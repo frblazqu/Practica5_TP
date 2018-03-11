@@ -26,10 +26,25 @@ public class NewVehicle extends Event
 	}
 	
 
-	public void execute(RoadMap map)
+	public void execute(RoadMap map)	throws IllegalArgumentException
 	{
-		Vehicle vehic = new Vehicle(vehicleId, maxSpeed, itinerary, map);
-		map.addVehicle(vehic);
+		if(!map.duplicatedId(vehicleId)){
+			boolean validIds = true;
+			for(int i = 0; i < itinerary.length; ++i){
+				if(!map.duplicatedId(itinerary[i])){
+					validIds = false;
+					break;
+				}
+			}
+			if(validIds){
+			Vehicle vehic = new Vehicle(vehicleId, maxSpeed, itinerary, map);
+			map.addVehicle(vehic);
+			}else{
+				throw new IllegalArgumentException("There is no junction with the specified id");
+			}
+		}else{
+			throw new IllegalArgumentException("The id is already used");
+		}
 	}
 	
 	public static class NewVehicleBuilder implements EventBuilder {

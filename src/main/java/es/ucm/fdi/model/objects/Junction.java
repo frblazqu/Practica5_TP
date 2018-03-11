@@ -36,13 +36,15 @@ public class Junction extends SimulatedObject
 	}
 	public void avanza()					
 	{
-		if(!listadoColas.get(indiceColas).cola.isEmpty()){
-		listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
-		listadoColas.get(indiceColas).cola.pop();
+		if(!listadoColas.isEmpty()){
+			if(!listadoColas.get(indiceColas).cola.isEmpty()){
+				listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
+				listadoColas.get(indiceColas).cola.pop();
+			}
+			listadoColas.get(indiceColas).setSemaforo(false);
+			indiceColas = indiceSiguiente();
+			listadoColas.get(indiceColas).setSemaforo(true);
 		}
-		listadoColas.get(indiceColas).setSemaforo(false);
-		indiceColas = indiceSiguiente();
-		listadoColas.get(indiceColas).setSemaforo(true);
 	}
 	public int indiceAnterior(){
 		if(indiceColas == 0){
