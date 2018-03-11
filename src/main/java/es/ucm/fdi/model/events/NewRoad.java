@@ -34,13 +34,20 @@ public class NewRoad extends Event
 	
 	//Tipo y parámetros de los métodos no definitivo
 	//Ningún cuerpo de función implementado!!
-	public void execute(RoadMap map)
+	public void execute(RoadMap map) throws IllegalArgumentException
 	{
-		Road road = new Road(road_id, maxSpeed, length, map);
-		map.addRoad(road);
-		map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad());
-		map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad());
-		
+		if(!map.duplicatedId(road_id)){
+			if(map.duplicatedId(junctionDestId) && map.duplicatedId(junctionIniId)){
+				Road road = new Road(road_id, maxSpeed, length, map);
+				map.addRoad(road);
+				map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad());
+				map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad());
+			}else{
+				throw new IllegalArgumentException("There is no junction with the specified id");
+			}
+		}else{
+			throw new IllegalArgumentException("The id is already used");
+		}
 	}
 	public static class NewRoadBuilder implements EventBuilder{
 		public Event parse(IniSection sec)throws IllegalArgumentException {

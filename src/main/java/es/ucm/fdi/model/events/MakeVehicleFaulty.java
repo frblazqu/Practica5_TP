@@ -18,10 +18,21 @@ public class MakeVehicleFaulty extends Event
 		vehicleId = vId;
 	}
 	
-	public void execute(RoadMap map)
+	public void execute(RoadMap map)	throws IllegalArgumentException
 	{
-		for(int i=0; i<vehicleId.length; ++i){
-			map.getVehicle(vehicleId[i]).setTiempoAveria(faultDuration);
+		boolean validIds = true;
+		for(int i = 0; i < vehicleId.length; ++i){
+			if(!map.duplicatedId(vehicleId[i])){
+				validIds = false;
+				break;
+			}
+		}
+		if(validIds){
+			for(int i=0; i<vehicleId.length; ++i){
+				map.getVehicle(vehicleId[i]).setTiempoAveria(faultDuration);
+			}
+		}else{
+			throw new IllegalArgumentException("There is no vehicle with the specified id");
 		}
 	}
 	public static class NewVehicleFaulty implements EventBuilder{
