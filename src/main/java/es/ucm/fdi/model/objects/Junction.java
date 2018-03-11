@@ -9,23 +9,24 @@ import es.ucm.fdi.util.MultiTreeMap;
 
 public class Junction extends SimulatedObject
 {
-	//
 	private Map<Road, IncomingRoad> queue;
 	private List<IncomingRoad> listadoColas;
+	private int indiceColas;
 	
-	//
 	
 	public Junction()
 	{
 		super();
 		queue = new HashMap<>();
-		listadoColas = new ArrayList<>();		
+		listadoColas = new ArrayList<>();	
+		indiceColas = 0;
 	}
 	public Junction(String id)
 	{
 		super(id, ObjectType.JUNCTION);
 		queue = new HashMap<>();
 		listadoColas = new ArrayList<>();	
+		indiceColas = 0;
 	}
 	public Map<Road, IncomingRoad> getMap(){
 		return queue;
@@ -33,14 +34,28 @@ public class Junction extends SimulatedObject
 	public List<IncomingRoad> getIncRoadList(){
 		return listadoColas;
 	}
-	public void avanza()					//Unimplemented
+	public void avanza()					
 	{
-		for(IncomingRoad cola: listadoColas)
-		{
-			if(cola.semaforoVerde)
-			{
-				
-			}
+		if(!listadoColas.get(indiceColas).cola.isEmpty()){
+		listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
+		listadoColas.get(indiceColas).cola.pop();
+		}
+		listadoColas.get(indiceColas).setSemaforo(false);
+		indiceColas = indiceSiguiente();
+		listadoColas.get(indiceColas).setSemaforo(true);
+	}
+	public int indiceAnterior(){
+		if(indiceColas == 0){
+			return listadoColas.size() - 1;
+		}else{
+			return indiceColas - 1;
+		}
+	}
+	public int indiceSiguiente(){
+		if(indiceColas == listadoColas.size() - 1){
+			return 0;
+		}else{
+			return indiceColas + 1;
 		}
 	}
 	public void entraVehiculo(Vehicle car)
@@ -75,14 +90,16 @@ public class Junction extends SimulatedObject
 		return aux;
 	}
 	
-	//
 	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
-	private class IncomingRoad
+	public static class IncomingRoad
 	{
 		private boolean semaforoVerde;
 		private ArrayDeque<Vehicle> cola;
 		
-		
+		public IncomingRoad(){
+			semaforoVerde = false;
+			cola = new ArrayDeque<>();
+		}
 		public void insert(Vehicle car)
 		{
 			cola.addLast(car);
