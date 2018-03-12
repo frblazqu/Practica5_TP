@@ -56,7 +56,7 @@ public class NewRoad extends Event
 			}else{
 				int tm;
 				String id = sec.getValue("id"), src = sec.getValue("src"), dest = sec.getValue("dest"),
-						ms = sec.getValue("max_speed"), l = sec.getValue("lenght");
+						ms = sec.getValue("max_speed"), l = sec.getValue("length");
 				if(id != null && src != null && dest != null && dest != null && ms != null && l != null){
 					if(sec.getValue("time") != null){
 						tm = Integer.parseInt(sec.getValue("time"));
