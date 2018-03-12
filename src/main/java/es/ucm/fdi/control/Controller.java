@@ -33,7 +33,7 @@ public class Controller
 	private OutputStream outputStream;						//Flujo de salida de informes de la simulación
 	private InputStream inputStream;						//Flujo de entrada de datos para la simulación
 	private TrafficSimulator simulador;						//Simulador a controlar
-	private static List<EventBuilder> EventBuilderList;		//Lista para parsear las IniSections
+	private List<EventBuilder> EventBuilderList;			//Lista para parsear las IniSections
 	
 	//CONSTRUCTORAS
 	/**Dada una localización del fichero de entrada y una localización para el fichero de salida
