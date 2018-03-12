@@ -16,6 +16,7 @@ public interface EventBuilder
 			if(!Character.isLetterOrDigit(id.charAt(i)) && id.charAt(i)!='_'){
 				valid=false;		
 			}
+			++i;
 		}
 		return valid;
 	}

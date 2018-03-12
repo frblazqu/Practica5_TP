@@ -41,9 +41,13 @@ public class NewJunction extends Event
 					tm = Integer.parseInt(sec.getValue("time"));
 				}
 				if(id == null){
-					throw new IllegalArgumentException("Inconrrect parameters");
+					throw new IllegalArgumentException("Incorrect parameters");
 				}else{
-					return new NewJunction(id, tm);
+					if(EventBuilder.isValidId(id)){
+						return new NewJunction(id, tm);
+					}else{
+						throw new IllegalArgumentException("Not valid values");
+					}
 				}
 			}
 		}
