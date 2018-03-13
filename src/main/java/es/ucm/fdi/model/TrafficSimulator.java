@@ -52,23 +52,25 @@ public class TrafficSimulator
 	 * @throws IOException */
 	public void ejecuta(int numTicks, OutputStream out) throws IOException
 	{
-		// 1. ejecutar los eventos correspondientes a ese tiempo
-		for(Event e: listaEventos.get(reloj))
-			e.execute(mapa);
+		for(int i = 0; i<numTicks; ++i){
+			// 1. ejecutar los eventos correspondientes a ese tiempo
+			for(Event e: listaEventos.get(reloj))
+				e.execute(mapa);
 
-		// 2. invocar al método avanzar de las carreteras
-		for(Road road: mapa.getRoads())
-			road.avanza();
+			// 2. invocar al método avanzar de las carreteras
+			for(Road road: mapa.getRoads())
+				road.avanza();
 		
-		// 3. invocar al método avanzar de los cruces
-		for(Junction junc: mapa.getJunctions())
-			junc.avanza();
+			// 3. invocar al método avanzar de los cruces
+			for(Junction junc: mapa.getJunctions())
+				junc.avanza();
 		
-		// 4. this.contadorTiempo++;
-			reloj++;
+			// 4. this.contadorTiempo++;
+				reloj++;
 			
-		// 5. esciribir un informe en OutputStream
+			// 5. esciribir un informe en OutputStream
 			generaInforme(out);
+		}
 
 	}
 	/**Escribe en el flujo de salida un informe de la situación de todos los objetos en el instante de la llamada. Escribe
