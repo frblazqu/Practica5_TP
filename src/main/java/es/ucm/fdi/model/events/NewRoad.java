@@ -7,6 +7,7 @@ import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Junction.IncomingRoad;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 
 public class NewRoad extends Event
 {
@@ -42,6 +43,14 @@ public class NewRoad extends Event
 				map.addRoad(road);
 				map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad());
 				map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad());
+				ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
+				if(map.getConectionMap().containsKey(junctionIniId)){
+					map.getConectionMap().get(junctionDestId).add(conJunct);
+				}else{
+					List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
+					connect.add(conJunct);
+					map.getConectionMap().put(junctionIniId, connect);
+				}
 			}else{
 				throw new IllegalArgumentException("There is no junction with the specified id");
 			}
