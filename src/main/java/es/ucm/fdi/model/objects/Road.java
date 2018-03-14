@@ -34,6 +34,13 @@ public class Road extends SimulatedObject
 		//vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> b - a);
 		//vehiculos = new MultiTreeMap<Integer,Vehicle>(new MayorAMenor());	
 	}
+	/**Constructora solo para testeo*/
+	public Road(String id, int maxSpeed, int size)
+	{
+		super(id, ObjectType.ROAD);
+		maxVelocidad = maxSpeed;
+		longitud = size;
+	}
 	
 	//MÉTODOS
 	public void avanza()																//Unimplemented

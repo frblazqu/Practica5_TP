@@ -11,6 +11,8 @@ public class RoadMap
 {
 	// búsqueda por ids, unicidad
 	private Map<String, SimulatedObject> simObjects;
+	//Cruces y carreteras que los unen
+	private Map<String, List<ConexionCruces>> connectedJunctions;
 	// listados reales
 	private List<Junction> junctions;
 	private List<Road> roads;
@@ -24,6 +26,8 @@ public class RoadMap
 	public RoadMap()												//Muuuchas cosas por probar
 	{
 		simObjects = new HashMap<>();
+		
+		connectedJunctions = new HashMap<>();
 		
 		junctions = new ArrayList<>();
 		roads = new ArrayList<>();
@@ -49,18 +53,20 @@ public class RoadMap
 	{
 		simObjects.put(vehic.getId(), vehic);
 	}
+	public SimulatedObject getSimulatedObject(String id){
+		return simObjects.get(id);
+	}
 	public Vehicle getVehicle(String id)
 	{
-		return null;
+		return (Vehicle)simObjects.get(id);
 	}
 	public Junction getJunction(String id)
 	{
-		return null;
+		return (Junction)simObjects.get(id);
 	}
 	public Road getRoad(String id)
 	{
-		
-		return null;
+		return (Road)simObjects.get(id);
 	}
 	public Road getRoad(String junctionIniId, String junctionFinId)
 	{
@@ -81,5 +87,17 @@ public class RoadMap
 	public boolean duplicatedId(String id)
 	{
 		return simObjects.containsKey(id);
+	}
+	public Map<String, List<ConexionCruces>> getConectionMap(){
+		return connectedJunctions;
+	}
+	//Par junction con carretera entrante
+	public static class ConexionCruces{
+		String idDest;
+		String idRoad;
+		public ConexionCruces(String idR, String idJ){
+			idDest = idJ;
+			idRoad = idR;
+		}
 	}
 }
