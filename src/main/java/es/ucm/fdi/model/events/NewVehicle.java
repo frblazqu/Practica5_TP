@@ -52,31 +52,15 @@ public class NewVehicle extends Event
 			if (!sec.getTag().equals("new_vehicle")){
 				return null;
 			}else{
-				int tm;
-				String id = sec.getValue("id"), ms = sec.getValue("max_speed"), it = sec.getValue("itinerary");
-				if(id != null && ms != null && it != null){
-					if(sec.getValue("time") != null){
-						tm = Integer.parseInt(sec.getValue("time"));
-					}else{
-						tm = 0;
-					}
-					int mSpeed = Integer.parseInt(ms);
-					String[] itiner = EventBuilder.parseIdList(it);
-					boolean validListId = true;
-					for(int i = 0; i < itiner.length; ++i){
-						if(!EventBuilder.isValidId(itiner[i])){
-							validListId = false;
-							break;
-						}
-						++i;
-					}
-					if(EventBuilder.isValidId(id) && mSpeed>=0 && validListId){
-						return new NewVehicle(tm, id, mSpeed, itiner);
-					}else{
-						throw new IllegalArgumentException("Not valid values");
-					}
-				}else{
-					throw new IllegalArgumentException("Invalid parameters");
+				int tm = EventBuilder.parseTime(sec.getValue("time"));
+				try{
+					String id = EventBuilder.parseId(sec.getValue("id"));
+					int mSpeed = EventBuilder.parseIntValue(sec.getValue("max_speed"));
+					String[] it = EventBuilder.parseIdList(sec.getValue("itinerary"));
+					return new NewVehicle(tm, id, mSpeed, it);
+				}
+				catch(IllegalArgumentException e){
+					throw new IllegalArgumentException("There was something wrong with one of the atributes");
 				}
 			}
 		}

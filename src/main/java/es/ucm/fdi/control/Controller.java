@@ -112,10 +112,10 @@ public class Controller
 	}
 	
 	
-	//public void run() ??
-	//{
-	//	simulador.execute(outputStream, ticksSimulacion);
-	//}
+	public void run() 
+	{
+		//simulador.ejecuta(ticksSimulacion, outputStream);			Excepciones
+	}
 }
 
 

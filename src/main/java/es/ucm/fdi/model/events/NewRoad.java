@@ -63,23 +63,17 @@ public class NewRoad extends Event
 			if(!sec.getTag().equals("new_road")){
 				return null;
 			}else{
-				int tm;
-				String id = sec.getValue("id"), src = sec.getValue("src"), dest = sec.getValue("dest"),
-						ms = sec.getValue("max_speed"), l = sec.getValue("length");
-				if(id != null && src != null && dest != null && dest != null && ms != null && l != null){
-					if(sec.getValue("time") != null){
-						tm = Integer.parseInt(sec.getValue("time"));
-					}else{
-						tm = 0;
-					}
-					int mSpeed = Integer.parseInt(ms), lenght = Integer.parseInt(l);
-					if(EventBuilder.isValidId(id) && EventBuilder.isValidId(src) && EventBuilder.isValidId(dest) && mSpeed >= 0 && lenght >= 0){
-						return new NewRoad(tm, id, src, dest, lenght, mSpeed);
-					}else{
-						throw new IllegalArgumentException("Not valid values");
-					}
-				}else{
-					throw new IllegalArgumentException("Incorrect parameters");
+				int tm = EventBuilder.parseTime(sec.getValue("time"));
+				try{
+					String id = EventBuilder.parseId(sec.getValue("id"));
+					String src = EventBuilder.parseId(sec.getValue("src"));
+					String dest = EventBuilder.parseId(sec.getValue("dest"));
+					int mSpeed = EventBuilder.parseIntValue(sec.getValue("max_speed"));
+					int l = EventBuilder.parseIntValue(sec.getValue("length"));
+					return new NewRoad(tm, id, src, dest, l, mSpeed);
+				}
+				catch(IllegalArgumentException e){
+					throw new IllegalArgumentException("There is something wrong with one of the atributes.");
 				}
 			}
 		}

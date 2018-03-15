@@ -70,6 +70,12 @@ public class RoadMap
 	}
 	public Road getRoad(String junctionIniId, String junctionFinId)
 	{
+		List<ConexionCruces> conexionAux = connectedJunctions.get(junctionIniId);
+		for(ConexionCruces c: conexionAux){
+			if(c.getJunctionDest().equals(junctionFinId)){
+				return (Road)simObjects.get(c.getRoadConnect());
+			}
+		}
 		return null;
 	}
 	public List<Road> getRoads()
@@ -98,6 +104,12 @@ public class RoadMap
 		public ConexionCruces(String idR, String idJ){
 			idDest = idJ;
 			idRoad = idR;
+		}
+		public String getRoadConnect(){
+			return idRoad;
+		}
+		public String getJunctionDest(){
+			return idDest;
 		}
 	}
 }

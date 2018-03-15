@@ -40,31 +40,14 @@ public class MakeVehicleFaulty extends Event
 			if (!sec.getTag().equals("make_vehicle_faulty")){
 				return null;
 			}else{
-				int tm;
-				String vehic = sec.getValue("vehicles"), dur = sec.getValue("duration");
-				if(vehic != null && dur != null){
-					if(sec.getValue("time") != null){
-						tm = Integer.parseInt(sec.getValue("time"));
-					}else{
-						tm = 0;
-					}
-					String[] vehicles = EventBuilder.parseIdList(vehic);
-					int duration = Integer.parseInt(dur);
-					boolean validIdList =  true;
-					for(int i = 0; i < vehicles.length; ++i){
-						if(!EventBuilder.isValidId(vehicles[i])){
-							validIdList = false;
-							break;
-						}
-						++i;
-					}
-					if(validIdList && duration >= 0){
-						return new MakeVehicleFaulty(tm, duration, vehicles);
-					}else{
-						throw new IllegalArgumentException("Not valid values");
-					}
-				}else{
-					throw new IllegalArgumentException("Invalid parameters");
+				int tm = EventBuilder.parseTime(sec.getValue("time"));
+				try{
+					String[] vehic = EventBuilder.parseIdList(sec.getValue("vehicles"));
+					int dur = EventBuilder.parseIntValue(sec.getValue("duration"));
+					return new MakeVehicleFaulty(tm, dur, vehic);
+				}
+				catch(IllegalArgumentException e){
+					throw new IllegalArgumentException("There is something wrong with one of the atributes.");
 				}
 			}
 		}
