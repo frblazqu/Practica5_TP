@@ -160,8 +160,9 @@ public class ExampleMain {
 		// TODO
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
-		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _outFile, DEFAULT_READ_DIRECTORY + _inFile, _timeLimit);
+		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_READ_DIRECTORY + _outFile, _timeLimit);
 		controller.leerDatosSimulacion();
+		controller.run();
 	}
 
 	private static void start(String[] args) throws IOException {
@@ -185,5 +186,6 @@ public class ExampleMain {
 	    //	test("resources/examples/events/basic");
 
 		// Call start to start the simulator from command line, etc.
+		start(args);
 	}
 }

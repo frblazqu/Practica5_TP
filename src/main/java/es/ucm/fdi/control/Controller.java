@@ -93,7 +93,7 @@ public class Controller
 	}
 	/**Dada una IniSection la parsea para leer el evento que representa. Si no se consigue generar ningún evento de esta
 	 * sección se lanza una excepción del tipo IllegalArgumentException.*/
-	public Event getEvento(IniSection s) throws IllegalArgumentException
+	public Event getEvento(IniSection s) throws IllegalArgumentException	//Añadir excepciones
 	{
 		Event event;
 
@@ -114,7 +114,12 @@ public class Controller
 	
 	public void run() 
 	{
-		//simulador.ejecuta(ticksSimulacion, outputStream);			Excepciones
+		try{
+		simulador.ejecuta(ticksSimulacion, outputStream);	
+		}
+		catch(IOException e){
+			//Añadir tratamiento excepcion
+		}
 	}
 }
 
