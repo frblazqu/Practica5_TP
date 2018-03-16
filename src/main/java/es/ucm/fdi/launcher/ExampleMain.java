@@ -6,6 +6,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
+
+import es.ucm.fdi.control.Controller;
 import es.ucm.fdi.ini.Ini;
 
 import org.apache.commons.cli.CommandLine;
@@ -21,6 +23,10 @@ public class ExampleMain {
 
 	private final static Integer _timeLimitDefaultValue = 10;
 	public static Integer _timeLimit = null;
+	private final static String DEFAULT_READ_DIRECTORY = "src/main/resources/readStr/";
+	private final static String DEFAULT_WRITE_DIRECTORY = "src/main/resources/writeStr/";
+	private final static String DEFAULT_INI_FILE = "iniFile.ini";
+	private final static String DEFAULT_OUT_FILE = "outFile.ini";
 	public static String _inFile = null;
 	public static String _outFile = null;
 
@@ -86,14 +92,14 @@ public class ExampleMain {
 	}
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
-		_inFile = line.getOptionValue("i");
+		_inFile = line.getOptionValue("i", DEFAULT_INI_FILE);
 		if (_inFile == null) {
 			throw new ParseException("An events file is missing");
 		}
 	}
 
 	private static void parseOutFileOption(CommandLine line) throws ParseException {
-		_outFile = line.getOptionValue("o");
+		_outFile = line.getOptionValue("o", DEFAULT_OUT_FILE);
 	}
 
 	private static void parseStepsOption(CommandLine line) throws ParseException {
@@ -154,6 +160,8 @@ public class ExampleMain {
 		// TODO
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
+		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _outFile, DEFAULT_READ_DIRECTORY + _inFile, _timeLimit);
+		controller.leerDatosSimulacion();
 	}
 
 	private static void start(String[] args) throws IOException {
