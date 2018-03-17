@@ -110,8 +110,6 @@ public class Vehicle extends SimulatedObject
 			//Esto es solo si vamos a tener el vehículo en la carretera y el cruce a la vez.
 			//itinerario.get(indiceItinerario).saleVehiculo(this);
 			
-			//Qué pasa si está averiado ?? hay que controlarlo también ??
-
 			localizacion = 0;
 			velActual = 0;
 			++indiceItinerario;
@@ -145,10 +143,15 @@ public class Vehicle extends SimulatedObject
 	 * si es este el caso.*/
 	public void setVelocidadActual(int nuevaVelocidad)
 	{
-		if(nuevaVelocidad < 0)  
+		if(nuevaVelocidad < 0){  
 			throw new InvalidParameterException("Velocidad negativa no válida.");
-		else 
-			velActual = nuevaVelocidad;
+		}else{
+			if (nuevaVelocidad <= velMaxima){
+				velActual = nuevaVelocidad;
+			}else{
+				velActual = velMaxima;
+			}
+		}
 	}
 	/**True si el vehículo se encuentra averiado. False en caso contrario.*/
 	public boolean averiado()
