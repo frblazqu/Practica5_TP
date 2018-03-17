@@ -43,7 +43,7 @@ public class Road extends SimulatedObject
 	}
 	
 	//MÉTODOS
-	public void avanza(RoadMap map)																
+	public void avanza(RoadMap mapa)																
 	{
 		if(vehiculos.sizeOfValues() > 0)
 		{
@@ -66,9 +66,8 @@ public class Road extends SimulatedObject
 				
 				
 				//Avanzamos y si no cambia de carretera lo insertamos en el nuevo Mtm
-				v.avanza(map);
+				v.avanza(mapa);
 				
-				//Qué pasa si llega al destino ??
 				if(v.getLocalizacion() != this.longitud)
 				{
 					aux.putValue(v.getLocalizacion(), v);
@@ -88,7 +87,10 @@ public class Road extends SimulatedObject
 		return vehiculos.removeValue(longitud, vehicle);
 	}
 	public int getLongitud() 		{return longitud;}
-	public void fillReportDetails(Map<String, String> camposValor)						//Falta rellenar el estado recorriendo el Mtm
+	public MultiTreeMap<Integer, Vehicle> getVehicles(){
+		return vehiculos;
+	}
+	public void fillReportDetails(Map<String, String> camposValor)						
 	{
 		camposValor.put("state", vehiclesInRoad());
 	}
@@ -109,11 +111,11 @@ public class Road extends SimulatedObject
 	{
 		return "road_report";
 	}
-	private class MayorAMenor implements Comparator<Integer>							//Cómo se si es de menos a mas o de mas a menos ??
+	private class MayorAMenor implements Comparator<Integer>							
 	{
 		public int compare(Integer arg0, Integer arg1)
 		{																				//Debe devolver:
-			return arg0 - arg1;															//Negativo si arg0 < arg1
+			return arg1 - arg0;															//Negativo si arg0 < arg1
 																						//Positivo si arg0 > arg1
 		}
 	}
