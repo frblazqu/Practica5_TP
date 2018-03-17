@@ -41,11 +41,11 @@ public class NewRoad extends Event
 			if(map.duplicatedId(junctionDestId) && map.duplicatedId(junctionIniId)){
 				Road road = new Road(road_id, maxSpeed, length, map);
 				map.addRoad(road);
-				map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad());
-				map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad());
+				map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad(road));
+				map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad(road));
 				ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
 				if(map.getConectionMap().containsKey(junctionIniId)){
-					map.getConectionMap().get(junctionDestId).add(conJunct);
+					map.getConectionMap().get(junctionIniId).add(conJunct);
 				}else{
 					List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
 					connect.add(conJunct);

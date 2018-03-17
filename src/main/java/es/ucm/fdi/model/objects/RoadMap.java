@@ -35,7 +35,7 @@ public class RoadMap
 		
 		junctionsRO = Collections.unmodifiableList(junctions);
 		roadsRO = Collections.unmodifiableList(roads);
-		vehicles = Collections.unmodifiableList(vehicles);
+		vehiclesRO = Collections.unmodifiableList(vehicles);
 	}
 	public void addJunction(Junction junc)
 	{
@@ -52,6 +52,9 @@ public class RoadMap
 	public void addVehicle(Vehicle vehic)
 	{
 		simObjects.put(vehic.getId(), vehic);
+		vehicles.add(vehic);
+		vehiclesRO = Collections.unmodifiableList(vehicles);
+		
 	}
 	public SimulatedObject getSimulatedObject(String id){
 		return simObjects.get(id);

@@ -160,7 +160,7 @@ public class ExampleMain {
 		// TODO
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
-		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_READ_DIRECTORY + _outFile, _timeLimit);
+		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_WRITE_DIRECTORY + _outFile, _timeLimit);
 		controller.leerDatosSimulacion();
 		controller.run();
 	}

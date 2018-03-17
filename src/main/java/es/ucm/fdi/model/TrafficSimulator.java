@@ -54,8 +54,10 @@ public class TrafficSimulator
 	{
 		for(int i = 0; i<numTicks; ++i){
 			// 1. ejecutar los eventos correspondientes a ese tiempo
-			for(Event e: listaEventos.get(reloj))
-				e.execute(mapa);
+			if(listaEventos.get(reloj) != null){
+				for(Event e: listaEventos.get(reloj))
+					e.execute(mapa);
+			}
 
 			// 2. invocar al método avanzar de las carreteras
 			for(Road road: mapa.getRoads())

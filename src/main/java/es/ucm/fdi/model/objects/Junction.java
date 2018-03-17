@@ -39,11 +39,14 @@ public class Junction extends SimulatedObject
 		if(!listadoColas.isEmpty()){
 			if(!listadoColas.get(indiceColas).cola.isEmpty()){
 				listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
+				queue.get(listadoColas.get(indiceColas).road).cola.pop();
 				listadoColas.get(indiceColas).cola.pop();
 			}
 			listadoColas.get(indiceColas).setSemaforo(false);
+			queue.get(listadoColas.get(indiceColas).road).setSemaforo(false);
 			indiceColas = indiceSiguiente();
 			listadoColas.get(indiceColas).setSemaforo(true);
+			queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
 		}
 	}
 	public int indiceAnterior(){
@@ -95,10 +98,12 @@ public class Junction extends SimulatedObject
 	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
 	public static class IncomingRoad
 	{
+		private Road road;
 		private boolean semaforoVerde;
 		private ArrayDeque<Vehicle> cola;
 		
-		public IncomingRoad(){
+		public IncomingRoad(Road r){
+			road = r;
 			semaforoVerde = false;
 			cola = new ArrayDeque<>();
 		}

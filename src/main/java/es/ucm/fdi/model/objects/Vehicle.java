@@ -37,10 +37,12 @@ public class Vehicle extends SimulatedObject
 	{
 		super(id, ObjectType.VEHICLE);
 		
+		itinerario = new ArrayList<>();
 		//Esto no debe permitir saltarse el mapa a la torera. Lanzar excepciones si no existe la carretera.
 		for(int i = 1; i < trayecto.length; i++)
 			itinerario.add(map.getRoad(trayecto[i-1], trayecto[i]));
 		
+		map.getRoad(trayecto[0], trayecto[1]).entraVehiculo(this);
 		indiceItinerario = 0;
 		kilometrage = 0;
 		velActual = 0;
