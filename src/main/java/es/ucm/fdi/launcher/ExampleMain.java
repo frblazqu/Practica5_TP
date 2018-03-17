@@ -92,14 +92,14 @@ public class ExampleMain {
 	}
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
-		_inFile = line.getOptionValue("i", DEFAULT_INI_FILE);
+		_inFile = DEFAULT_READ_DIRECTORY + line.getOptionValue("i", DEFAULT_INI_FILE);
 		if (_inFile == null) {
 			throw new ParseException("An events file is missing");
 		}
 	}
 
 	private static void parseOutFileOption(CommandLine line) throws ParseException {
-		_outFile = line.getOptionValue("o", DEFAULT_OUT_FILE);
+		_outFile = DEFAULT_WRITE_DIRECTORY + line.getOptionValue("o", DEFAULT_OUT_FILE);
 	}
 
 	private static void parseStepsOption(CommandLine line) throws ParseException {
@@ -136,7 +136,7 @@ public class ExampleMain {
 		});
 
 		for (File file : files) {
-			test(file.getAbsolutePath(), file.getAbsolutePath() + ".out", file.getAbsolutePath() + ".eout",100);
+			test(file.getAbsolutePath(), file.getAbsolutePath() + ".out", file.getAbsolutePath() + ".eout", 10);
 		}
 
 	}
@@ -161,7 +161,7 @@ public class ExampleMain {
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
 		try{
-			Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_WRITE_DIRECTORY + _outFile, _timeLimit);
+			Controller controller = new Controller(_inFile, _outFile, _timeLimit);
 			controller.leerDatosSimulacion();
 			controller.run();
 		}
@@ -174,7 +174,8 @@ public class ExampleMain {
 
 	private static void start(String[] args) throws IOException, IllegalArgumentException {
 		parseArgs(args);
-		startBatchMode();
+		test("src/main/resources/readStr/");
+		//startBatchMode();
 	}
 
 	public static void main(String[] args) throws IOException, InvocationTargetException, InterruptedException 

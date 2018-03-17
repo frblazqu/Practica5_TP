@@ -43,7 +43,7 @@ public class Road extends SimulatedObject
 	}
 	
 	//MÉTODOS
-	public void avanza()																//Unimplemented
+	public void avanza(RoadMap map)																
 	{
 		if(vehiculos.sizeOfValues() > 0)
 		{
@@ -66,14 +66,15 @@ public class Road extends SimulatedObject
 				
 				
 				//Avanzamos y si no cambia de carretera lo insertamos en el nuevo Mtm
-				v.avanza();
+				v.avanza(map);
 				
 				//Qué pasa si llega al destino ??
-				if(v.actualRoad() == this)
+				if(v.getLocalizacion() != this.longitud)
 				{
 					aux.putValue(v.getLocalizacion(), v);
 				}
 			}
+			vehiculos = aux;
 		}
 	}
 	public void entraVehiculo(Vehicle vehicle)											//Excepciones									
@@ -89,7 +90,20 @@ public class Road extends SimulatedObject
 	public int getLongitud() 		{return longitud;}
 	public void fillReportDetails(Map<String, String> camposValor)						//Falta rellenar el estado recorriendo el Mtm
 	{
-		camposValor.put("state", "//!!!!//");
+		camposValor.put("state", vehiclesInRoad());
+	}
+	public String vehiclesInRoad(){
+		String aux = "";
+		
+		for(Vehicle v: vehiculos.innerValues()){
+			aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
+		}
+		
+		if(aux.length() != 0){
+			aux = aux.substring(0, aux.length() - 1);
+		}
+			
+			return aux;
 	}
 	public String getHeader()
 	{

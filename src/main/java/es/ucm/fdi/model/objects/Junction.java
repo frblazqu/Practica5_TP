@@ -66,6 +66,12 @@ public class Junction extends SimulatedObject
 	public void entraVehiculo(Vehicle car)
 	{
 		queue.get(car.actualRoad()).insert(car);
+		for(IncomingRoad r: listadoColas){
+			if(r.road.getId().equals(car.actualRoad().getId())){
+				r.insert(car);
+				break;
+			}
+		}
 	}
 	public void saleVehiculo(Vehicle car)
 	{
@@ -74,7 +80,7 @@ public class Junction extends SimulatedObject
 	}
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
-		camposValor.put("queue", colaCruce());
+		camposValor.put("queues", colaCruce());
 	}
 	public String getHeader()
 	{
@@ -89,8 +95,9 @@ public class Junction extends SimulatedObject
 			aux += "(" + road.getId() + "," + queue.get(road).representaSemaforo() + "," + queue.get(road).colaCarretera() + "),";
 		}
 		
-		if(aux.length() != 0)
-		aux.substring(0, aux.length() - 1);
+		if(aux.length() != 0){
+			aux = aux.substring(0, aux.length() - 1);
+		}
 		
 		return aux;
 	}
@@ -119,13 +126,14 @@ public class Junction extends SimulatedObject
 			{
 				aux += v.getId() + ",";
 			}
-			
-			aux.substring(0, aux.length() - 1); aux += "]";
-			
+			if(aux.length()>1){
+				aux = aux.substring(0, aux.length() - 1);
+			}
+			aux += "]";
 			
 			return aux;
 		}
-		public void elimina()					//OJO!!
+		public void elimina()					
 		{
 			cola.removeFirst();
 		}

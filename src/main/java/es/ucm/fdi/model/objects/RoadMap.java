@@ -23,7 +23,7 @@ public class RoadMap
 	private List<Vehicle> vehiclesRO;
 	
 	
-	public RoadMap()												//Muuuchas cosas por probar
+	public RoadMap()												
 	{
 		simObjects = new HashMap<>();
 		
@@ -84,6 +84,16 @@ public class RoadMap
 		}else{
 			return null;
 		}
+	}
+	public Junction getJunctionDest(Road r){
+		for(String s: connectedJunctions.keySet()){
+			for(ConexionCruces c: connectedJunctions.get(s)){
+				if(c.getRoadConnect().equals(r.getId())){
+					return (Junction)simObjects.get(c.getJunctionDest());
+				}
+			}
+		}
+		return null;
 	}
 	public List<Road> getRoads()
 	{

@@ -62,7 +62,7 @@ public class TrafficSimulator
 
 				// 2. invocar al método avanzar de las carreteras
 				for(Road road: mapa.getRoads())
-					road.avanza();
+					road.avanza(mapa);
 		
 				// 3. invocar al método avanzar de los cruces
 				for(Junction junc: mapa.getJunctions())

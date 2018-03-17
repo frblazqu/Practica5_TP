@@ -71,7 +71,7 @@ public class Vehicle extends SimulatedObject
 	//MÉTODOS
 	/**Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
 	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.*/
-	public void avanza()
+	public void avanza(RoadMap map)
 	{
 		if(tiempoAveria > 0) 
 		{	
@@ -90,8 +90,7 @@ public class Vehicle extends SimulatedObject
 			if(localizacion >= itinerario.get(indiceItinerario).getLongitud())
 			{
 				localizacion = itinerario.get(indiceItinerario).getLongitud();
-				//Este método no me cuadra...
-				itinerario.get(indiceItinerario).entraVehiculo(this);
+				map.getJunctionDest(actualRoad()).entraVehiculo(this);
 				velActual = 0;
 			}
 			
@@ -164,7 +163,11 @@ public class Vehicle extends SimulatedObject
 		camposValor.put("speed", Integer.toString(velActual));
 		camposValor.put("kilometrage", Integer.toString(kilometrage));
 		camposValor.put("faulty", Integer.toString(tiempoAveria));
+		if(enDestino){
+			camposValor.put("location", "arrived");
+		}else{
 		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
+		}
 	}
 	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
 	public String getHeader()
