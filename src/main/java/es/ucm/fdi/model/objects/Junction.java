@@ -37,16 +37,22 @@ public class Junction extends SimulatedObject
 	public void avanza()					
 	{
 		if(!listadoColas.isEmpty()){
-			if(!listadoColas.get(indiceColas).cola.isEmpty()){
-				listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
-				queue.get(listadoColas.get(indiceColas).road).cola.pop();
-				listadoColas.get(indiceColas).cola.pop();
+			if(!listadoColas.get(indiceColas).semaforoVerde){
+				listadoColas.get(indiceColas).setSemaforo(true);
+				queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
+			}else{
+				if(!listadoColas.get(indiceColas).cola.isEmpty()){
+					listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
+					queue.get(listadoColas.get(indiceColas).road).cola.pop();
+					listadoColas.get(indiceColas).cola.pop();
+				}
+			
+				listadoColas.get(indiceColas).setSemaforo(false);
+				queue.get(listadoColas.get(indiceColas).road).setSemaforo(false);
+				indiceColas = indiceSiguiente();
+				listadoColas.get(indiceColas).setSemaforo(true);
+				queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
 			}
-			listadoColas.get(indiceColas).setSemaforo(false);
-			queue.get(listadoColas.get(indiceColas).road).setSemaforo(false);
-			indiceColas = indiceSiguiente();
-			listadoColas.get(indiceColas).setSemaforo(true);
-			queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
 		}
 	}
 	public int indiceAnterior(){
@@ -90,9 +96,9 @@ public class Junction extends SimulatedObject
 	{
 		String aux = "";
 		
-		for(Road road: queue.keySet())
+		for(IncomingRoad road: listadoColas)
 		{
-			aux += "(" + road.getId() + "," + queue.get(road).representaSemaforo() + "," + queue.get(road).colaCarretera() + "),";
+			aux += "(" + road.getRoadInc().getId() + "," + road.representaSemaforo() + "," + road.colaCarretera() + "),";
 		}
 		
 		if(aux.length() != 0){
@@ -113,6 +119,9 @@ public class Junction extends SimulatedObject
 			road = r;
 			semaforoVerde = false;
 			cola = new ArrayDeque<>();
+		}
+		public Road getRoadInc(){
+			return road;
 		}
 		public void insert(Vehicle car)
 		{
