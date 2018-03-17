@@ -6,6 +6,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
+
+import es.ucm.fdi.control.Controller;
 import es.ucm.fdi.ini.Ini;
 
 import org.apache.commons.cli.CommandLine;
@@ -21,6 +23,10 @@ public class ExampleMain {
 
 	private final static Integer _timeLimitDefaultValue = 10;
 	public static Integer _timeLimit = null;
+	private final static String DEFAULT_READ_DIRECTORY = "src/main/resources/readStr/";
+	private final static String DEFAULT_WRITE_DIRECTORY = "src/main/resources/writeStr/";
+	private final static String DEFAULT_INI_FILE = "iniFile.ini";
+	private final static String DEFAULT_OUT_FILE = "outFile.ini";
 	public static String _inFile = null;
 	public static String _outFile = null;
 
@@ -86,14 +92,14 @@ public class ExampleMain {
 	}
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
-		_inFile = line.getOptionValue("i");
+		_inFile = DEFAULT_READ_DIRECTORY + line.getOptionValue("i", DEFAULT_INI_FILE);
 		if (_inFile == null) {
 			throw new ParseException("An events file is missing");
 		}
 	}
 
 	private static void parseOutFileOption(CommandLine line) throws ParseException {
-		_outFile = line.getOptionValue("o");
+		_outFile = DEFAULT_WRITE_DIRECTORY + line.getOptionValue("o", DEFAULT_OUT_FILE);
 	}
 
 	private static void parseStepsOption(CommandLine line) throws ParseException {
@@ -130,7 +136,7 @@ public class ExampleMain {
 		});
 
 		for (File file : files) {
-			test(file.getAbsolutePath(), file.getAbsolutePath() + ".out", file.getAbsolutePath() + ".eout",100);
+			test(file.getAbsolutePath(), file.getAbsolutePath() + ".out", file.getAbsolutePath() + ".eout", 10);
 		}
 
 	}
@@ -150,15 +156,26 @@ public class ExampleMain {
 	 * 
 	 * @throws IOException
 	 */
-	private static void startBatchMode() throws IOException {
+	private static void startBatchMode() throws IOException{
 		// TODO
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
+		try{
+			Controller controller = new Controller(_inFile, _outFile, _timeLimit);
+			controller.leerDatosSimulacion();
+			controller.run();
+		}
+		catch(IllegalArgumentException e){
+			System.out.println("Something went wrong whith the simulation\n");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
-	private static void start(String[] args) throws IOException {
+	private static void start(String[] args) throws IOException, IllegalArgumentException {
 		parseArgs(args);
-		startBatchMode();
+		test("src/main/resources/readStr/");
+		//startBatchMode();
 	}
 
 	public static void main(String[] args) throws IOException, InvocationTargetException, InterruptedException 
@@ -177,5 +194,6 @@ public class ExampleMain {
 	    //	test("resources/examples/events/basic");
 
 		// Call start to start the simulator from command line, etc.
+		start(args);
 	}
 }

@@ -39,11 +39,14 @@ public class Junction extends SimulatedObject
 		if(!listadoColas.isEmpty()){
 			if(!listadoColas.get(indiceColas).cola.isEmpty()){
 				listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
+				queue.get(listadoColas.get(indiceColas).road).cola.pop();
 				listadoColas.get(indiceColas).cola.pop();
 			}
 			listadoColas.get(indiceColas).setSemaforo(false);
+			queue.get(listadoColas.get(indiceColas).road).setSemaforo(false);
 			indiceColas = indiceSiguiente();
 			listadoColas.get(indiceColas).setSemaforo(true);
+			queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
 		}
 	}
 	public int indiceAnterior(){
@@ -63,6 +66,12 @@ public class Junction extends SimulatedObject
 	public void entraVehiculo(Vehicle car)
 	{
 		queue.get(car.actualRoad()).insert(car);
+		for(IncomingRoad r: listadoColas){
+			if(r.road.getId().equals(car.actualRoad().getId())){
+				r.insert(car);
+				break;
+			}
+		}
 	}
 	public void saleVehiculo(Vehicle car)
 	{
@@ -71,7 +80,7 @@ public class Junction extends SimulatedObject
 	}
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
-		camposValor.put("queue", colaCruce());
+		camposValor.put("queues", colaCruce());
 	}
 	public String getHeader()
 	{
@@ -86,8 +95,9 @@ public class Junction extends SimulatedObject
 			aux += "(" + road.getId() + "," + queue.get(road).representaSemaforo() + "," + queue.get(road).colaCarretera() + "),";
 		}
 		
-		if(aux.length() != 0)
-		aux.substring(0, aux.length() - 1);
+		if(aux.length() != 0){
+			aux = aux.substring(0, aux.length() - 1);
+		}
 		
 		return aux;
 	}
@@ -95,10 +105,12 @@ public class Junction extends SimulatedObject
 	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
 	public static class IncomingRoad
 	{
+		private Road road;
 		private boolean semaforoVerde;
 		private ArrayDeque<Vehicle> cola;
 		
-		public IncomingRoad(){
+		public IncomingRoad(Road r){
+			road = r;
 			semaforoVerde = false;
 			cola = new ArrayDeque<>();
 		}
@@ -114,13 +126,14 @@ public class Junction extends SimulatedObject
 			{
 				aux += v.getId() + ",";
 			}
-			
-			aux.substring(0, aux.length() - 1); aux += "]";
-			
+			if(aux.length()>1){
+				aux = aux.substring(0, aux.length() - 1);
+			}
+			aux += "]";
 			
 			return aux;
 		}
-		public void elimina()					//OJO!!
+		public void elimina()					
 		{
 			cola.removeFirst();
 		}

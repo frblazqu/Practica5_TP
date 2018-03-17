@@ -50,26 +50,33 @@ public class TrafficSimulator
 	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el estado 
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
 	 * @throws IOException */
-	public void ejecuta(int numTicks, OutputStream out) throws IOException
+	public void ejecuta(int numTicks, OutputStream out) throws IOException, IllegalArgumentException
 	{
-		for(int i = 0; i<numTicks; ++i){
-			// 1. ejecutar los eventos correspondientes a ese tiempo
-			for(Event e: listaEventos.get(reloj))
-				e.execute(mapa);
+		try{
+			for(int i = 0; i<numTicks; ++i){
+				// 1. ejecutar los eventos correspondientes a ese tiempo
+				if(listaEventos.get(reloj) != null){
+					for(Event e: listaEventos.get(reloj))
+						e.execute(mapa);
+				}
 
-			// 2. invocar al método avanzar de las carreteras
-			for(Road road: mapa.getRoads())
-				road.avanza();
+				// 2. invocar al método avanzar de las carreteras
+				for(Road road: mapa.getRoads())
+					road.avanza(mapa);
 		
-			// 3. invocar al método avanzar de los cruces
-			for(Junction junc: mapa.getJunctions())
-				junc.avanza();
+				// 3. invocar al método avanzar de los cruces
+				for(Junction junc: mapa.getJunctions())
+					junc.avanza();
 		
-			// 4. this.contadorTiempo++;
+				// 4. this.contadorTiempo++;
 				reloj++;
 			
-			// 5. esciribir un informe en OutputStream
-			generaInforme(out);
+				// 5. esciribir un informe en OutputStream
+				generaInforme(out);
+			}
+		}
+		catch(IllegalArgumentException e){
+			throw new IllegalArgumentException("Something is wrong with one of the events", e);
 		}
 
 	}

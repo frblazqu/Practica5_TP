@@ -80,10 +80,14 @@ public class Controller
 		Ini ini = new Ini(inputStream);
 		
 		//Parseamos uno a uno los eventos de las secciones
-		for(IniSection s: ini.getSections())
+		try{
+			for(IniSection s: ini.getSections())
 				//Anidar la posible excepción lanzada ??
 				simulador.insertaEvento(getEvento(s));	
-		
+		}
+		catch(IllegalArgumentException e){
+			throw new IllegalArgumentException("Something went wrong with the ini file:\n\n" + ini.toString(), e);
+		}
 		//Recordamos que en getEvento(s) se lanza una IllegalArgumentException si no se puede parsear alguna sección.
 	}
 	/***/
@@ -93,29 +97,40 @@ public class Controller
 	}
 	/**Dada una IniSection la parsea para leer el evento que representa. Si no se consigue generar ningún evento de esta
 	 * sección se lanza una excepción del tipo IllegalArgumentException.*/
-	public Event getEvento(IniSection s) throws IllegalArgumentException
+	public Event getEvento(IniSection s) throws IllegalArgumentException	//Añadir excepciones
 	{
 		Event event;
-
-		for(EventBuilder e: EventBuilderList)
-		{
-			//Parsea el evento con el correspondiente builder
-			event = e.parse(s);
+		try{
+			for(EventBuilder e: EventBuilderList)
+			{
+				//Parsea el evento con el correspondiente builder
+				event = e.parse(s);
 			
-			//Si se consigue parsear correctamente lo devuelve
-			if(event != null)
-				return event;
+				//Si se consigue parsear correctamente lo devuelve
+				if(event != null)
+					return event;
+			}
 		}
-		
+		catch(IllegalArgumentException e){
+			throw new IllegalArgumentException("There was an error while parsing the iniSection:\n\n" + s.toString(), e);
+		}
 		//Si llega aquí es porque no ha podido parsear esta sección correctamente
 		throw new IllegalArgumentException(new Throwable("No se ha podido parsear la sección:\n" + s.toString()));
 	}
 	
 	
-	//public void run() ??
-	//{
-	//	simulador.execute(outputStream, ticksSimulacion);
-	//}
+	public void run() 
+	{
+		try{
+		simulador.ejecuta(ticksSimulacion, outputStream);	
+		}
+		catch(IllegalArgumentException e){
+			throw new IllegalArgumentException("Something went wrong while executing the simulation", e);
+		}
+		catch(IOException e){
+			//???
+		}
+	}
 }
 
 
