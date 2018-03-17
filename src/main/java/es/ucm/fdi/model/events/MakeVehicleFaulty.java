@@ -47,7 +47,7 @@ public class MakeVehicleFaulty extends Event
 					return new MakeVehicleFaulty(tm, dur, vehic);
 				}
 				catch(IllegalArgumentException e){
-					throw new IllegalArgumentException("There is something wrong with one of the atributes.");
+					throw new IllegalArgumentException("There is something wrong with one of the atributes.", e);
 				}
 			}
 		}

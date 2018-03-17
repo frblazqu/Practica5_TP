@@ -25,7 +25,7 @@ public class NewJunction extends Event
 		Junction junc = new Junction(junction_id);
 		map.addJunction(junc);
 		}else{
-			throw new IllegalArgumentException("The id is already used");
+			throw new IllegalArgumentException("The id " + junction_id + " is already used");
 		}
 	}
 	public static class NewJunctionBuilder implements EventBuilder{
@@ -39,7 +39,7 @@ public class NewJunction extends Event
 					return new NewJunction(id, tm);
 				}
 				catch(IllegalArgumentException e){
-					throw new IllegalArgumentException("There was something wrong with one of the atributes.");
+					throw new IllegalArgumentException("There was something wrong with one of the atributes.", e);
 				}
 			}
 		}

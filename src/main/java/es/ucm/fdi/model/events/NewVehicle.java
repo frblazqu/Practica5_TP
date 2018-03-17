@@ -30,20 +30,18 @@ public class NewVehicle extends Event
 	{
 		if(!map.duplicatedId(vehicleId)){
 			boolean validIds = true;
-			for(int i = 0; i < itinerary.length; ++i){
-				if(!map.duplicatedId(itinerary[i])){
+			for(int i = 1; i < itinerary.length; ++i){
+				if(map.getRoad(itinerary[i-1], itinerary[i]) == null){
 					validIds = false;
-					break;
+					throw new IllegalArgumentException("There is no road that connects the specified junctions " + itinerary[i-1] + " and " + itinerary[i] + " for the itinerary.");
 				}
 			}
 			if(validIds){
 			Vehicle vehic = new Vehicle(vehicleId, maxSpeed, itinerary, map);
 			map.addVehicle(vehic);
-			}else{
-				throw new IllegalArgumentException("There is no junction with the specified id");
 			}
 		}else{
-			throw new IllegalArgumentException("The id is already used");
+			throw new IllegalArgumentException("The id " + vehicleId +" is already used");
 		}
 	}
 	
@@ -60,7 +58,7 @@ public class NewVehicle extends Event
 					return new NewVehicle(tm, id, mSpeed, it);
 				}
 				catch(IllegalArgumentException e){
-					throw new IllegalArgumentException("There was something wrong with one of the atributes");
+					throw new IllegalArgumentException("There was something wrong with one of the atributes", e);
 				}
 			}
 		}

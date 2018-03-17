@@ -71,15 +71,19 @@ public class RoadMap
 	{
 		return (Road)simObjects.get(id);
 	}
-	public Road getRoad(String junctionIniId, String junctionFinId)
+	public Road getRoad(String junctionIniId, String junctionFinId) throws IllegalArgumentException
 	{
-		List<ConexionCruces> conexionAux = connectedJunctions.get(junctionIniId);
-		for(ConexionCruces c: conexionAux){
-			if(c.getJunctionDest().equals(junctionFinId)){
-				return (Road)simObjects.get(c.getRoadConnect());
+		if(connectedJunctions.containsKey(junctionIniId)){
+			List<ConexionCruces> conexionAux = connectedJunctions.get(junctionIniId);
+			for(ConexionCruces c: conexionAux){
+				if(c.getJunctionDest().equals(junctionFinId)){
+					return (Road)simObjects.get(c.getRoadConnect());
+				}
 			}
+			return null;
+		}else{
+			return null;
 		}
-		return null;
 	}
 	public List<Road> getRoads()
 	{
@@ -96,6 +100,17 @@ public class RoadMap
 	public boolean duplicatedId(String id)
 	{
 		return simObjects.containsKey(id);
+	}
+	public boolean validJuctionsForRoad(String idIni, String idDest){
+		if(simObjects.containsKey(idIni) && simObjects.containsKey(idDest)){
+			return true;
+		}
+		else if(!simObjects.containsKey(idIni)){
+			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idIni);
+		}
+		else{
+			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idDest);
+		}
 	}
 	public Map<String, List<ConexionCruces>> getConectionMap(){
 		return connectedJunctions;

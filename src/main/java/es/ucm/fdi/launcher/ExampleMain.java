@@ -156,16 +156,23 @@ public class ExampleMain {
 	 * 
 	 * @throws IOException
 	 */
-	private static void startBatchMode() throws IOException {
+	private static void startBatchMode() throws IOException{
 		// TODO
 		// Add your code here. Note that the input argument where parsed and stored into
 		// corresponding fields.
-		Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_WRITE_DIRECTORY + _outFile, _timeLimit);
-		controller.leerDatosSimulacion();
-		controller.run();
+		try{
+			Controller controller = new Controller(DEFAULT_READ_DIRECTORY + _inFile, DEFAULT_WRITE_DIRECTORY + _outFile, _timeLimit);
+			controller.leerDatosSimulacion();
+			controller.run();
+		}
+		catch(IllegalArgumentException e){
+			System.out.println("Something went wrong whith the simulation\n");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
-	private static void start(String[] args) throws IOException {
+	private static void start(String[] args) throws IOException, IllegalArgumentException {
 		parseArgs(args);
 		startBatchMode();
 	}

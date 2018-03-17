@@ -38,24 +38,26 @@ public class NewRoad extends Event
 	public void execute(RoadMap map) throws IllegalArgumentException
 	{
 		if(!map.duplicatedId(road_id)){
-			if(map.duplicatedId(junctionDestId) && map.duplicatedId(junctionIniId)){
-				Road road = new Road(road_id, maxSpeed, length, map);
-				map.addRoad(road);
-				map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad(road));
-				map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad(road));
-				ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
-				if(map.getConectionMap().containsKey(junctionIniId)){
-					map.getConectionMap().get(junctionIniId).add(conJunct);
-				}else{
-					List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
-					connect.add(conJunct);
-					map.getConectionMap().put(junctionIniId, connect);
+			try{
+				if(map.validJuctionsForRoad(junctionIniId, junctionDestId)){
+					Road road = new Road(road_id, maxSpeed, length, map);
+					map.addRoad(road);
+					map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad(road));
+					map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad(road));
+					ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
+					if(map.getConectionMap().containsKey(junctionIniId)){
+						map.getConectionMap().get(junctionIniId).add(conJunct);
+					}else{
+						List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
+						connect.add(conJunct);
+						map.getConectionMap().put(junctionIniId, connect);
+					}
 				}
-			}else{
-				throw new IllegalArgumentException("There is no junction with the specified id");
+			}catch(IllegalArgumentException e){
+				throw new IllegalArgumentException("There is something wrong with the junctions specified for the road", e);
 			}
 		}else{
-			throw new IllegalArgumentException("The id is already used");
+			throw new IllegalArgumentException("The id " + road_id + " is already used");
 		}
 	}
 	public static class NewRoadBuilder implements EventBuilder{
@@ -73,7 +75,7 @@ public class NewRoad extends Event
 					return new NewRoad(tm, id, src, dest, l, mSpeed);
 				}
 				catch(IllegalArgumentException e){
-					throw new IllegalArgumentException("There is something wrong with one of the atributes.");
+					throw new IllegalArgumentException("There is something wrong with one of the atributes.", e);
 				}
 			}
 		}
