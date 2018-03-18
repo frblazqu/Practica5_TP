@@ -3,6 +3,7 @@ package es.ucm.fdi.model.objects;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;;
 
 public class Road extends SimulatedObject
@@ -106,6 +107,10 @@ public class Road extends SimulatedObject
 		}
 			
 			return aux;
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("state", vehiclesInRoad());
 	}
 	public String getHeader()
 	{

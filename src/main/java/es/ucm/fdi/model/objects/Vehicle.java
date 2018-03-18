@@ -3,6 +3,7 @@ package es.ucm.fdi.model.objects;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Map;
+import es.ucm.fdi.ini.IniSection;
 
 public class Vehicle extends SimulatedObject
 {
@@ -197,5 +198,24 @@ public class Vehicle extends SimulatedObject
 	public String getHeader()
 	{
 		return "vehicle_report";
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
+		s.setValue("location", localizacionString());
 	}	
+	public String localizacionString()
+	{
+		if(enDestino)
+		{
+			return  "arrived";
+		}
+		else
+		{
+			return "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")";		
+		}
+		
+	}
 }
