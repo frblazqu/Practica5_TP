@@ -53,6 +53,18 @@ public interface EventBuilder
 			}
 		}
 	}
+	public static double parseDoubleValue(String value) throws IllegalArgumentException{
+		if(value == null){
+			throw new IllegalArgumentException("There is a missing double value in the IniSection");
+		}else{
+			double val = Double.parseDouble(value);
+			if(val < 0 || val > 1){
+				throw new IllegalArgumentException("The value " + value + " is not valid.");
+			}else{
+				return val;
+			}
+		}
+	}
 	public static int parseTime(String value){
 		if (value == null){
 			return 0;
