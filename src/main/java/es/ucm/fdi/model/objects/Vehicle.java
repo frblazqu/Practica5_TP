@@ -37,10 +37,12 @@ public class Vehicle extends SimulatedObject
 	{
 		super(id, ObjectType.VEHICLE);
 		
+		itinerario = new ArrayList<>();
 		//Esto no debe permitir saltarse el mapa a la torera. Lanzar excepciones si no existe la carretera.
 		for(int i = 1; i < trayecto.length; i++)
 			itinerario.add(map.getRoad(trayecto[i-1], trayecto[i]));
 		
+		map.getRoad(trayecto[0], trayecto[1]).entraVehiculo(this);
 		indiceItinerario = 0;
 		kilometrage = 0;
 		velActual = 0;
@@ -67,9 +69,12 @@ public class Vehicle extends SimulatedObject
 	}
 	
 	//MÉTODOS
+	public int getKilometrage(){
+		return kilometrage;
+	}
 	/**Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
 	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.*/
-	public void avanza()
+	public void avanza(RoadMap map)
 	{
 		if(tiempoAveria > 0) 
 		{	
@@ -88,8 +93,7 @@ public class Vehicle extends SimulatedObject
 			if(localizacion >= itinerario.get(indiceItinerario).getLongitud())
 			{
 				localizacion = itinerario.get(indiceItinerario).getLongitud();
-				//Este método no me cuadra...
-				itinerario.get(indiceItinerario).entraVehiculo(this);
+				map.getJunctionDest(actualRoad()).entraVehiculo(this);
 				velActual = 0;
 			}
 			
@@ -109,8 +113,6 @@ public class Vehicle extends SimulatedObject
 			//Esto es solo si vamos a tener el vehículo en la carretera y el cruce a la vez.
 			//itinerario.get(indiceItinerario).saleVehiculo(this);
 			
-			//Qué pasa si está averiado ?? hay que controlarlo también ??
-
 			localizacion = 0;
 			velActual = 0;
 			++indiceItinerario;
@@ -144,10 +146,15 @@ public class Vehicle extends SimulatedObject
 	 * si es este el caso.*/
 	public void setVelocidadActual(int nuevaVelocidad)
 	{
-		if(nuevaVelocidad < 0)  
+		if(nuevaVelocidad < 0){  
 			throw new InvalidParameterException("Velocidad negativa no válida.");
-		else 
-			velActual = nuevaVelocidad;
+		}else{
+			if (nuevaVelocidad <= velMaxima){
+				velActual = nuevaVelocidad;
+			}else{
+				velActual = velMaxima;
+			}
+		}
 	}
 	/**True si el vehículo se encuentra averiado. False en caso contrario.*/
 	public boolean averiado()
@@ -156,13 +163,35 @@ public class Vehicle extends SimulatedObject
 	}
 	/**Devuelve la distancia al origne de la carretera actual del vehículo.*/
 	public int getLocalizacion() { return localizacion;}
+	public int getVelActual(){
+		return velActual;
+	}
+	public int getVelMax(){
+		return velMaxima;
+	}
+	public boolean getEnDestino(){
+		return enDestino;
+	}
+	public ArrayList<Road> getItinerario(){
+		return itinerario;
+	}
+	public int getIndIti(){
+		return indiceItinerario;
+	}
+	public int getTiempoAveria(){
+		return tiempoAveria;
+	}
 	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
 		camposValor.put("speed", Integer.toString(velActual));
 		camposValor.put("kilometrage", Integer.toString(kilometrage));
 		camposValor.put("faulty", Integer.toString(tiempoAveria));
+		if(enDestino){
+			camposValor.put("location", "arrived");
+		}else{
 		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
+		}
 	}
 	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
 	public String getHeader()

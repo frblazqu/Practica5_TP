@@ -42,8 +42,7 @@ public abstract class SimulatedObject
 		s = new IniSection(informe.get(""));
 		informe.remove("");
 				
-		for(String key: informe.keySet())
-			s.setValue(key, informe.get(key));
+		informe.forEach((key, value) -> s.setValue(key, value));
 		
 		//Escribimos la sección
 		s.store(out);

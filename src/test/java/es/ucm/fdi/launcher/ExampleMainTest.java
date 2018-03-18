@@ -24,22 +24,6 @@ public class ExampleMainTest
 		assertTrue("No coincide el tiempo", ExampleMain._timeLimit == 10);
 	}
 	
-	//Comprobar y ver como se muestra el mensaje de ayuda del ExampleMain
-	//@Test
-	public void helpTest()
-	{
-		
-		;
-	}
-	
-	//Rellenar los camos default de iniFile y outFile de ExampleMain y comprobar su correcto funcionamiento
-	//@Test 
-	public void defaultEntryTest()
-	{
-		;
-		
-		
-	}
 	
 }
 
