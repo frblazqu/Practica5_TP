@@ -174,7 +174,7 @@ public class ExampleMain {
 
 	private static void start(String[] args) throws IOException, IllegalArgumentException {
 		parseArgs(args);
-		test("src/main/resources/readStr/");
+		test("src/main/resources/readStr/examples/basic/");
 		//startBatchMode();
 	}
 

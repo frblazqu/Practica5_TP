@@ -47,6 +47,18 @@ public abstract class SimulatedObject
 		//Escribimos la sección
 		s.store(out);
 	}
+	/**Genera un report en formato IniSection de la situación del objeto.*/
+	public IniSection seccionInforme(int time)
+	{
+		//Creamos la sección con el encabezado del informe
+		IniSection s = new IniSection(getHeader());
+				
+		s.setValue("id", id);
+		s.setValue("time" , "" + time);
+		fillSectionDetails(s);
+		
+		return s;
+	}
 	/**Dado un mapa<String,String> introduce en este el informe del objeto campo por campo con nombreCampo-valor en cada
 	 * clave-valor del mapa.*/
 	public void report(int time, Map<String, String> camposValor)
@@ -62,4 +74,5 @@ public abstract class SimulatedObject
 	public abstract void fillReportDetails(Map<String, String> camposValor);
 	/**Devuelve el encabezado de los reports específico de cada simObject.*/
 	public abstract String getHeader();
+	public abstract void fillSectionDetails(IniSection s);
 }

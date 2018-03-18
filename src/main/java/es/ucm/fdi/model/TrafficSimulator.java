@@ -2,6 +2,7 @@ package es.ucm.fdi.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.events.Event;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.Road;
@@ -85,17 +86,21 @@ public class TrafficSimulator
 	 * @throws IOException */
 	public void generaInforme(OutputStream out) throws IOException
 	{
+		Ini ini = new Ini();
+		
 		//1. Escribir el report de los cruces
 		for(Junction junc: mapa.getJunctions())
-			junc.escribeInforme(out, reloj);
+			ini.addsection(junc.seccionInforme(reloj));
 		
 		//2. Escribir el report de las carreteras
 		for(Road road: mapa.getRoads())
-			road.escribeInforme(out, reloj);
+			ini.addsection(road.seccionInforme(reloj));
 		
 		//3. Escribir el report de los vehículos
 		for(Vehicle car: mapa.getVehicles())
-			car.escribeInforme(out, reloj);
+			ini.addsection(car.seccionInforme(reloj));
+		
+		ini.store(out);
 	}
 
 }
