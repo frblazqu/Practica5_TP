@@ -3,6 +3,7 @@ package es.ucm.fdi.model.objects;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Map;
+import es.ucm.fdi.ini.IniSection;
 
 public class Vehicle extends SimulatedObject
 {
@@ -69,6 +70,9 @@ public class Vehicle extends SimulatedObject
 	}
 	
 	//MÉTODOS
+	public int getKilometrage(){
+		return kilometrage;
+	}
 	/**Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
 	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.*/
 	public void avanza(RoadMap map)
@@ -160,6 +164,24 @@ public class Vehicle extends SimulatedObject
 	}
 	/**Devuelve la distancia al origne de la carretera actual del vehículo.*/
 	public int getLocalizacion() { return localizacion;}
+	public int getVelActual(){
+		return velActual;
+	}
+	public int getVelMax(){
+		return velMaxima;
+	}
+	public boolean getEnDestino(){
+		return enDestino;
+	}
+	public ArrayList<Road> getItinerario(){
+		return itinerario;
+	}
+	public int getIndIti(){
+		return indiceItinerario;
+	}
+	public int getTiempoAveria(){
+		return tiempoAveria;
+	}
 	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
@@ -176,5 +198,24 @@ public class Vehicle extends SimulatedObject
 	public String getHeader()
 	{
 		return "vehicle_report";
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
+		s.setValue("location", localizacionString());
 	}	
+	public String localizacionString()
+	{
+		if(enDestino)
+		{
+			return  "arrived";
+		}
+		else
+		{
+			return "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")";		
+		}
+		
+	}
 }

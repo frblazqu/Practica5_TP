@@ -3,14 +3,15 @@ package es.ucm.fdi.model.objects;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;;
 
 public class Road extends SimulatedObject
 {	
 	//ATRIBUTOS
-	private int longitud;									//Longitud de la carretera
-	private int maxVelocidad;								//Velocidad máxima de circulación de la carretera
-	private MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
+	protected int longitud;									//Longitud de la carretera
+	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
+	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
 	/**Constructora por defecto, inicializa a una carretera de longitud nula con identificador  vacío "" y sin vehículos.*/
@@ -106,6 +107,10 @@ public class Road extends SimulatedObject
 		}
 			
 			return aux;
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("state", vehiclesInRoad());
 	}
 	public String getHeader()
 	{

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.objects.Car;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
@@ -25,7 +26,15 @@ public class NewVehicle extends Event
 		itinerary = it;
 	}
 	
-
+	public String getId(){
+		return vehicleId;
+	}
+	public int getmSpeed(){
+		return maxSpeed;
+	}
+	public String[] getItinerary(){
+		return itinerary;
+	}
 	public void execute(RoadMap map)	throws IllegalArgumentException
 	{
 		if(!map.duplicatedId(vehicleId)){
@@ -55,7 +64,25 @@ public class NewVehicle extends Event
 					String id = EventBuilder.parseId(sec.getValue("id"));
 					int mSpeed = EventBuilder.parseIntValue(sec.getValue("max_speed"));
 					String[] it = EventBuilder.parseIdList(sec.getValue("itinerary"));
-					return new NewVehicle(tm, id, mSpeed, it);
+					if(sec.getValue("type") != null){
+						if(sec.getValue("type").equals("car")){
+							int res = EventBuilder.parseIntValue(sec.getValue("resistance"));
+							double fProb = EventBuilder.parseDoubleValue(sec.getValue("fault_probability"));
+							int mFDur = EventBuilder.parseIntValue(sec.getValue("max_fault_duration"));
+							if(sec.getValue("seed") != null){
+								long seed = Long.parseLong(sec.getValue("seed"));
+								return new NewCar(res, fProb, mFDur, seed, tm, id, mSpeed, it);
+							}else{
+								return new NewCar(res, fProb, mFDur, tm, id, mSpeed, it);
+							}
+						}else if(sec.getValue("type").equals("bike")){
+							return new NewBike(tm, id, mSpeed, it);
+						}else{
+							throw new IllegalArgumentException("The type of vehicle " + sec.getValue("type") + "isn`t a valid type");
+						}
+					}else{
+						return new NewVehicle(tm, id, mSpeed, it);
+					}
 				}
 				catch(IllegalArgumentException e){
 					throw new IllegalArgumentException("There was something wrong with one of the atributes", e);

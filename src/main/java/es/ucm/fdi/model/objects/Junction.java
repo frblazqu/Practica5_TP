@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;
 
 public class Junction extends SimulatedObject
@@ -106,6 +107,10 @@ public class Junction extends SimulatedObject
 		}
 		
 		return aux;
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("queues", colaCruce());
 	}
 	
 	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
