@@ -90,4 +90,17 @@ public class NewVehicle extends Event
 			}
 		}
 	}
+
+	@Override
+	public String getTag()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void fillSectionDetails(IniSection s)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

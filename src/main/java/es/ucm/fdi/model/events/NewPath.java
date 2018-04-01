@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Junction.IncomingRoad;
 import es.ucm.fdi.model.objects.Path;
 import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
@@ -11,6 +12,17 @@ import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 public class NewPath extends NewRoad
 {
 
+	public static class NewPathBuilder implements EventBuilder
+	{
+
+		@Override
+		public Event parse(IniSection sec)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
 	public NewPath()
 	{
 		

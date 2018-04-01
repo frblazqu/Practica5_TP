@@ -32,6 +32,10 @@ public class Car extends Vehicle{
 		numAleatorio = new Random(seed);
 		kmSinceLastFaulty = 0;
 	}
+	public Car()
+	{
+		super();
+	}
 	public int tiempoAveria(){
 		return numAleatorio.nextInt(max_fault_duration) + 1;
 	}

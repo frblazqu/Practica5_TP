@@ -6,6 +6,13 @@ import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;;
 
+/**
+ * Representación y funcionalidad de una carretera en el simulador.
+ * 
+ * @author Francisco Javier Blázquez
+ * @author Manuel Ortega
+ * @version 26/03/18
+ */
 public class Road extends SimulatedObject
 {	
 	//ATRIBUTOS

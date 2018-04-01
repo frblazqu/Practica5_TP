@@ -1,5 +1,13 @@
 package es.ucm.fdi.model.events;
 
+/**
+ * Enumerado que representa el tipo del evento.
+ * 
+ *
+ * @author Francisco Javier Blázquez 
+ * @version 23/03/18
+ *  deprecated Cada evento tiene una clase distinta, no es necesaria la distinción con un enumerado.
+ */
 public enum EventType
 {
 	NEW_JUNCTION, NEW_ROAD, NEW_VEHICLE, NEW_FAULT, EVENT_ERROR;
@@ -16,7 +24,6 @@ public enum EventType
 		default:					return "";										//crear posible excepción para esto
 		}
 	}
-	
 	/**Devuelve el tipo de evento que representa la cadena parámetro (no distingue mayúsculas y minúsculas)*/
 	public static EventType eventType(String name)
 	{

@@ -5,12 +5,24 @@ import java.util.List;
 import es.ucm.fdi.model.objects.Path;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Freeway;
 import es.ucm.fdi.model.objects.Junction.IncomingRoad;
 import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 
 public class NewFreeway extends NewRoad
 {
+	public static class NewFreewayBuilder implements EventBuilder
+	{
+
+		@Override
+		public Event parse(IniSection sec)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
 	private int lanes;
 	
 	public NewFreeway()

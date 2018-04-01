@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
+/**
+ * Representación y funcionalidad de un vehículo en el simulador.
+ * 
+ * @author Francisco Javier Blázquez
+ * @author Manuel Ortega
+ * @version 26/03/18
+ */
 public class Vehicle extends SimulatedObject
 {
 	//ATRIBUTOS
@@ -18,7 +25,9 @@ public class Vehicle extends SimulatedObject
 	private boolean enDestino;								//True si y sólo si el vehículo está al final de la última carretera de itinerario.
 	
 	//CONSTRUCTORAS
-	/**Constructora por defecto, genera un itinerario vacío y un identificador "" para el vehículo, no preparada para usarse.*/
+	/**
+	 * Constructora por defecto, genera un itinerario vacío y un identificador "" para el vehículo, no preparada para usarse.
+	 */
 	public Vehicle()
 	{
 		super();
@@ -31,9 +40,13 @@ public class Vehicle extends SimulatedObject
 		itinerario = new ArrayList<>();
 		indiceItinerario = 0;
 	}
-	/**Constructora usual, dada un id, velocidad máxima, mapa de objetos y listado de ids de cruces inicializa las variables del
+	/**
+	 * Constructora usual, dada un id, velocidad máxima, mapa de objetos y listado de ids de cruces inicializa las variables del
 	 * vehículo con estos datos. El itinerario se completará con las carreteras que unen dos índices consecutivos del trayecto y
-	 * se lanzará una excepción si esta o uno de los cruces no existen.*/
+	 * se lanzará una excepción si esta o uno de los cruces no existen.
+	 * 
+	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo.
+	 */
 	public Vehicle(String id, int maxSpeed, String[] trayecto, RoadMap map)
 	{
 		super(id, ObjectType.VEHICLE);
@@ -52,7 +65,10 @@ public class Vehicle extends SimulatedObject
 		enDestino = false;		//Salvo caso patolóooogico muy patológico.
 		velMaxima = maxSpeed;
 	}
-	/**Método realizado para facilitar el testeo de la funcionalidad. No debe ser usado!!*/
+	/**
+	 * Método realizado para facilitar el testeo de la funcionalidad. No debe ser usado.
+	 * 
+	 * @deprecated Solo válido para el testeo.*/
 	public Vehicle(String id, int maxSpeed, Road[] trayecto)
 	{
 		super(id, ObjectType.VEHICLE);
@@ -70,11 +86,10 @@ public class Vehicle extends SimulatedObject
 	}
 	
 	//MÉTODOS
-	public int getKilometrage(){
-		return kilometrage;
-	}
-	/**Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
-	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.*/
+	/**
+	 * Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
+	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.
+	 */
 	public void avanza(RoadMap map)
 	{
 		if(tiempoAveria > 0) 
@@ -131,7 +146,7 @@ public class Vehicle extends SimulatedObject
 		//Qué pasa si está en un cruce ??
 		return itinerario.get(indiceItinerario);
 	}
-	/**Suma el @param tiempoAveria al actual, no pone el tiempo de averia a este valor.*/
+	/**Suma el tiempo de averia al actual, no pone el tiempo de averia a este valor.*/
 	public void setTiempoAveria(int tiempoAveria)
 	{
 		if(tiempoAveria > 0)	
@@ -162,8 +177,25 @@ public class Vehicle extends SimulatedObject
 	{
 		return tiempoAveria > 0;
 	}
-	/**Devuelve la distancia al origne de la carretera actual del vehículo.*/
+	/**Devuelve la distancia al origen de la carretera actual del vehículo.*/
 	public int getLocalizacion() { return localizacion;}
+	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
+	public void fillReportDetails(Map<String, String> camposValor)
+	{
+		camposValor.put("speed", Integer.toString(velActual));
+		camposValor.put("kilometrage", Integer.toString(kilometrage));
+		camposValor.put("faulty", Integer.toString(tiempoAveria));
+		if(enDestino){
+			camposValor.put("location", "arrived");
+		}else{
+		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
+		}
+	}
+	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
+	public String getHeader()
+	{
+		return "vehicle_report";
+	}
 	public int getVelActual(){
 		return velActual;
 	}
@@ -182,22 +214,9 @@ public class Vehicle extends SimulatedObject
 	public int getTiempoAveria(){
 		return tiempoAveria;
 	}
-	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
-	public void fillReportDetails(Map<String, String> camposValor)
+	public int getKilometrage()
 	{
-		camposValor.put("speed", Integer.toString(velActual));
-		camposValor.put("kilometrage", Integer.toString(kilometrage));
-		camposValor.put("faulty", Integer.toString(tiempoAveria));
-		if(enDestino){
-			camposValor.put("location", "arrived");
-		}else{
-		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
-		}
-	}
-	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
-	public String getHeader()
-	{
-		return "vehicle_report";
+		return kilometrage;
 	}
 	public void fillSectionDetails(IniSection s)
 	{
