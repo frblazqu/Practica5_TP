@@ -1,5 +1,7 @@
 package es.ucm.fdi.model.objects;
 
+//A currar a partir de aquí!
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Map;
