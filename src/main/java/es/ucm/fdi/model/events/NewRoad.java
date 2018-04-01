@@ -91,4 +91,16 @@ public class NewRoad extends Event
 			}
 		}
 	}
+	public String getTag()
+	{
+		return "new_road";
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("id", road_id);
+		s.setValue("src", junctionIniId);
+		s.setValue("dest", junctionDestId);
+		s.setValue("max_speed", "" + maxSpeed);
+		s.setValue("length", "" + length);	
+	}
 }

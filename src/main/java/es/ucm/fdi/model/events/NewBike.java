@@ -1,10 +1,22 @@
 package es.ucm.fdi.model.events;
 
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Bike;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewBike extends NewVehicle{
+	public static class NewBikeBuilder implements EventBuilder
+	{
+
+		@Override
+		public Event parse(IniSection sec)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
 	public NewBike(int time, String vId, int mSpeed, String[] it){
 		super(time, vId, mSpeed, it);
 	}

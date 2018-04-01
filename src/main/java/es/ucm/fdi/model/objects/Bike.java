@@ -4,6 +4,11 @@ import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
 public class Bike extends Vehicle{
+	
+	public Bike()
+	{
+		super();
+	}
 	public Bike(String id, int maxSpeed, String[] trayecto, RoadMap map){
 		super(id, maxSpeed, trayecto, map);
 	}
