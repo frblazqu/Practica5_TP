@@ -1,10 +1,22 @@
 package es.ucm.fdi.model.events;
 
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Car;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewCar extends NewVehicle{
+	public static class NewCarBuilder implements EventBuilder
+	{
+
+		@Override
+		public Event parse(IniSection sec)
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
 	private int resistance;
 	private double fault_probability;
 	private int max_fault_duration;

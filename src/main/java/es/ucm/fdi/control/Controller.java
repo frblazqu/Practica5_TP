@@ -7,118 +7,124 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
-import es.ucm.fdi.model.events.*;
-import es.ucm.fdi.model.events.NewRoad.NewRoadBuilder;
-import es.ucm.fdi.model.events.NewJunction.NewJunctionBuilder;
-import es.ucm.fdi.model.events.NewVehicle.NewVehicleBuilder;
-import es.ucm.fdi.model.events.MakeVehicleFaulty.NewVehicleFaulty;
+import es.ucm.fdi.model.events.Event;
+import es.ucm.fdi.model.events.EventFactory;
 
+/**
+ * Controla toda la simulación que se va a ejecutar. Tiene las siguientes responsabilidades:
+ * -> Crear el simulador.
+ * -> Leer los eventos de la simulación.
+ * -> Manejo de gran parte de excepciones lanzadas en niveles inferiores.
+ * 
+ * @author 		Francisco Javier Blázquez
+ * @version		23/03/18
+ */
 public class Controller
 {
-	//ARGUMENTOS POR DEFECTO
+	//ATRIBUTOS POR DEFECTO
 	private final static int 	DEFAULT_TICKS = 10;
 	private final static String DEFAULT_INI_FILE = "iniFile.ini";
 	private final static String DEFAULT_OUT_FILE = "outFile.ini";
 	private final static String DEFAULT_READ_DIRECTORY = "src/main/resources/readStr/";
 	private final static String DEFAULT_WRITE_DIRECTORY = "src/main/resources/writeStr/";
 
-	//ARGUMENTOS DE LA CLASE
+	//ATRIBUTOS DE LA CLASE
 	private int ticksSimulacion;							//Duración de la simulación
 	private OutputStream outputStream;						//Flujo de salida de informes de la simulación
 	private InputStream inputStream;						//Flujo de entrada de datos para la simulación
 	private TrafficSimulator simulador;						//Simulador a controlar
-	private List<EventBuilder> EventBuilderList;			//Lista para parsear las IniSections
+	//private EventFactory eventBuilder;					//Para parsear iniSection como events
 	
 	//CONSTRUCTORAS
-	/**Dada una localización del fichero de entrada y una localización para el fichero de salida
-	 * y la duración (numTicks) de la simulación crea los flujos de entrada/salida y el propio simulador.
-	 * Lanza FileNotFoundException si no se puede crear el flujo de entrada o salida.*/
+	/**
+	 * Crea un nuevo simulador y nuevos flujos de entrada salida con los parámetros recibidos.
+	 * @param loadFilePath 	localización del fichero de entrada de eventos
+	 * @param saveFilePath	localización del fichero de escritura de informes
+	 * @param numTicks		duración de la simulación a ejecutar
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	public Controller(String loadFilePath, String saveFilePath, int numTicks) throws FileNotFoundException 
 	{
 		inputStream  = new FileInputStream( new File(loadFilePath));
 		outputStream = new FileOutputStream(new File(saveFilePath));
-		ticksSimulacion = numTicks;
-		//Deberíamos en la propia constructora de la clase Contro generar totalmente el TrafficSimulator ??
-		//Esto es, deberíamos también leer e insertar los eventos del fichero aquí ??
 		simulador = new TrafficSimulator();
-		EventBuilderList = new ArrayList<>();
-		EventBuilderList.add(new NewRoadBuilder());
-		EventBuilderList.add(new NewJunctionBuilder());
-		EventBuilderList.add(new NewVehicleBuilder());
-		EventBuilderList.add(new NewVehicleFaulty());
+		ticksSimulacion = numTicks;
 	}
-	/**Realiza una llamada a la constructora más general con todos los parámetros por defecto.
+	/**
+	 * Crea un nuevo simulador con entrada de eventos, flujo de salida y duración de la simulación por defecto.
+	 * Llama a la constructora más general con los parámetros por defecto.
 	 * Entrada por defecto -> src/main/resources/readStr/iniFile.ini
 	 * Salida por defecto  -> src/main/resources/writeStr/outFile.ini
-	 * Duración simulación por defecto -> 10 ticks
-	 * Lanza FileNotFoundException si no se puede crear el flujo de entrada o salida.*/
+	 * Duración simulación por defecto -> 10
+	 * 
+	 * @see #Controller(String, String, int)
+	 * @throws FileNotFoundException
+	 */
 	public Controller() throws FileNotFoundException 
 	{
 		this(DEFAULT_READ_DIRECTORY  + DEFAULT_INI_FILE/**/, DEFAULT_WRITE_DIRECTORY + DEFAULT_OUT_FILE /**/, DEFAULT_TICKS);
 	}
-	/**Realiza una llamada a la constructora más general con la duraciónd de simulación por defecto
+	/**
+	 * Llama a la constructora más general con el tiempo por defecto.
 	 * Duración simulación por defecto -> 10 ticks
-	 * Lanza FileNotFoundException si no se puede crear el flujo de entrada o salida.*/
+	 * 
+	 * @see #Controller(String, String, int)
+	 * @throws FileNotFoundException
+	 */
 	public Controller(String loadFilePath, String saveFilePath) throws FileNotFoundException 
 	{
 		this(loadFilePath, saveFilePath, DEFAULT_TICKS);
 	}
 	
 	//MÉTODOS
-	/**Lee el fichero .ini del flujo de entrada y parsea cada una de sus secciones en eventos que inserta en el simulador.
-	 * Lanza IOException si hay algún problema en la lectura del fichero. Lanza IllegalArgumentException si no consigue
-	 * parsear alguna sección.*/
+	/**
+	 *Lee el fichero .ini del flujo de entrada y parsea cada una de sus secciones en eventos que inserta en el simulador.
+	 * 
+	 * @throws IOException Si no se consigue leer correctamente el fichero de entrada.
+	 * @throws IllegalArgumentException Si alguna sección no se consigue parsear bien.
+	 */
 	public void leerDatosSimulacion() throws IOException, IllegalArgumentException
 	{
 		//Cargamos todo el fichero en la variable ini (Puede lanzar IOException)
 		Ini ini = new Ini(inputStream);
 		
 		//Parseamos uno a uno los eventos de las secciones
-		try{
+		try
+		{
+			Event evento;
+			
 			for(IniSection s: ini.getSections())
-				//Anidar la posible excepción lanzada ??
-				simulador.insertaEvento(getEvento(s));	
+			{
+				evento = EventFactory.buildEvent(s);
+				simulador.insertaEvento(evento);	
+			}
+				
 		}
-		catch(IllegalArgumentException e){
+		catch(IllegalArgumentException e)
+		{
 			throw new IllegalArgumentException("Something went wrong with the ini file:\n\n" + ini.toString(), e);
 		}
+		catch(Exception e)
+		{
+			System.out.println("Excepción inesperada!!");
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		
 		//Recordamos que en getEvento(s) se lanza una IllegalArgumentException si no se puede parsear alguna sección.
 	}
-	/***/
-	public void escribirDatosSimulacion()
-	{
-		//Creo que esto puede morir sin problema si se pasa a TrafficSimulator.
-	}
-	/**Dada una IniSection la parsea para leer el evento que representa. Si no se consigue generar ningún evento de esta
-	 * sección se lanza una excepción del tipo IllegalArgumentException.*/
-	public Event getEvento(IniSection s) throws IllegalArgumentException	//Añadir excepciones
-	{
-		Event event;
-		try{
-			for(EventBuilder e: EventBuilderList)
-			{
-				//Parsea el evento con el correspondiente builder
-				event = e.parse(s);
-			
-				//Si se consigue parsear correctamente lo devuelve
-				if(event != null)
-					return event;
-			}
-		}
-		catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("There was an error while parsing the iniSection:\n\n" + s.toString(), e);
-		}
-		//Si llega aquí es porque no ha podido parsear esta sección correctamente
-		throw new IllegalArgumentException(new Throwable("No se ha podido parsear la sección:\n" + s.toString()));
-	}
-	
-	
+	/**
+	 * Ejecuta la simulación.
+	 * 
+	 * @see TrafficSimulator#ejecuta(int, OutputStream)
+	 * @throws IOException si hay problemas de escritura de reports de la simulación.
+	 * @throws IllegalArgumentException si algún parámetro de la simulación no es válido.
+	 * */
 	public void run() 
 	{
 		try{

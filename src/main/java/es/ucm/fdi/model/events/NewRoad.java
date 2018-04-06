@@ -11,11 +11,11 @@ import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 
 public class NewRoad extends Event
 {
-	private String road_id;
-	private String junctionIniId;
-	private String junctionDestId;
-	private int length;
-	private int maxSpeed;
+	protected String road_id;
+	protected String junctionIniId;
+	protected String junctionDestId;
+	protected int length;
+	protected int maxSpeed;
 	
 	public NewRoad(){
 		road_id = null;
@@ -72,12 +72,35 @@ public class NewRoad extends Event
 					String dest = EventBuilder.parseId(sec.getValue("dest"));
 					int mSpeed = EventBuilder.parseIntValue(sec.getValue("max_speed"));
 					int l = EventBuilder.parseIntValue(sec.getValue("length"));
-					return new NewRoad(tm, id, src, dest, l, mSpeed);
+					
+					if(sec.getValue("type") == null)
+						return new NewRoad(tm, id, src, dest, l, mSpeed);
+					else if (sec.getValue("type").equals("dirt"))
+						return new NewPath(tm, id, src, dest, l, mSpeed);
+					else if (sec.getValue("type").equals("lanes"))
+					{
+						int lanes = EventBuilder.parseIntValue(sec.getValue("lanes"));
+						return new NewFreeway(tm, id, src, dest, l, mSpeed, lanes);
+					}
+					else 
+						return null;
 				}
 				catch(IllegalArgumentException e){
 					throw new IllegalArgumentException("There is something wrong with one of the atributes.", e);
 				}
 			}
 		}
+	}
+	public String getTag()
+	{
+		return "new_road";
+	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("id", road_id);
+		s.setValue("src", junctionIniId);
+		s.setValue("dest", junctionDestId);
+		s.setValue("max_speed", "" + maxSpeed);
+		s.setValue("length", "" + length);	
 	}
 }

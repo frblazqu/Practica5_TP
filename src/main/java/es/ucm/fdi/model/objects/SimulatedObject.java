@@ -74,5 +74,6 @@ public abstract class SimulatedObject
 	public abstract void fillReportDetails(Map<String, String> camposValor);
 	/**Devuelve el encabezado de los reports específico de cada simObject.*/
 	public abstract String getHeader();
+	/**Completa los aspectos únicos de cada informe. Específico para cada objeto.*/
 	public abstract void fillSectionDetails(IniSection s);
 }

@@ -2,6 +2,7 @@ package es.ucm.fdi.model.objects;
 
 import java.util.Map;
 import java.util.Random;
+import es.ucm.fdi.ini.IniSection;
 
 public class Car extends Vehicle{
 	private int resistance;
@@ -31,6 +32,10 @@ public class Car extends Vehicle{
 		numAleatorio = new Random(seed);
 		kmSinceLastFaulty = 0;
 	}
+	public Car()
+	{
+		super();
+	}
 	public int tiempoAveria(){
 		return numAleatorio.nextInt(max_fault_duration) + 1;
 	}
@@ -39,7 +44,7 @@ public class Car extends Vehicle{
 	}
 	public void avanza(RoadMap map){
 		int aux = this.getKilometrage();
-		if(!this.averiado() && kmSinceLastFaulty>=resistance && posibleProbAveria() < fault_probability){
+		if(!this.averiado() && kmSinceLastFaulty>resistance && posibleProbAveria() < fault_probability){
 			this.setTiempoAveria(tiempoAveria());
 			kmSinceLastFaulty = 0;
 		}
@@ -48,9 +53,9 @@ public class Car extends Vehicle{
 	}
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
+		camposValor.put("type", "car");
 		camposValor.put("speed", Integer.toString(this.getVelActual()));
 		camposValor.put("kilometrage", Integer.toString(this.getKilometrage()));
-		camposValor.put("type", "car");
 		camposValor.put("faulty", Integer.toString(this.getTiempoAveria()));
 		if(this.getEnDestino()){
 			camposValor.put("location", "arrived");
@@ -58,4 +63,12 @@ public class Car extends Vehicle{
 		camposValor.put("location", "(" + this.getItinerario().get(this.getIndIti()).getId() + "," + Integer.toString(this.getLocalizacion())  + ")");		
 		}
 	}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("type", "car");
+		s.setValue("speed", this.getVelActual());
+		s.setValue("kilometrage", this.getKilometrage());
+		s.setValue("faulty", this.getTiempoAveria());
+		s.setValue("location", localizacionString());
+	}	
 }

@@ -19,13 +19,14 @@ import es.ucm.fdi.model.events.NewJunction.NewJunctionBuilder;
 import es.ucm.fdi.model.events.NewRoad.NewRoadBuilder;
 import es.ucm.fdi.model.events.NewVehicle.NewVehicleBuilder;
 
-public class ControllerTest {
+public class ControllerTest 
+{
 	@Test
 	public void LeerEntradaTest(){
 		InputStream input;
 		Event event;
 		try {
-			input = new FileInputStream(new File("src/main/resources/readStr/05_twoVehiclesOneFaulty.ini"));
+			input = new FileInputStream(new File("src/main/resources/readStr/examples/basic/05_twoVehiclesOneFaulty.ini"));
 			Ini ini = new Ini(input);
 			for(IniSection s: ini.getSections()){
 				try{

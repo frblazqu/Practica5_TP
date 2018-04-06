@@ -10,6 +10,9 @@ import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 import es.ucm.fdi.util.MultiTreeMap;
 
+/**
+ * Clase encargada del propio simulador de tráfico. 
+ * */
 public class TrafficSimulator
 {
 	//ARGUMENTOS POR DEFECTO
@@ -39,7 +42,6 @@ public class TrafficSimulator
 		mapa = new RoadMap();
 		listaEventos = new MultiTreeMap<>();
 	}
-
 	
 	//MÉTODOS
 	/**Inserta un evento en el simulador manteniendo la ordenación por tiempo y orden de insercción.*/
@@ -47,7 +49,8 @@ public class TrafficSimulator
 	{
 		listaEventos.putValue(evento.getTime(), evento);
 	}
-	/**Ejecuta la simulación durante un número de pasos numTicks y escribe los datos e informes de esta en el flujo out.
+	/**
+	 * Ejecuta la simulación durante un número de pasos numTicks y escribe los datos e informes de esta en el flujo out.
 	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el estado 
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
 	 * @throws IOException */
@@ -81,9 +84,13 @@ public class TrafficSimulator
 		}
 
 	}
-	/**Escribe en el flujo de salida un informe de la situación de todos los objetos en el instante de la llamada. Escribe
+	/**
+	 * Escribe en el flujo de salida un informe de la situación de todos los objetos en el instante de la llamada. Escribe
 	 * primero los informes de los cruces, después los de las carreteras y por último los vehículos.
-	 * @throws IOException */
+	 * 
+	 * @param out Flujo de salida para los datos.
+	 * @throws IOException Si no se consigue almacenar bien el informe generado.
+	 * */
 	public void generaInforme(OutputStream out) throws IOException
 	{
 		Ini ini = new Ini();
@@ -100,7 +107,14 @@ public class TrafficSimulator
 		for(Vehicle car: mapa.getVehicles())
 			ini.addsection(car.seccionInforme(reloj));
 		
-		ini.store(out);
+		//4. Almacenamos el informe de este paso de la simulación.
+		try
+		{
+			ini.store(out);
+		}
+		catch(IOException e)
+		{
+			throw new IOException("Almacenando el report del tiempo "+ reloj + "\n" + e.getMessage());
+		}
 	}
-
 }

@@ -6,23 +6,31 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**RoadMap debe ser la clase que gestione el almacenamiento de todos los objetos de la simulación.*/
+/**
+ * RoadMap es la clase encargada de almacenar todos los objetos que forman parte de la simulación.
+ * Permite acceder a estos por su identificador y preserva en todo momento la unicidad de este
+ * 
+ * @author Manuel Ortega
+ * @author Francisco Javier Blázquez
+ * @version 26/03/18
+ * 
+ */
 public class RoadMap
 {
-	// búsqueda por ids, unicidad
-	private Map<String, SimulatedObject> simObjects;
-	//Cruces y carreteras que los unen
-	private Map<String, List<ConexionCruces>> connectedJunctions;
-	// listados reales
-	private List<Junction> junctions;
+	//ATRIBUTOS DE LA CLASE
+	private Map<String, SimulatedObject> simObjects;					//Búsqueda por ids, unicidad
+	private Map<String, List<ConexionCruces>> connectedJunctions;		//Cruces y carreteras que los unen
+
+	private List<Junction> junctions;									//Listados reales
 	private List<Road> roads;
 	private List<Vehicle> vehicles;
-	// listados read-only, via Collections.unmodifiableList();
-	private List<Junction> junctionsRO;
+	
+	private List<Junction> junctionsRO;									//Listados read-only, via Collections.unmodifiableList();
 	private List<Road> roadsRO;
 	private List<Vehicle> vehiclesRO;
 	
-	
+	//CONSTRUCTORAS
+	/**Genera un RoadMap contenedor vacío, sin objetos iniciales.*/
 	public RoadMap()												
 	{
 		simObjects = new HashMap<>();
@@ -37,6 +45,8 @@ public class RoadMap
 		roadsRO = Collections.unmodifiableList(roads);
 		vehiclesRO = Collections.unmodifiableList(vehicles);
 	}
+	
+	//MÉTODOS
 	public void addJunction(Junction junc)
 	{
 		simObjects.put(junc.getId(), junc);
@@ -56,7 +66,28 @@ public class RoadMap
 		vehiclesRO = Collections.unmodifiableList(vehicles);
 		
 	}
-	public SimulatedObject getSimulatedObject(String id){
+	public void addObject(SimulatedObject simObject)
+	{
+		simObjects.put(simObject.getId(), simObject);
+		
+		if(simObject instanceof Vehicle)
+		{
+			vehicles.add((Vehicle)simObject);
+			vehiclesRO = Collections.unmodifiableList(vehicles);
+		}
+		else if(simObject instanceof Road)
+		{
+			roads.add((Road)simObject);
+			roadsRO = Collections.unmodifiableList(roads);
+		}
+		else if(simObject instanceof Junction)
+		{
+			junctions.add((Junction)simObject);
+			junctionsRO = Collections.unmodifiableList(junctions);
+		}
+	}
+	public SimulatedObject getSimulatedObject(String id)
+	{
 		return simObjects.get(id);
 	}
 	public Vehicle getVehicle(String id)
@@ -71,6 +102,23 @@ public class RoadMap
 	{
 		return (Road)simObjects.get(id);
 	}
+	public List<Road> getRoads()
+	{
+		return roadsRO;
+	}
+	public List<Junction> getJunctions()
+	{
+		return junctionsRO;
+	}
+	public List<Vehicle> getVehicles()
+	{
+		return vehiclesRO;
+	}
+	public boolean duplicatedId(String id)
+	{
+		return simObjects.containsKey(id);
+	}
+	
 	public Road getRoad(String junctionIniId, String junctionFinId) throws IllegalArgumentException
 	{
 		if(connectedJunctions.containsKey(junctionIniId)){
@@ -94,22 +142,6 @@ public class RoadMap
 			}
 		}
 		return null;
-	}
-	public List<Road> getRoads()
-	{
-		return roadsRO;
-	}
-	public List<Junction> getJunctions()
-	{
-		return junctionsRO;
-	}
-	public List<Vehicle> getVehicles()
-	{
-		return vehiclesRO;
-	}
-	public boolean duplicatedId(String id)
-	{
-		return simObjects.containsKey(id);
 	}
 	public boolean validJuctionsForRoad(String idIni, String idDest){
 		if(simObjects.containsKey(idIni) && simObjects.containsKey(idDest)){

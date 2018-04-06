@@ -6,12 +6,19 @@ import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;;
 
+/**
+ * Representación y funcionalidad de una carretera en el simulador.
+ * 
+ * @author Francisco Javier Blázquez
+ * @author Manuel Ortega
+ * @version 26/03/18
+ */
 public class Road extends SimulatedObject
 {	
 	//ATRIBUTOS
-	private int longitud;									//Longitud de la carretera
-	private int maxVelocidad;								//Velocidad máxima de circulación de la carretera
-	private MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
+	protected int longitud;									//Longitud de la carretera
+	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
+	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
 	/**Constructora por defecto, inicializa a una carretera de longitud nula con identificador  vacío "" y sin vehículos.*/
