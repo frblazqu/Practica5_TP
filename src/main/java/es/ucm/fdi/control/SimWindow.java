@@ -40,7 +40,7 @@ public class SimWindow extends JFrame {
 				KeyEvent.VK_S, "control S", 
 				()-> System.err.println("guardando..."));
 		
-		// add actions to toolbar, and bar to window
+		// add actions to toolbar, and bar to window.
 		JToolBar bar = new JToolBar();
 		bar.add(salir);
 		bar.add(guardar);
