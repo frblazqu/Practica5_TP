@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
 
 public class SimWindow extends JFrame {
 	public SimWindow() {
-		super("Prueba 123");
+		super("Traffic Simulator");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addBars();
@@ -31,27 +31,42 @@ public class SimWindow extends JFrame {
 	
 	private void addBars() {
 		// instantiate actions
-		SimulatorAction salir = new SimulatorAction(
-				"Salir", "exit.png", "Salir de la aplicacion",
-				KeyEvent.VK_A, "control shift X", 
-				()-> System.exit(0));
+		SimulatorAction cargar = new SimulatorAction(
+				"Load Events", "open.png", "Cargar eventos",
+				KeyEvent.VK_L, "control L",
+				()-> System.err.println("cargando..."));
 		SimulatorAction guardar = new SimulatorAction(
-				"Guardar", "save.png", "Guardar cosas",
+				"Save Events", "save.png", "Guardar cosas",
 				KeyEvent.VK_S, "control S", 
 				()-> System.err.println("guardando..."));
+		SimulatorAction clear = new SimulatorAction(
+				"Clear Events", "clear.png", "Borrar eventos",
+				KeyEvent.VK_B, "control B",
+				()-> System.err.println("borrando..."));		
+		SimulatorAction salir = new SimulatorAction(
+				"Exit", "exit.png", "Salir de la aplicacion",
+				KeyEvent.VK_A, "control shift X", 
+				()-> System.exit(0));
 		
 		// add actions to toolbar, and bar to window.
 		JToolBar bar = new JToolBar();
-		bar.add(salir);
+		bar.add(cargar);
 		bar.add(guardar);
+		bar.add(clear);
+		bar.add(salir);
 		add(bar, BorderLayout.NORTH);
 
 		// add actions to menubar, and bar to window
 		JMenu file = new JMenu("File");
-		file.add(guardar);		
+		file.add(cargar);
+		file.add(guardar);
+		file.addSeparator();
 		file.add(salir);		
+		JMenu simulator = new JMenu("Simulator");
+		//añadir acciones de simulator
 		JMenuBar menu = new JMenuBar();
 		menu.add(file);
+		menu.add(simulator);
 		setJMenuBar(menu);
 	}
 	
