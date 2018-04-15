@@ -38,7 +38,7 @@ public class TextEditorExample extends JFrame implements ActionListener {
 
 		// text area
 		textArea = new JTextArea("");
-		textArea.setEditable(true);
+		textArea.setEditable(false);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		JScrollPane area = new JScrollPane(textArea);

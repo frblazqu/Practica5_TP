@@ -1,13 +1,15 @@
 package es.ucm.fdi.control;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+
+import es.ucm.fdi.extra.texteditor.TextEditor;
+import es.ucm.fdi.extra.texteditor.TextEditorExample;
 
 /**
  * Esto es sólo para empezar a jugar con las interfaces
@@ -24,6 +26,7 @@ public class SimWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addBars();
+		addPanels();
 		
 		setSize(1000, 1000);		
 		setVisible(true);
@@ -68,6 +71,44 @@ public class SimWindow extends JFrame {
 		menu.add(file);
 		menu.add(simulator);
 		setJMenuBar(menu);
+	}
+	
+	//Apañar mucho
+	public void addPanels() {
+		
+		JPanel upperPanel = new JPanel(new GridLayout(1, 3, 0, 0));
+		
+		JPanel graphPanel = new JPanel();
+		
+		JPanel tablePanel = new JPanel(new GridLayout(3, 1, 0, 0));
+		
+		JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
+		JSplitPane topSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
+		
+		add(topSplit);
+		//add(bottomSplit);
+		
+		TextEditor events = new TextEditor("Events", true);
+		TextEditor events1 = new TextEditor("Events Queue", false);
+		TextEditor events2 = new TextEditor("Reports", false);
+		TextEditor events3 = new TextEditor("Events", false);
+		TextEditor events4 = new TextEditor("Events", false);
+		TextEditor events5 = new TextEditor("Events", false);
+		tablePanel.add(events3);
+		tablePanel.add(events4);
+		tablePanel.add(events5);
+		upperPanel.add(events);
+		upperPanel.add(events1);
+		upperPanel.add(events2);
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 	
 	public static void main(String ... args) {
