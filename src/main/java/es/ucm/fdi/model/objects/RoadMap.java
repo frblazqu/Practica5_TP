@@ -42,8 +42,8 @@ public class RoadMap
 		vehicles = new ArrayList<>();
 		
 		junctionsRO = Collections.unmodifiableList(junctions);
-		roadsRO = Collections.unmodifiableList(roads);
-		vehiclesRO = Collections.unmodifiableList(vehicles);
+		roadsRO =     Collections.unmodifiableList(roads);
+		vehiclesRO =  Collections.unmodifiableList(vehicles);
 	}
 	
 	//MÉTODOS
@@ -128,10 +128,11 @@ public class RoadMap
 					return (Road)simObjects.get(c.getRoadConnect());
 				}
 			}
-			return null;
-		}else{
-			return null;
+			
+			throw new IllegalArgumentException("No hay conexión entre el los cruces "+ junctionIniId + " y " + junctionFinId);
 		}
+		else
+			throw new IllegalArgumentException("El cruce " + junctionIniId + " no existe o no está comunicado");
 	}
 	public Junction getJunctionDest(Road r){
 		for(String s: connectedJunctions.keySet()){

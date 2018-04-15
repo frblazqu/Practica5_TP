@@ -1,7 +1,5 @@
 package es.ucm.fdi.model.objects;
 
-//A currar a partir de aquí!
-
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,14 +15,14 @@ import es.ucm.fdi.ini.IniSection;
 public class Vehicle extends SimulatedObject
 {
 	//ATRIBUTOS
-	private ArrayList<Road> itinerario;						//Carreteras que forman el itinerario del vehículo.
-	private int indiceItinerario;							//itinerario(indiceItinerario) debe ser siempre la carretera actual.
-	private int localizacion;								//Distancia recorrida en la carretera actual.
-	private int kilometrage;								//Distancia total recorrida por el vehículo.
-	private int velActual;									//Velocidad actual del vehículo (debe estar siempre actualizada!!).
-	private int velMaxima;									//Velocidad máxima de un determinado vehículo.
-	private int tiempoAveria;								//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
-	private boolean enDestino;								//True si y sólo si el vehículo está al final de la última carretera de itinerario.
+	private ArrayList<Road> itinerario;					//Carreteras que forman el itinerario del vehículo.
+	private int indiceItinerario;						//itinerario(indiceItinerario) debe ser siempre la carretera actual.
+	private int localizacion;							//Distancia recorrida en la carretera actual.
+	private int kilometrage;							//Distancia total recorrida por el vehículo.
+	private int velActual;								//Velocidad actual del vehículo (debe estar siempre actualizada!!).
+	private int velMaxima;								//Velocidad máxima de un determinado vehículo.
+	private int tiempoAveria;							//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
+	private boolean enDestino;							//True si y sólo si el vehículo está al final de la última carretera de itinerario.
 	
 	//CONSTRUCTORAS
 	/**
@@ -94,14 +92,10 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void avanza(RoadMap map)
 	{
-		if(tiempoAveria > 0) 
-		{	
-			--tiempoAveria;
-		} 
+		if(tiempoAveria > 0)  --tiempoAveria; 
 		else 
 		{
-			//itinerario.get(indiceItinerario).getLongitud() 	~ longitud de la carretera actual
-			//itinerario.get(indiceItinerario).getJunctionFin() ~ cruce en el que termina la carretera actual
+			//itinerario.get(indiceItinerario) 					~ carretera actual
 			
 			//1. Hacemos que propiamente avance en la carretera actual
 			int aux = localizacion;
@@ -111,6 +105,7 @@ public class Vehicle extends SimulatedObject
 			if(localizacion >= itinerario.get(indiceItinerario).getLongitud())
 			{
 				localizacion = itinerario.get(indiceItinerario).getLongitud();
+				//itinerario.get(indiceItinerario).getJunctionFin().entraVehiculo(this);
 				map.getJunctionDest(actualRoad()).entraVehiculo(this);
 				velActual = 0;
 			}
@@ -119,9 +114,11 @@ public class Vehicle extends SimulatedObject
 			kilometrage += localizacion - aux;
 		}
 	}
-	/**Permite realizar un cambio de carretera del vehículo, mueve este a su siguiente carretera determinada en el itinerario. En
+	/**
+	 * Permite realizar un cambio de carretera del vehículo, mueve este a su siguiente carretera determinada en el itinerario. En
 	 * el caso de que se llegue al final se marca el vehículo como situado en destino. Con la disposición actual del código está 
-	 * pensada para ser llamada desde un cruce del que después se eliminará el vehículo. (donde este está esperando)*/
+	 * pensada para ser llamada desde un cruce del que después se eliminará el vehículo (donde este está esperando).
+	 */
 	public void moverASiguienteCarretera()
 	{
 		//OJO! Por cómo lo hemos hecho no esta preparado para ser llamado nada más crear el vehículo, la constructora se encarga
@@ -229,14 +226,7 @@ public class Vehicle extends SimulatedObject
 	}	
 	public String localizacionString()
 	{
-		if(enDestino)
-		{
-			return  "arrived";
-		}
-		else
-		{
-			return "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")";		
-		}
-		
+		if(enDestino)	return  "arrived";
+		else			return "(" + itinerario.get(indiceItinerario).getId() + "," + localizacion  + ")";				
 	}
 }

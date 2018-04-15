@@ -39,10 +39,10 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
      * @return true if removed, false if not found
      */
     public boolean removeValue(K key, V value) {
-        if ( ! containsKey(key)) {
-            return false;
-        }
-        return get(key).remove(value);
+        if ( ! containsKey(key) || get(key) == null) 
+        	return false;
+        else
+        	return get(key).remove(value);
     }
 
     /**

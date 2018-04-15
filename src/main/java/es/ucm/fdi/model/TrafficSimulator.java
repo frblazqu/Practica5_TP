@@ -53,6 +53,7 @@ public class TrafficSimulator
 	 * Ejecuta la simulación durante un número de pasos numTicks y escribe los datos e informes de esta en el flujo out.
 	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el estado 
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
+	 * 
 	 * @throws IOException */
 	public void ejecuta(int numTicks, OutputStream out) throws IOException, IllegalArgumentException
 	{

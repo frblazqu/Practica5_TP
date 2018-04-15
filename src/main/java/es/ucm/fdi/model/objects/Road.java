@@ -1,6 +1,5 @@
 package es.ucm.fdi.model.objects;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
@@ -18,6 +17,7 @@ public class Road extends SimulatedObject
 	//ATRIBUTOS
 	protected int longitud;									//Longitud de la carretera
 	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
+	protected Junction cruceFin;							//Cruce en el que termina la carretera
 	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
@@ -66,12 +66,9 @@ public class Road extends SimulatedObject
 				//Ajustamos la velocidad
 				if(v.averiado())	numAveriados++;
 				else if(numAveriados == 0)
-				{
 					v.setVelocidadActual(velocidadBase);
-				}
 				else
 					v.setVelocidadActual(velocidadBase/2);
-				
 				
 				//Avanzamos y si no cambia de carretera lo insertamos en el nuevo Mtm
 				v.avanza(mapa);
@@ -84,13 +81,13 @@ public class Road extends SimulatedObject
 			vehiculos = aux;
 		}
 	}
-	public void entraVehiculo(Vehicle vehicle)											//Excepciones									
+	/** Introduce un vehículo en la carretera. Siempre al comienzo de esta.	 */
+	public void entraVehiculo(Vehicle vehicle)								
 	{
-		//comprobar que no sea null
-		//vehicle.setVelocidadActual(0); ??
 		vehiculos.putValue(0, vehicle);
 	}
-	public boolean saleVehiculo(Vehicle vehicle)										//Testear y dar robustez
+	/** Elimina un vehículo que ha llegado al final de la carretera. */
+	public boolean saleVehiculo(Vehicle vehicle)
 	{
 		return vehiculos.removeValue(longitud, vehicle);
 	}
@@ -113,7 +110,7 @@ public class Road extends SimulatedObject
 			aux = aux.substring(0, aux.length() - 1);
 		}
 			
-			return aux;
+		return aux;
 	}
 	public void fillSectionDetails(IniSection s)
 	{
