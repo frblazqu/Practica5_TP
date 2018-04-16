@@ -14,7 +14,7 @@ import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class TextEditor extends JPanel implements ActionListener{
+public class TextEditor extends JScrollPane implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -29,26 +29,27 @@ public class TextEditor extends JPanel implements ActionListener{
 	boolean editable;
 	
 	public TextEditor(String n, boolean e){
-		super();
+		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		name = n;
 		editable = e;
 		initGUI();
 	}
 	
 	private void initGUI(){
+		setPreferredSize(new Dimension(300, 200));
+		
 		textArea = new JTextArea("");
-		textArea.setEditable(editable);
+		textArea.setEnabled(editable);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
-		add(textArea);
 		
-		JScrollPane area = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		area.setPreferredSize(new Dimension(300, 200));
-		add(area);
+		
 		
 		Border b = BorderFactory.createLineBorder(Color.black, 2);
-		area.setBorder(BorderFactory.createTitledBorder(b, name));
+		textArea.setBorder(BorderFactory.createTitledBorder(b, name));
+		
+		this.setViewportView(textArea);
 		
 		fc = new JFileChooser();
 	}

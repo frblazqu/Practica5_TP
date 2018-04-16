@@ -2,11 +2,13 @@ package es.ucm.fdi.control;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import es.ucm.fdi.extra.texteditor.TextEditor;
 import es.ucm.fdi.extra.texteditor.TextEditorExample;
@@ -28,7 +30,9 @@ public class SimWindow extends JFrame {
 		addBars();
 		addPanels();
 		
-		setSize(1000, 1000);		
+		setSize(1000, 1000);
+		
+		pack();
 		setVisible(true);
 	}
 	
@@ -76,17 +80,19 @@ public class SimWindow extends JFrame {
 	//Apañar mucho
 	public void addPanels() {
 		
-		JPanel upperPanel = new JPanel(new GridLayout(1, 3, 0, 0));
+		JPanel upperPanel = new JPanel();
+		upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.X_AXIS));
 		
 		JPanel graphPanel = new JPanel();
 		
-		JPanel tablePanel = new JPanel(new GridLayout(3, 1, 0, 0));
+		JPanel tablePanel = new JPanel();
+		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
 		
 		JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
+		bottomSplit.setDividerLocation(.5);
 		JSplitPane topSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
 		
 		add(topSplit);
-		//add(bottomSplit);
 		
 		TextEditor events = new TextEditor("Events", true);
 		TextEditor events1 = new TextEditor("Events Queue", false);
