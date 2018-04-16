@@ -23,17 +23,6 @@ public class TrafficSimulator
 	private RoadMap mapa;									//Contenedor para todos los objetos de la simulación (identificaros por id único)
 	private int reloj;										//Reloj que indica el paso de la simulación actual
 	
-	/*CONSTRUCTORAS
-	 public TrafficSimulator(Ini ini)
-	 {
-	 
-	 }
-	 
-	 public TrafficSimulator(List<Event> eventos)
-	 {
-	 
-	 }
-	 */
 	/**Inicializa el objeto a una simulación vacía. Tiempo inicial nulo (0 por defecto), contenedor de objetos vacío 
 	 * y listado de eventos vacío.*/
 	public TrafficSimulator()
@@ -117,5 +106,23 @@ public class TrafficSimulator
 		{
 			throw new IOException("Almacenando el report del tiempo "+ reloj + "\n" + e.getMessage());
 		}
+	}
+	
+	public enum SimEventType {
+		REGISTERED, RESET, NEW_EVENT, ADVANCED, ERROR;
+	}
+	
+	public interface Listener {
+		
+	}
+	
+	public class UpdateEvent {
+		SimEventType eventType;
+		
+		UpdateEvent(SimEventType type){
+			eventType = type;
+		}
+		
+		
 	}
 }
