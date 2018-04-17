@@ -44,7 +44,7 @@ public class TrafficSimulator
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
 	 * 
 	 * @throws IOException */
-	public void ejecuta(int numTicks, OutputStream out) throws IOException, IllegalArgumentException
+	public void ejecuta(int numTicks, OutputStream out)
 	{
 		try{
 			for(int i = 0; i<numTicks; ++i){
@@ -68,13 +68,10 @@ public class TrafficSimulator
 				// 5. esciribir un informe en OutputStream
 				generaInforme(out);
 			}
-		}
-		catch(IllegalArgumentException e){
+		} catch(IllegalArgumentException e){
 			throw new IllegalArgumentException("Something is wrong with one of the events", e);
-		}
-		catch(Exception e)
-		{
-			/* Oh, Oh, this is unexpected! */
+		} catch(IOException e) {
+			throw new IllegalStateException("No se pudo escribir el informe generado en el tiempo " + reloj, e);
 		}
 
 	}

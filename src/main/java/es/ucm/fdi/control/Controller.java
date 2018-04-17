@@ -111,21 +111,9 @@ public class Controller
 	 * @throws IOException si hay problemas de escritura de reports de la simulación.
 	 * @throws IllegalArgumentException si algún parámetro de la simulación no es válido.
 	 * */
-	public void run() 
+	public void run()
 	{
-		try{
-		simulador.ejecuta(ticksSimulacion, outputStream);	
-		}
-		catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("Something went wrong while executing the simulation", e);
-		}
-		catch(IOException e){
-			//???
-		}
-		catch(Exception e)
-		{
-			/* Oh, Oh, this is unexpected! */ 
-		}
+		simulador.ejecuta(ticksSimulacion, outputStream);
 	}
 }
 
