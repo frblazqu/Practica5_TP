@@ -5,14 +5,7 @@ import es.ucm.fdi.util.MultiTreeMap;
 
 public class Path extends Road
 {
-	
-	
-	
-	
-	public Path()
-	{
-		
-	}
+	public Path() { super();}
 	public Path(String id, int maxSpeed, int size, RoadMap map)
 	{
 		super(id, maxSpeed, size, map);				
@@ -29,8 +22,7 @@ public class Path extends Road
 			MultiTreeMap<Integer,Vehicle> aux = new MultiTreeMap<>((a, b) -> (b-a)); 
 			int velocidadBase = maxVelocidad;
 			int numAveriados = 0;
-			
-			
+		
 			for(Vehicle v: vehiculos.innerValues())
 			{
 				if(v.averiado())	numAveriados++;

@@ -102,10 +102,10 @@ public class Vehicle extends SimulatedObject
 			localizacion += velActual;
 			
 			//2. Si ha llegado al final de la carretera se introduce en el cruce de final de carretera
-			if(localizacion >= itinerario.get(indiceItinerario).getLongitud())
+			if(localizacion >= actualRoad().getLongitud())
 			{
-				localizacion = itinerario.get(indiceItinerario).getLongitud();
-				//itinerario.get(indiceItinerario).getJunctionFin().entraVehiculo(this);
+				localizacion = actualRoad().getLongitud();
+				//actualRoad().getJunctionFin().entraVehiculo(this);
 				map.getJunctionDest(actualRoad()).entraVehiculo(this);
 				velActual = 0;
 			}
@@ -126,17 +126,17 @@ public class Vehicle extends SimulatedObject
 		if(indiceItinerario + 1 < itinerario.size())
 		{
 			//Esto es solo si vamos a tener el vehículo en la carretera y el cruce a la vez.
-			//itinerario.get(indiceItinerario).saleVehiculo(this);
+			//actualRoad().saleVehiculo(this);
 			
 			localizacion = 0;
 			velActual = 0;
 			++indiceItinerario;
-			itinerario.get(indiceItinerario).entraVehiculo(this);
+			actualRoad().entraVehiculo(this);
 		}
 		else
 		{
 			enDestino = true;
-			//itinerario.get(indiceItinerario).saleVehiculo(this);
+			//actualRoad().saleVehiculo(this);
 		}
 	}
 	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/
@@ -178,23 +178,25 @@ public class Vehicle extends SimulatedObject
 	}
 	/**Devuelve la distancia al origen de la carretera actual del vehículo.*/
 	public int getLocalizacion() { return localizacion;}
-	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
-	public void fillReportDetails(Map<String, String> camposValor)
+	public void fillSectionDetails(IniSection s)
 	{
-		camposValor.put("speed", Integer.toString(velActual));
-		camposValor.put("kilometrage", Integer.toString(kilometrage));
-		camposValor.put("faulty", Integer.toString(tiempoAveria));
-		if(enDestino){
-			camposValor.put("location", "arrived");
-		}else{
-		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
-		}
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
+		s.setValue("location", localizacionString());
+	}	
+	protected String localizacionString()
+	{
+		if(enDestino)	return  "arrived";
+		else			return "(" + itinerario.get(indiceItinerario).getId() + "," + localizacion  + ")";				
 	}
 	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
 	public String getHeader()
 	{
 		return "vehicle_report";
 	}
+	
+	//MANU SALIÓ LOCO A GETS
 	public int getVelActual(){
 		return velActual;
 	}
@@ -217,16 +219,17 @@ public class Vehicle extends SimulatedObject
 	{
 		return kilometrage;
 	}
-	public void fillSectionDetails(IniSection s)
+	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
+	public void fillReportDetails(Map<String, String> camposValor)
 	{
-		s.setValue("speed", velActual);
-		s.setValue("kilometrage", kilometrage);
-		s.setValue("faulty", tiempoAveria);
-		s.setValue("location", localizacionString());
-	}	
-	public String localizacionString()
-	{
-		if(enDestino)	return  "arrived";
-		else			return "(" + itinerario.get(indiceItinerario).getId() + "," + localizacion  + ")";				
+		camposValor.put("speed", Integer.toString(velActual));
+		camposValor.put("kilometrage", Integer.toString(kilometrage));
+		camposValor.put("faulty", Integer.toString(tiempoAveria));
+		if(enDestino){
+			camposValor.put("location", "arrived");
+		}else{
+		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
+		}
 	}
+
 }

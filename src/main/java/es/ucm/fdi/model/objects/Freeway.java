@@ -7,10 +7,7 @@ public class Freeway extends Road
 {
 	private int lanes;
 	
-	public Freeway()
-	{
-		
-	}
+	public Freeway() { super();	}
 	public Freeway(String id, int maxSpeed, int size, int lanes, RoadMap map)
 	{
 		super(id, maxSpeed, size, map);			
@@ -28,7 +25,6 @@ public class Freeway extends Road
 			MultiTreeMap<Integer,Vehicle> aux = new MultiTreeMap<>((a, b) -> (b-a)); 
 			int velocidadBase = (int) Math.min(maxVelocidad, ((maxVelocidad*lanes)/(Math.max(1, vehiculos.sizeOfValues()))) + 1);
 			int numAveriados = 0;
-			
 			
 			for(Vehicle v: vehiculos.innerValues())
 			{

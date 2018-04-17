@@ -46,26 +46,7 @@ public class RoadMap
 		vehiclesRO =  Collections.unmodifiableList(vehicles);
 	}
 	
-	//MÉTODOS
-	public void addJunction(Junction junc)
-	{
-		simObjects.put(junc.getId(), junc);
-		junctions.add(junc);
-		junctionsRO = Collections.unmodifiableList(junctions);
-	}
-	public void addRoad(Road road)
-	{
-		simObjects.put(road.getId(), road);
-		roads.add(road);
-		roadsRO = Collections.unmodifiableList(roads);
-	}
-	public void addVehicle(Vehicle vehic)
-	{
-		simObjects.put(vehic.getId(), vehic);
-		vehicles.add(vehic);
-		vehiclesRO = Collections.unmodifiableList(vehicles);
-		
-	}
+	//MÉTODOS BUENOS
 	public void addObject(SimulatedObject simObject)
 	{
 		simObjects.put(simObject.getId(), simObject);
@@ -90,17 +71,9 @@ public class RoadMap
 	{
 		return simObjects.get(id);
 	}
-	public Vehicle getVehicle(String id)
+	public boolean duplicatedId(String id)
 	{
-		return (Vehicle)simObjects.get(id);
-	}
-	public Junction getJunction(String id)
-	{
-		return (Junction)simObjects.get(id);
-	}
-	public Road getRoad(String id)
-	{
-		return (Road)simObjects.get(id);
+		return simObjects.containsKey(id);
 	}
 	public List<Road> getRoads()
 	{
@@ -114,11 +87,52 @@ public class RoadMap
 	{
 		return vehiclesRO;
 	}
-	public boolean duplicatedId(String id)
+
+	
+	//MÉTODOS MALOS
+	public void addJunction(Junction junc)
 	{
-		return simObjects.containsKey(id);
+		simObjects.put(junc.getId(), junc);
+		junctions.add(junc);
+		junctionsRO = Collections.unmodifiableList(junctions);
+	}
+	public void addRoad(Road road)
+	{
+		simObjects.put(road.getId(), road);
+		roads.add(road);
+		roadsRO = Collections.unmodifiableList(roads);
+	}
+	public void addVehicle(Vehicle vehic)
+	{
+		simObjects.put(vehic.getId(), vehic);
+		vehicles.add(vehic);
+		vehiclesRO = Collections.unmodifiableList(vehicles);
+		
+	}
+	public Vehicle getVehicle(String id)
+	{
+		return (Vehicle)simObjects.get(id);
+	}
+	public Junction getJunction(String id)
+	{
+		return (Junction)simObjects.get(id);
+	}
+	public Road getRoad(String id)
+	{
+		return (Road)simObjects.get(id);
+	}
+	public Junction getJunctionDest(Road r){
+		for(String s: connectedJunctions.keySet()){
+			for(ConexionCruces c: connectedJunctions.get(s)){
+				if(c.getRoadConnect().equals(r.getId())){
+					return (Junction)simObjects.get(c.getJunctionDest());
+				}
+			}
+		}
+		return null;
 	}
 	
+	//MÉTODOS COMPLICADOS	
 	public Road getRoad(String junctionIniId, String junctionFinId) throws IllegalArgumentException
 	{
 		if(connectedJunctions.containsKey(junctionIniId)){
@@ -134,18 +148,9 @@ public class RoadMap
 		else
 			throw new IllegalArgumentException("El cruce " + junctionIniId + " no existe o no está comunicado");
 	}
-	public Junction getJunctionDest(Road r){
-		for(String s: connectedJunctions.keySet()){
-			for(ConexionCruces c: connectedJunctions.get(s)){
-				if(c.getRoadConnect().equals(r.getId())){
-					return (Junction)simObjects.get(c.getJunctionDest());
-				}
-			}
-		}
-		return null;
-	}
 	public boolean validJuctionsForRoad(String idIni, String idDest){
 		if(simObjects.containsKey(idIni) && simObjects.containsKey(idDest)){
+			//Solo con esta condición ya sabes que son cruces válidos ??
 			return true;
 		}
 		else if(!simObjects.containsKey(idIni)){
@@ -158,6 +163,7 @@ public class RoadMap
 	public Map<String, List<ConexionCruces>> getConectionMap(){
 		return connectedJunctions;
 	}
+	
 	//Par junction con carretera entrante
 	public static class ConexionCruces{
 		String idDest;
