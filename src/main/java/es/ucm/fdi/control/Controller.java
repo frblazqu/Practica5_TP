@@ -110,11 +110,13 @@ public class Controller
 		}
 		catch(Exception e)
 		{
+			/* Oh, Oh, this is unexpected! */
 			System.out.println("Excepción inesperada!!");
 			System.out.println(e.getMessage());
 			System.out.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		}
+	
 		
 		//Recordamos que en getEvento(s) se lanza una IllegalArgumentException si no se puede parsear alguna sección.
 	}
@@ -135,6 +137,10 @@ public class Controller
 		}
 		catch(IOException e){
 			//???
+		}
+		catch(Exception e)
+		{
+			/* Oh, Oh, this is unexpected! */ 
 		}
 	}
 }

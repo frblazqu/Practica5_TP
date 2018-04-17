@@ -12,6 +12,7 @@ public class Car extends Vehicle{
 	private long seed;
 	private Random numAleatorio;
 	
+	//CONSTRUCTORAS
 	//Constructora con Seed
 	public Car(int res, double fProb, int mFDur, long s, String id, int maxSpeed, String[] trayecto, RoadMap map){
 		super(id, maxSpeed, trayecto, map);
@@ -36,6 +37,7 @@ public class Car extends Vehicle{
 	{
 		super();
 	}
+	
 	public int tiempoAveria(){
 		return numAleatorio.nextInt(max_fault_duration) + 1;
 	}

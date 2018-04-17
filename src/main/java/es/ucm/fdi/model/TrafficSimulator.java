@@ -12,10 +12,10 @@ import es.ucm.fdi.util.MultiTreeMap;
 
 /**
  * Clase encargada del propio simulador de tráfico. 
- * */
+ */
 public class TrafficSimulator
 {
-	//ARGUMENTOS POR DEFECTO
+	//ATRIBUTOS POR DEFECTO
 	private static final int DEFAULT_SET_TIME = 0;
 	
 	//ATRIBUTOS
@@ -71,6 +71,10 @@ public class TrafficSimulator
 		}
 		catch(IllegalArgumentException e){
 			throw new IllegalArgumentException("Something is wrong with one of the events", e);
+		}
+		catch(Exception e)
+		{
+			/* Oh, Oh, this is unexpected! */
 		}
 
 	}

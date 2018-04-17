@@ -201,7 +201,7 @@ public class ExampleMain {
 		startBatchMode();
 		boolean equalOutput = (new Ini(_outFile)).equals(new Ini(expectedOutFile));
 		System.out.println("Result for: '" + _inFile + "' : "
-				+ (equalOutput ? "OK!" : ("not equal to expected output +'" + expectedOutFile + "'")));
+				+ (equalOutput ? "OK!" : ("FAIL! :(")));
 	}
 	/**
 	 * Run the simulator in batch mode
@@ -226,6 +226,10 @@ public class ExampleMain {
 			System.out.println("Something went wrong whith the simulation:\n");
 			e.printStackTrace();
 			System.exit(1);
+		}
+		catch(Exception e)
+		{
+			/*  Oh, Oh, this is unexpected! */
 		}
 	}
 	/**
