@@ -77,16 +77,14 @@ public class SimWindow extends JFrame {
 		setJMenuBar(menu);
 	}
 	
-	//Apañar mucho
+	//Establece el layout básico de la práctica
 	public void addPanels() {
 		
-		JPanel upperPanel = new JPanel();
-		upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.X_AXIS));
+		JPanel upperPanel = new JPanel(new GridLayout(1, 3));
 		
 		JPanel graphPanel = new JPanel();
 		
-		JPanel tablePanel = new JPanel();
-		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+		JPanel tablePanel = new JPanel(new GridLayout(3, 1));
 		
 		JSplitPane bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
 		bottomSplit.setDividerLocation(.5);
