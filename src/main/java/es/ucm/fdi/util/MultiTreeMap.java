@@ -39,21 +39,65 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
      * @return true if removed, false if not found
      */
     public boolean removeValue(K key, V value) {
-        if ( ! containsKey(key)) {
-            return false;
-        }
-        return get(key).remove(value);
+        if ( ! containsKey(key) || get(key) == null) 
+        	return false;
+        else
+        	return get(key).remove(value);
     }
 
     /**
      * Returns the total number of values stored in this multimap
      */
-    public long sizeOfValues() {
-        long total = 0;
+    public int sizeOfValues() {
+        int total = 0;
         for (List<V> l : values()) {
             total += l.size();
         }
         return total;
+    }
+
+    /**
+     * Returns the values as a read-only list. Changes to this structure
+     * will be immediately reflected in the list.
+     */
+    public List<V> valuesList() {
+        return new InnerList();
+    }
+
+    /**
+     * A logical, read-only list containing all elements in
+     * correct order.
+     */
+    private class InnerList extends AbstractList<V> {
+
+        @Override
+        public V get(int index) {
+
+            if (index < 0 || isEmpty()) {
+                throw new IndexOutOfBoundsException(
+                        "Index " + index + " is out of bounds");
+            }
+
+            Iterator<ArrayList<V>> it = values().iterator();
+            ArrayList<V> current = it.next(); // not empty, therefore hasNext()
+            int start = 0;
+
+            while (index >= (start+current.size())) {
+                if (!it.hasNext()) {
+                    throw new IndexOutOfBoundsException(
+                            "Index " + index + " is out of bounds");
+                }
+                start += current.size();
+                current = it.next();
+            }
+
+            return current.get(index - start);
+        }
+
+        @Override
+        public int size() {
+            return sizeOfValues();
+        }
     }
 
     /**
