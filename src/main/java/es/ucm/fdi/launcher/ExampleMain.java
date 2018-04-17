@@ -200,7 +200,7 @@ public class ExampleMain {
 		_timeLimit = timeLimit;
 		startBatchMode();
 		boolean equalOutput = (new Ini(_outFile)).equals(new Ini(expectedOutFile));
-		System.out.println("Result for: '" + _inFile + "' : "
+		System.out.println("Result for: '" + _inFile.substring(_inFile.lastIndexOf('\\') + 1)  + "' : "
 				+ (equalOutput ? "OK!" : ("FAIL! :(")));
 	}
 	/**

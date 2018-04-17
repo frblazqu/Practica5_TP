@@ -92,14 +92,11 @@ public class Road extends SimulatedObject
 		return vehiculos.removeValue(longitud, vehicle);
 	}
 	public int getLongitud() 		{return longitud;}
-	public MultiTreeMap<Integer, Vehicle> getVehicles(){
-		return vehiculos;
-	}
 	public void fillReportDetails(Map<String, String> camposValor)						
 	{
 		camposValor.put("state", vehiclesInRoad());
 	}
-	public String vehiclesInRoad(){
+	protected String vehiclesInRoad(){
 		String aux = "";
 		
 		for(Vehicle v: vehiculos.innerValues()){
@@ -123,9 +120,9 @@ public class Road extends SimulatedObject
 	private class MayorAMenor implements Comparator<Integer>							
 	{
 		public int compare(Integer arg0, Integer arg1)
-		{																				//Debe devolver:
-			return arg1 - arg0;															//Negativo si arg0 < arg1
-																						//Positivo si arg0 > arg1
+		{												//Debe devolver:
+			return arg1 - arg0;							//Negativo si arg0 < arg1
+														//Positivo si arg0 > arg1
 		}
 	}
 }
