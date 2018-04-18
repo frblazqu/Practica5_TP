@@ -256,7 +256,7 @@ public class ExampleMain {
 			parseArgs(args);
 			startBatchMode();
 		} catch (SimulationFailedException e){
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		} catch(Exception e) {
 			System.err.println("Se ha producido un fallo durante el parseo de argumentos de entrada:\n" + args);
 		}
@@ -279,7 +279,7 @@ public class ExampleMain {
 		//test(DEFAULT_READ_DIRECTORY + "examples/advanced/");
 
 		// Call start to start the simulator from command line, etc.
-		//start(args);
+		// start(args);
 	}
 
 	//MÉTODOS QUE SOLO DEBEN SER USADOS PARA EL TESTEO

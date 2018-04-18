@@ -6,16 +6,31 @@ import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewCar extends NewVehicle{
-	public static class NewCarBuilder implements EventBuilder
+	public static class NewCarBuilder extends NewVehicle.NewVehicleBuilder implements EventBuilder
 	{
-
+		/**
+		 * Método que indica si estamos (dentro de los vehículos) en la instancia adecuada para generar a
+		 * partir de esta seccion.
+		 * 
+		 * @param sec Sección formato IniSection por parsear.
+		 * @return true Si la sección se corresponde con un evento NewCar.
+		 */
 		@Override
-		public Event parse(IniSection sec)
+		protected boolean esDeEsteTipo(IniSection sec)
 		{
-			// TODO Auto-generated method stub
-			return null;
+			return sec.getTag().equals("new_vehicle") && sec.getValue("type").equals("car");
 		}
-
+		/**
+		 * Debe terminar de parsear la sección IniSection con los atributos necesarios para generar un nuevo
+		 * evento de la instancia que estemos considerando y devolver este.
+		 * 
+		 * @param sec La sección formato IniSection que estamos parseando.
+		 * @return El evento representado por la sección.
+		 */
+		protected Event leerAtributosEspecificos(IniSection sec)
+		{
+			return new NewVehicle(time,id,mSpeed, it);
+		}
 	}
 	private int resistance;
 	private double fault_probability;

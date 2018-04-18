@@ -13,28 +13,24 @@ public class Bike extends Vehicle{
 		super(id, maxSpeed, trayecto, map);
 	}
 	public void setTiempoAveria(int tiempoAveria){
-		if(this.getVelActual()>this.getVelMax()/2){
+		if(velActual > velMaxima/2){
 			super.setTiempoAveria(tiempoAveria);
 		}
 	}
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
-		camposValor.put("speed", Integer.toString(this.getVelActual()));
-		camposValor.put("kilometrage", Integer.toString(this.getKilometrage()));
+		camposValor.put("speed", "" + velActual);
+		camposValor.put("kilometrage", "" + kilometrage);
 		camposValor.put("type", "bike");
-		camposValor.put("faulty", Integer.toString(this.getTiempoAveria()));
-		if(this.getEnDestino()){
-			camposValor.put("location", "arrived");
-		}else{
-		camposValor.put("location", "(" + this.getItinerario().get(this.getIndIti()).getId() + "," + Integer.toString(this.getLocalizacion())  + ")");		
-		}
+		camposValor.put("faulty", "" + tiempoAveria);
+		camposValor.put("location", localizacionString());
 	}
 	public void fillSectionDetails(IniSection s)
 	{
 		s.setValue("type", "bike");
-		s.setValue("speed", this.getVelActual());
-		s.setValue("kilometrage", this.getKilometrage());
-		s.setValue("faulty", this.getTiempoAveria());
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
 		s.setValue("location", localizacionString());
 	}	
 }
