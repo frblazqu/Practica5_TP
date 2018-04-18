@@ -14,7 +14,6 @@ public class Junction extends SimulatedObject
 	private List<IncomingRoad> listadoColas;
 	private int indiceColas;
 	
-	
 	public Junction()
 	{
 		super();
@@ -113,7 +112,8 @@ public class Junction extends SimulatedObject
 		s.setValue("queues", colaCruce());
 	}
 	
-	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
+	
+	/** TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo). */
 	public static class IncomingRoad
 	{
 		private Road road;
@@ -161,5 +161,4 @@ public class Junction extends SimulatedObject
 			semaforoVerde = bool;
 		}
 	}
-
 }

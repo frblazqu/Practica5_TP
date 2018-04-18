@@ -7,41 +7,29 @@ public class Freeway extends Road
 {
 	private int lanes;
 	
+	//CONSTRUCTORAS
 	public Freeway() { super();	}
 	public Freeway(String id, int maxSpeed, int size, int lanes, Junction junc)
 	{
 		super(id, maxSpeed, size, junc);			
 		this.lanes = lanes;
 	}
+	
+	//MÉTODOS QUE SOBREESCRIBEN
+	@Override
 	public void fillSectionDetails(IniSection s)
 	{
 		s.setValue("type", "lanes");
 		s.setValue("state", vehiclesInRoad());
 	}
-	public void avanza(RoadMap mapa)
+	@Override
+	public int velocidadAvance(int numAveriados)
 	{
-		if(vehiculos.sizeOfValues() > 0)
-		{
-			MultiTreeMap<Integer,Vehicle> aux = new MultiTreeMap<>((a, b) -> (b-a)); 
-			int velocidadBase = (int) Math.min(maxVelocidad, ((maxVelocidad*lanes)/(Math.max(1, vehiculos.sizeOfValues()))) + 1);
-			int numAveriados = 0;
-			
-			for(Vehicle v: vehiculos.innerValues())
-			{
-				if(v.averiado())	numAveriados++;
-				else if(numAveriados < lanes)
-					v.setVelocidadActual(velocidadBase);
-				else 
-					v.setVelocidadActual(velocidadBase/2);
-				
-				v.avanza(mapa);
-				
-				if(v.getLocalizacion() != this.longitud)
-				{
-					aux.putValue(v.getLocalizacion(), v);
-				}
-			}
-			vehiculos = aux;
-		}
+		int velocidadBase = Math.min(maxVelocidad, ((maxVelocidad*lanes)/(Math.max(1, vehiculos.sizeOfValues()))) + 1);
+		
+		if(numAveriados < lanes)
+			return velocidadBase;
+		else 
+			return velocidadBase/2;
 	}
 }

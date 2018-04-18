@@ -123,19 +123,16 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void moverASiguienteCarretera()
 	{
+		velActual = 0;	localizacion = 0;
+		actualRoad().saleVehiculo(this);
+		
 		if(indiceItinerario + 1 < itinerario.size())
 		{
-			actualRoad().saleVehiculo(this); 	//Sale de la carretera actual
-			localizacion = 0;
-			velActual = 0;
 			++indiceItinerario;
-			actualRoad().entraVehiculo(this);	//Entra en la carretera siguiente
+			actualRoad().entraVehiculo(this);
 		}
 		else
-		{
-			actualRoad().saleVehiculo(this);
 			enDestino = true;
-		}
 	}
 	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/
 	public Road actualRoad()
