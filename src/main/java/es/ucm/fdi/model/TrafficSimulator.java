@@ -43,7 +43,9 @@ public class TrafficSimulator
 	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el estado 
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
 	 * 
-	 * @throws IOException */
+	 * @throws IllegalStateException Si no se consigue ejecutar correctamente un evento o no se puede escribir el informe
+	 * de un paso de la simulación por el flujo de salida.
+	  */
 	public void ejecuta(int numTicks, OutputStream out)
 	{
 		try{
@@ -69,9 +71,9 @@ public class TrafficSimulator
 				generaInforme(out);
 			}
 		} catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("Something is wrong with one of the events", e);
+			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
 		} catch(IOException e) {
-			throw new IllegalStateException("No se pudo escribir el informe generado en el tiempo " + reloj, e);
+			throw new IllegalStateException("No se pudo escribir el informe generado en el tiempo " + reloj + " ticks.", e);
 		}
 
 	}
