@@ -98,19 +98,18 @@ public class Vehicle extends SimulatedObject
 		if(tiempoAveria > 0)  --tiempoAveria; 
 		else 
 		{
-			//itinerario.get(indiceItinerario) 					~ carretera actual
+			//itinerario.get(indiceItinerario) ~ carretera actual ~ acualRoad()
 			
 			//1. Hacemos que propiamente avance en la carretera actual
 			int aux = localizacion;
 			localizacion += velActual;
 			
-			//2. Si ha llegado al final de la carretera se introduce en el cruce de final de carretera
+			//2. Si ha llegado al final de la carretera espera en el cruce 
 			if(localizacion >= actualRoad().getLongitud())
 			{
 				localizacion = actualRoad().getLongitud();
-				//actualRoad().getJunctionFin().entraVehiculo(this);
-				map.getJunctionDest(actualRoad()).entraVehiculo(this);
 				velActual = 0;
+				actualRoad().getJunctionFin().entraVehiculo(this);
 			}
 			
 			//La distancia recorrida en la carretera se suma a la distancia recorrida en total
@@ -124,22 +123,18 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void moverASiguienteCarretera()
 	{
-		//OJO! Por cómo lo hemos hecho no esta preparado para ser llamado nada más crear el vehículo, la constructora se encarga
-		//de ponerlo en la primera carretera en su posición.
 		if(indiceItinerario + 1 < itinerario.size())
 		{
-			//Esto es solo si vamos a tener el vehículo en la carretera y el cruce a la vez.
-			//actualRoad().saleVehiculo(this);
-			
+			actualRoad().saleVehiculo(this); 	//Sale de la carretera actual
 			localizacion = 0;
 			velActual = 0;
 			++indiceItinerario;
-			actualRoad().entraVehiculo(this);
+			actualRoad().entraVehiculo(this);	//Entra en la carretera siguiente
 		}
 		else
 		{
+			actualRoad().saleVehiculo(this);
 			enDestino = true;
-			//actualRoad().saleVehiculo(this);
 		}
 	}
 	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/

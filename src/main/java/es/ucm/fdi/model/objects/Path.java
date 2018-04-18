@@ -6,9 +6,9 @@ import es.ucm.fdi.util.MultiTreeMap;
 public class Path extends Road
 {
 	public Path() { super();}
-	public Path(String id, int maxSpeed, int size, RoadMap map)
+	public Path(String id, int maxSpeed, int size, Junction junc)
 	{
-		super(id, maxSpeed, size, map);				
+		super(id, maxSpeed, size, junc);				
 	}
 	public void fillSectionDetails(IniSection s)
 	{

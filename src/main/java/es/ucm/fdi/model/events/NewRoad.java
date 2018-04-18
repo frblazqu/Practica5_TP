@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.Junction.IncomingRoad;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
@@ -39,8 +40,9 @@ public class NewRoad extends Event
 	{
 		if(!map.duplicatedId(road_id)){
 			try{
+				Junction junc = map.getJunction(junctionDestId);
 				if(map.validJuctionsForRoad(junctionIniId, junctionDestId)){
-					Road road = new Road(road_id, maxSpeed, length, map);
+					Road road = new Road(road_id, maxSpeed, length, junc);
 					map.addRoad(road);
 					map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad(road));
 					map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad(road));
