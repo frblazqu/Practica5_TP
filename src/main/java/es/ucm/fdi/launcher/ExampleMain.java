@@ -222,7 +222,7 @@ public class ExampleMain {
 		}
 	}
 	/**
-	 * Run the simulator in batch mode
+	 * Run the simulator in batch mode.
 	 * 
 	 * @throws SimulationFailedException If the simulation ended abruptly to notice the cause.
 	 */
@@ -237,6 +237,12 @@ public class ExampleMain {
 		catch(Exception e)
 		{
 			throw new SimulationFailedException(_inFile, _outFile, _timeLimit, e);
+			
+			/*
+			 * Construye una excepción en la que pone:
+			 * 		Mira con estos parámetros no hemos podido ejecutar la simulación.
+			 * 		El motivo ha sido este: y pinta el mensaje de la excepción.
+			 */
 		}
 	}
 	/**
@@ -269,11 +275,11 @@ public class ExampleMain {
 
 		// Call test in order to test the simulator on all examples in a directory.
 		//
-	    //test(DEFAULT_READ_DIRECTORY + "examples/basic/");
+	    test(DEFAULT_READ_DIRECTORY + "examples/basic/");
 		//test(DEFAULT_READ_DIRECTORY + "examples/advanced/");
 
 		// Call start to start the simulator from command line, etc.
-		start(args);
+		//start(args);
 	}
 
 	//MÉTODOS QUE SOLO DEBEN SER USADOS PARA EL TESTEO
