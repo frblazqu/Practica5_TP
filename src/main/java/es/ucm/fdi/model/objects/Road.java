@@ -101,8 +101,10 @@ public class Road extends SimulatedObject
 	protected String vehiclesInRoad(){
 		String aux = "";
 		
-		for(Vehicle v: vehiculos.innerValues()){
-			aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
+		for(Vehicle v: vehiculos.innerValues())
+		{
+			if(v != null)
+				aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
 		}
 		
 		if(aux.length() != 0){
