@@ -15,14 +15,14 @@ import es.ucm.fdi.ini.IniSection;
 public class Vehicle extends SimulatedObject
 {
 	//ATRIBUTOS
-	private ArrayList<Road> itinerario;					//Carreteras que forman el itinerario del vehículo.
-	private int indiceItinerario;						//itinerario(indiceItinerario) debe ser siempre la carretera actual.
-	private int localizacion;							//Distancia recorrida en la carretera actual.
-	private int kilometrage;							//Distancia total recorrida por el vehículo.
-	private int velActual;								//Velocidad actual del vehículo (debe estar siempre actualizada!!).
-	private int velMaxima;								//Velocidad máxima de un determinado vehículo.
-	private int tiempoAveria;							//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
-	private boolean enDestino;							//True si y sólo si el vehículo está al final de la última carretera de itinerario.
+	protected ArrayList<Road> itinerario;		//Carreteras que forman el itinerario del vehículo.
+	protected int indiceItinerario;				//itinerario(indiceItinerario) debe ser siempre la carretera actual.
+	protected int localizacion;					//Distancia recorrida en la carretera actual.
+	protected int kilometrage;					//Distancia total recorrida por el vehículo.
+	protected int velActual;					//Velocidad actual del vehículo (debe estar siempre actualizada!!).
+	protected int velMaxima;					//Velocidad máxima de un determinado vehículo.
+	protected int tiempoAveria;					//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
+	protected boolean enDestino;				//True si y sólo si el vehículo está al final de la última carretera de itinerario.
 	
 	//CONSTRUCTORAS
 	/**
@@ -45,7 +45,10 @@ public class Vehicle extends SimulatedObject
 	 * vehículo con estos datos. El itinerario se completará con las carreteras que unen dos índices consecutivos del trayecto y
 	 * se lanzará una excepción si esta o uno de los cruces no existen.
 	 * 
+	 * @param id El identificador del vehículo que vamos a crear.
 	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo.
+	 * @param map
+	 * 
 	 */
 	public Vehicle(String id, int maxSpeed, String[] trayecto, RoadMap map)
 	{
@@ -188,36 +191,12 @@ public class Vehicle extends SimulatedObject
 	protected String localizacionString()
 	{
 		if(enDestino)	return  "arrived";
-		else			return "(" + itinerario.get(indiceItinerario).getId() + "," + localizacion  + ")";				
+		else			return "(" + actualRoad().getId() + "," + localizacion  + ")";				
 	}
 	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
 	public String getHeader()
 	{
 		return "vehicle_report";
-	}
-	
-	//MANU SALIÓ LOCO A GETS
-	public int getVelActual(){
-		return velActual;
-	}
-	public int getVelMax(){
-		return velMaxima;
-	}
-	public boolean getEnDestino(){
-		return enDestino;
-	}
-	public ArrayList<Road> getItinerario(){
-		return itinerario;
-	}
-	public int getIndIti(){
-		return indiceItinerario;
-	}
-	public int getTiempoAveria(){
-		return tiempoAveria;
-	}
-	public int getKilometrage()
-	{
-		return kilometrage;
 	}
 	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
 	public void fillReportDetails(Map<String, String> camposValor)
