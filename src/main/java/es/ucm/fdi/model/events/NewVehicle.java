@@ -83,6 +83,8 @@ public class NewVehicle extends Event
 
 	public static class NewVehicleBuilder implements EventBuilder
 	{
+		protected final String TAG = "new_vehicle";
+		
 		protected int time;
 		protected String id;
 		protected int mSpeed;
@@ -111,7 +113,7 @@ public class NewVehicle extends Event
 		 */
 		public Event parse(IniSection sec) throws IllegalArgumentException
 		{
-			if (!esDeEsteTipo(sec))
+			if (!sec.getTag().equals(TAG) || !esDeEsteTipo(sec))
 				return null;
 			else 
 			{			   
@@ -130,7 +132,7 @@ public class NewVehicle extends Event
 		 */
 		protected boolean esDeEsteTipo(IniSection sec)
 		{
-			return sec.getTag().equals("new_vehicle") && sec.getValue("type") == null;
+			return sec.getValue("type") == null;
 		}
 		/**
 		 * Debe terminar de parsear la sección IniSection con los atributos necesarios para generar un nuevo

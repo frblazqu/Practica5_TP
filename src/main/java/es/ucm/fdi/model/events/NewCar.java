@@ -8,6 +8,14 @@ import es.ucm.fdi.model.objects.Vehicle;
 public class NewCar extends NewVehicle{
 	public static class NewCarBuilder extends NewVehicle.NewVehicleBuilder implements EventBuilder
 	{
+		/* 
+		ATRIBUTOS
+		protected final String TAG = "new_vehicle";
+		protected int time;
+		protected String id;
+		protected int mSpeed;
+		protected String[] it;*/
+		
 		/**
 		 * Método que indica si estamos (dentro de los vehículos) en la instancia adecuada para generar a
 		 * partir de esta seccion.
@@ -18,7 +26,7 @@ public class NewCar extends NewVehicle{
 		@Override
 		protected boolean esDeEsteTipo(IniSection sec)
 		{
-			return sec.getTag().equals("new_vehicle") && sec.getValue("type").equals("car");
+			return sec.getValue("type").equals("car");
 		}
 		/**
 		 * Debe terminar de parsear la sección IniSection con los atributos necesarios para generar un nuevo
@@ -29,7 +37,17 @@ public class NewCar extends NewVehicle{
 		 */
 		protected Event leerAtributosEspecificos(IniSection sec)
 		{
-			return new NewVehicle(time,id,mSpeed, it);
+			int resist 	 = EventBuilder.parseIntValue(sec.getValue("resistance"));
+			double fProb = EventBuilder.parseDoubleValue(sec.getValue("fault_probability"));
+			int mFDur	 = EventBuilder.parseIntValue(sec.getValue("max_fault_duration"));
+			
+			if(sec.getValue("seed") != null)
+			{
+				long seed = Long.parseLong(sec.getValue("seed"));
+				return new NewCar(resist, fProb, mFDur, seed, time, id, mSpeed, it);
+			}
+			else
+				return new NewCar(resist, fProb, mFDur, time, id, mSpeed, it);
 		}
 	}
 	private int resistance;

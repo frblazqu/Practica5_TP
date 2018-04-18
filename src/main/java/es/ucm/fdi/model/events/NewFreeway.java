@@ -7,6 +7,7 @@ import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Freeway;
+import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.Junction.IncomingRoad;
 import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 
@@ -38,8 +39,9 @@ public class NewFreeway extends NewRoad
 	{
 		if(!map.duplicatedId(road_id)){
 			try{
+				Junction junc = map.getJunction(junctionDestId);
 				if(map.validJuctionsForRoad(junctionIniId, junctionDestId)){
-					Road road = new Freeway(road_id, maxSpeed, length, lanes, map);
+					Road road = new Freeway(road_id, maxSpeed, length, lanes, junc);
 					map.addRoad(road);
 					map.getJunction(junctionDestId).getMap().put(road, new IncomingRoad(road));
 					map.getJunction(junctionDestId).getIncRoadList().add(new IncomingRoad(road));

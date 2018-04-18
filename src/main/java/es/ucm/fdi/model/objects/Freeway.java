@@ -8,9 +8,9 @@ public class Freeway extends Road
 	private int lanes;
 	
 	public Freeway() { super();	}
-	public Freeway(String id, int maxSpeed, int size, int lanes, RoadMap map)
+	public Freeway(String id, int maxSpeed, int size, int lanes, Junction junc)
 	{
-		super(id, maxSpeed, size, map);			
+		super(id, maxSpeed, size, junc);			
 		this.lanes = lanes;
 	}
 	public void fillSectionDetails(IniSection s)
