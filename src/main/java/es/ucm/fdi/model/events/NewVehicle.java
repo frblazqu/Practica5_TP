@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Car;
+import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewVehicle extends Event
 {
-	private String vehicleId;
-	private int maxSpeed;
-	private String[] itinerary;
+	private String vehicleId;		//Id del nuevo vehículo a generar
+	private int maxSpeed;			//Velocidad máxima del nuevo vehículo
+	private String[] itinerary;		//Array de string de identificadores de los cruces por los que pasa el vehículo 
 
 	public NewVehicle()
 	{
@@ -45,42 +46,43 @@ public class NewVehicle extends Event
 
 	public void execute(RoadMap map) throws IllegalArgumentException
 	{
-		if (!map.duplicatedId(vehicleId))
-		{
-			boolean validIds = true;
-			for (int i = 1; i < itinerary.length; ++i)
-			{
-				if (map.getRoad(itinerary[i - 1], itinerary[i]) == null)
-				{
-					validIds = false;
-					throw new IllegalArgumentException("There is no road that connects the specified junctions "
-							+ itinerary[i - 1] + " and " + itinerary[i] + " for the itinerary.");
-				}
-			}
-			if (validIds)
-			{
-				Vehicle vehic = new Vehicle(vehicleId, maxSpeed, itinerary, map);
-				map.addVehicle(vehic);
-			}
-		} else
-		{
+		if (map.duplicatedId(vehicleId))
 			throw new IllegalArgumentException("The id " + vehicleId + " is already used");
+		
+		//Si estamos aquí es porque el identificador del vehículo es válido
+		
+		ArrayList<Road> itinerario = new ArrayList<>();
+		
+		for (int i = 1; i < itinerary.length; ++i)
+		{
+			Road road = map.getRoad(itinerary[i - 1], itinerary[i]);
+			
+			if (road == null)
+				throw new IllegalArgumentException("There is no road that connects the specified junctions "+ 
+			                                       itinerary[i - 1] + " and " + itinerary[i] + " for the itinerary.");
+			else
+				itinerario.add(road);
 		}
+				
+		Vehicle vehic = new Vehicle(vehicleId, maxSpeed, itinerario);
+		map.addVehicle(vehic);
 	}
+	
+	
+	//MÉTODOS SOLO PARA EL TESTEO
 	@Override
 	public String getTag()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "new_vehicle";
 	}
-
 	@Override
 	public void fillSectionDetails(IniSection s)
 	{
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	//BUILDER
 	public static class NewVehicleBuilder implements EventBuilder
 	{
 		protected final String TAG = "new_vehicle";

@@ -152,17 +152,16 @@ public class RoadMap
 		else
 			throw new IllegalArgumentException("El cruce " + junctionIniId + " no existe o no está comunicado");
 	}
-	public boolean validJuctionsForRoad(String idIni, String idDest){
-		if(simObjects.containsKey(idIni) && simObjects.containsKey(idDest)){
-			//Solo con esta condición ya sabes que son cruces válidos ??
+	public boolean validJuctionsForRoad(String idIni, String idDest)
+	{
+		if(getJunction(idIni) != null && getJunction(idDest)!= null)
 			return true;
-		}
-		else if(!simObjects.containsKey(idIni)){
+		
+		else if(getJunction(idIni) == null)
 			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idIni);
-		}
-		else{
+		
+		else
 			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idDest);
-		}
 	}
 	public Map<String, List<ConexionCruces>> getConectionMap(){
 		return connectedJunctions;

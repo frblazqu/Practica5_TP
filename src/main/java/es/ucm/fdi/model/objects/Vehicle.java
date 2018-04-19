@@ -2,6 +2,7 @@ package es.ucm.fdi.model.objects;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
@@ -46,9 +47,7 @@ public class Vehicle extends SimulatedObject
 	 * se lanzará una excepción si esta o uno de los cruces no existen.
 	 * 
 	 * @param id El identificador del vehículo que vamos a crear.
-	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo.
-	 * @param map
-	 * 
+	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo. 
 	 */
 	public Vehicle(String id, int maxSpeed, String[] trayecto, RoadMap map)
 	{
@@ -67,6 +66,25 @@ public class Vehicle extends SimulatedObject
 		localizacion = 0;
 		enDestino = false;		//Salvo caso patolóooogico muy patológico.
 		velMaxima = maxSpeed;
+	}
+	/**
+	 * Constructora usual, genera un nuevo vehículo con un itinerario concreto. ADVERTENCIA! no incorpora el vehículo a su
+	 * primera carretera.
+	 */
+	public Vehicle(String id, int maxSpeed, List<Road> trayecto)
+	{
+		super(id, ObjectType.VEHICLE);
+		
+		itinerario = (ArrayList<Road>) trayecto;
+		indiceItinerario = 0;
+		kilometrage = 0;
+		velActual = 0;
+		tiempoAveria = 0;
+		localizacion = 0;
+		enDestino = false;
+		velMaxima = maxSpeed;
+		
+		actualRoad().entraVehiculo(this);
 	}
 	/**
 	 * Método realizado para facilitar el testeo de la funcionalidad. No debe ser usado.
@@ -95,7 +113,7 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void avanza(RoadMap map)
 	{
-		if(tiempoAveria > 0)  --tiempoAveria; 
+		if(tiempoAveria > 0)  --tiempoAveria; 	//No avanza si está averiado
 		else 
 		{
 			//itinerario.get(indiceItinerario) ~ carretera actual ~ acualRoad()
@@ -123,19 +141,16 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void moverASiguienteCarretera()
 	{
+		velActual = 0;	localizacion = 0;
+		actualRoad().saleVehiculo(this);
+		
 		if(indiceItinerario + 1 < itinerario.size())
 		{
-			actualRoad().saleVehiculo(this); 	//Sale de la carretera actual
-			localizacion = 0;
-			velActual = 0;
 			++indiceItinerario;
-			actualRoad().entraVehiculo(this);	//Entra en la carretera siguiente
+			actualRoad().entraVehiculo(this);
 		}
 		else
-		{
-			actualRoad().saleVehiculo(this);
 			enDestino = true;
-		}
 	}
 	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/
 	public Road actualRoad()

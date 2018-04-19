@@ -1,165 +1,105 @@
 package es.ucm.fdi.model.objects;
 
-import java.util.List;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.util.MultiTreeMap;
 
 public class Junction extends SimulatedObject
 {
-	private Map<Road, IncomingRoad> queue;
-	private List<IncomingRoad> listadoColas;
-	private int indiceColas;
-	
+	protected Map<String, ArrayDeque<Vehicle>> colas;	//Pares de Ids de carreteras entrantes, colas de vehículos esperando
+	protected List<String> incomingRoadIds;				//Ids de las carreteras entrantes, para acceder rápido con el semáforo
+	protected int semaforo;								//Índice dentro de IncomingRoads de la que tiene el semáforo verde
+	protected int numCarreterasEntrantes;				//Número de carreteras que entran a este cruce
+	protected int numVehiculos = 0;
 	
 	public Junction()
 	{
 		super();
-		queue = new HashMap<>();
-		listadoColas = new ArrayList<>();	
-		indiceColas = 0;
+		colas = new HashMap<>();
+		incomingRoadIds = new ArrayList<>();
+		numCarreterasEntrantes = 0;
+		semaforo = -1;
 	}
 	public Junction(String id)
 	{
 		super(id, ObjectType.JUNCTION);
-		queue = new HashMap<>();
-		listadoColas = new ArrayList<>();	
-		indiceColas = 0;
+		colas = new HashMap<>();
+		incomingRoadIds = new ArrayList<>();
+		numCarreterasEntrantes = 0;
+		semaforo = -1;
 	}
-	public Map<Road, IncomingRoad> getMap(){
-		return queue;
-	}
-	public List<IncomingRoad> getIncRoadList(){
-		return listadoColas;
-	}
-	public void avanza()					
+	
+	//MÉTODOS DE ESTADO
+	public void avanza()
 	{
-		if(!listadoColas.isEmpty()){
-			if(!listadoColas.get(indiceColas).semaforoVerde){
-				listadoColas.get(indiceColas).setSemaforo(true);
-				queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
-			}else{
-				if(!listadoColas.get(indiceColas).cola.isEmpty()){
-					listadoColas.get(indiceColas).cola.getFirst().moverASiguienteCarretera();
-					queue.get(listadoColas.get(indiceColas).road).cola.pop();
-					listadoColas.get(indiceColas).cola.pop();
-				}
+		if(numCarreterasEntrantes > 0)
+		{
+			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
 			
-				listadoColas.get(indiceColas).setSemaforo(false);
-				queue.get(listadoColas.get(indiceColas).road).setSemaforo(false);
-				indiceColas = indiceSiguiente();
-				listadoColas.get(indiceColas).setSemaforo(true);
-				queue.get(listadoColas.get(indiceColas).road).setSemaforo(true);
+			
+			if(colas.get(incomingRoadIds.get(semaforo))!= null && colas.get(incomingRoadIds.get(semaforo)).size() > 0)
+			{
+				colas.get(incomingRoadIds.get(semaforo)).pop().moverASiguienteCarretera();
+				numVehiculos--;
 			}
-		}
-	}
-	public int indiceAnterior(){
-		if(indiceColas == 0){
-			return listadoColas.size() - 1;
-		}else{
-			return indiceColas - 1;
-		}
-	}
-	public int indiceSiguiente(){
-		if(indiceColas == listadoColas.size() - 1){
-			return 0;
-		}else{
-			return indiceColas + 1;
+			
+			semaforo = (semaforo+1)%numCarreterasEntrantes;
 		}
 	}
 	public void entraVehiculo(Vehicle car)
 	{
-		queue.get(car.actualRoad()).insert(car);
-		for(IncomingRoad r: listadoColas){
-			if(r.road.getId().equals(car.actualRoad().getId())){
-				r.insert(car);
-				break;
-			}
-		}
+		colas.get(car.actualRoad().getId()).addLast(car);
+		car.setVelocidadActual(0);
+		numVehiculos++;
 	}
-	public void saleVehiculo(Vehicle car)
+	public void añadirCarreteraEntrante(Road road)
 	{
-		//Presupone que siempre se elimina el primer vehículo de la cola
-		queue.get(car.actualRoad()).elimina();
+		incomingRoadIds.add(road.getId());
+		colas.put(road.getId(), new ArrayDeque<>());
+		numCarreterasEntrantes++;
 	}
+	
+	//MÉTODOS PARA REPRESENTAR EL ESTADO
+	@Override
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
-		camposValor.put("queues", colaCruce());
+		/* Ha caído en desuso! */
 	}
+	@Override
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("queues", colaCruce());
+	}
+	@Override
 	public String getHeader()
 	{
 		return "junction_report";
 	}
 	public String colaCruce()
 	{
-		String aux = "";
+		String cola = "";
 		
-		for(IncomingRoad road: listadoColas)
+		for(int i = 0; i < incomingRoadIds.size(); i++)
 		{
-			aux += "(" + road.getRoadInc().getId() + "," + road.representaSemaforo() + "," + road.colaCarretera() + "),";
+			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green," : "red,") + "[" + vehiculosCola(i) + "]),";
 		}
 		
-		if(aux.length() != 0){
-			aux = aux.substring(0, aux.length() - 1);
-		}
+		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
 		
-		return aux;
+		return cola;
 	}
-	public void fillSectionDetails(IniSection s)
+	public String vehiculosCola(int index)
 	{
-		s.setValue("queues", colaCruce());
-	}
-	
-	/**TAD que almacena una cola de vehículos de una carretera y una situación del semáforo (verde/rojo)*/
-	public static class IncomingRoad
-	{
-		private Road road;
-		private boolean semaforoVerde;
-		private ArrayDeque<Vehicle> cola;
+		String vehiculos = "";
 		
-		public IncomingRoad(Road r){
-			road = r;
-			semaforoVerde = false;
-			cola = new ArrayDeque<>();
-		}
-		public Road getRoadInc(){
-			return road;
-		}
-		public void insert(Vehicle car)
-		{
-			cola.addLast(car);
-		}
-		public String colaCarretera()
-		{
-			String aux = "[";
-			
-			for(Vehicle v: cola)
-			{
-				aux += v.getId() + ",";
-			}
-			if(aux.length()>1){
-				aux = aux.substring(0, aux.length() - 1);
-			}
-			aux += "]";
-			
-			return aux;
-		}
-		public void elimina()					
-		{
-			cola.removeFirst();
-		}
-		public String representaSemaforo()
-		{
-			if(semaforoVerde)	return "green";
-			else				return "red";
-		}
-		public void setSemaforo(Boolean bool)
-		{
-			semaforoVerde = bool;
-		}
+		for(Vehicle v: colas.get(incomingRoadIds.get(index)))
+			vehiculos += v.getId() + ",";
+		
+		if(vehiculos.length() > 0) vehiculos = vehiculos.substring(0, vehiculos.length()-1);	//Eliminamos la ',' final
+		
+		return vehiculos;
 	}
-
 }
