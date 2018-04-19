@@ -10,12 +10,16 @@ public class CrowedJunction extends Junction
 	protected int semaforo;								//Índice dentro de IncomingRoads de la que tiene el semáforo verde
 	protected int numCarreterasEntrantes;				//Número de carreteras que entran a este cruce */
 	private int tiempoConsumido;						//Para controlar el numTicks que lleva en verde el semáforo que permite el paso
-	private int ticksPasaVehiculo;						//Se incrementa solo si el tick con semáforo en verde no ha sido en vano
-	private Map<String, Integer> intervalosVerde;		//Lleva a cada id de carretera entrante el tiempo que su semáforo estará en verde
+	private int limiteDeTiempo;							//Limite de tiempo para esta carretera para este momento.
 	
 	
-	
-	
+	public CrowedJunction(String id)
+	{
+		super(id);
+		tiempoConsumido = 0;
+		limiteDeTiempo = 1;
+	}
+
 	public void avanza()
 	{
 		if(numCarreterasEntrantes > 0) //No es un cruce de solo inicio 
@@ -37,28 +41,51 @@ public class CrowedJunction extends Junction
 	/**Presupone un número de carreteras entrantes no nulo.*/
 	public void inicializaSemaforo()
 	{
-		
+		semaforo = numCarreterasEntrantes-1;
+		tiempoConsumido = 0;
 	}
 	/**Presupone un numero de carreteras entrantes no nulo.*/
 	public void avanzarSemaforo()
 	{
+		tiempoConsumido++;
 		
+		if(tiempoConsumido == limiteDeTiempo)	//Hay que hacer transición
+		{
+			int maximo = -1; int indiceMax = 0;
+			
+			for(int i = 0; i < incomingRoadIds.size(); i++)
+				if(colas.get(incomingRoadIds.get(i)).size() > maximo)
+				{
+					maximo = colas.get(incomingRoadIds.get(i)).size();
+					indiceMax = i;
+				}
+			
+			if(maximo != 0)
+				semaforo = indiceMax;
+			
+			else
+				semaforo = (semaforo+1)%numCarreterasEntrantes;
+			
+			tiempoConsumido = 0;
+			limiteDeTiempo = Math.max(maximo/2, 1);
+			
+		}
 	}
 	@Override
 	public void fillSectionDetails(IniSection s)
 	{
-		s.setValue("type", "rr");
 		s.setValue("queues", colaCruce());
+		s.setValue("type", "mc");
 	}
 	@Override
 	public String colaCruce()
 	{
 		//TAL VEZ SEA SUFICIENTE CON UNA PEQUEÑA MODIFICACION
-		String cola = "";
+		String cola = ""; int aux = (limiteDeTiempo - tiempoConsumido);
 		
 		for(int i = 0; i < incomingRoadIds.size(); i++)
 		{
-			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:1," : "red,") + "[" + vehiculosCola(i) + "]),";
+			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:" + aux  : "red") + ",[" + vehiculosCola(i) + "]),";
 		}
 		
 		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final

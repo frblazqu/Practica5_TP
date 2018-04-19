@@ -1,6 +1,7 @@
 package es.ucm.fdi.model.events;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.objects.CrowedJunction;
 import es.ucm.fdi.model.objects.Junction;
 
 /**
@@ -12,10 +13,15 @@ import es.ucm.fdi.model.objects.Junction;
 public class NewCrowedJunction extends NewJunction
 {
 	
+	public NewCrowedJunction(String id, int time)
+	{
+		super(id, time);
+	}
+
 	@Override
 	protected Junction construyeElemento()
 	{
-		return new Junction(junction_id);
+		return new CrowedJunction(junction_id);
 	}
 	
 	public static class NewCrowedJunctionBuilder extends NewJunction.NewJunctionBuilder
@@ -28,7 +34,7 @@ public class NewCrowedJunction extends NewJunction
 		@Override
 		protected Event leerAtributosEspecificos(IniSection sec)
 		{
-			return new NewJunction(id, time);
+			return new NewCrowedJunction(id, time);
 		}
 
 	}

@@ -16,8 +16,8 @@ public class Path extends Road
 	@Override
 	public void fillSectionDetails(IniSection s)
 	{
-		s.setValue("state", vehiclesInRoad());
 		s.setValue("type", "dirt");
+		s.setValue("state", vehiclesInRoad());
 	}
 	@Override
 	public int velocidadAvance(int numAveriados)

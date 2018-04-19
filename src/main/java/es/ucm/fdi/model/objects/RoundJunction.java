@@ -36,7 +36,7 @@ public class RoundJunction extends Junction
 		if(numCarreterasEntrantes > 0) //No es un cruce de solo inicio 
 		{
 			//Primero controlar que haya alguno en verde, tenga sentido esto
-			if(semaforo == -1) inicializaSemaforo();
+			if(semaforo == -1) 	inicializaSemaforo();
 			
 			//Avanzar el primer vehículo de la cola de la carretera en verde si lo hay
 			
@@ -53,9 +53,9 @@ public class RoundJunction extends Junction
 	/**Presupone un número de carreteras entrantes no nulo.*/
 	public void inicializaSemaforo()
 	{
-		tiempoConsumido = 0;
-		ticksPasaVehiculo = 0;
-		semaforo = 0;		
+		tiempoConsumido = intervalosVerde.get(incomingRoadIds.get(numCarreterasEntrantes - 1)) - 1;
+		ticksPasaVehiculo = 1;
+		semaforo = numCarreterasEntrantes-1;	
 	}
 	/**Presupone un numero de carreteras entrantes no nulo.*/
 	public void avanzarSemaforo()
@@ -99,14 +99,14 @@ public class RoundJunction extends Junction
 	public String colaCruce()
 	{
 		//TAL VEZ SEA SUFICIENTE CON UNA PEQUEÑA MODIFICACION
-		String cola = "";
+		String cola = ""; int aux = intervalosVerde.get(incomingRoadIds.get(semaforo)) - tiempoConsumido;
 		
 		for(int i = 0; i < incomingRoadIds.size(); i++)
 		{
-			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:1," : "red,") + "[" + vehiculosCola(i) + "]),";
+			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:" + aux : "red") + ",[" + vehiculosCola(i) + "]),";
 		}
 		
-		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
+		if(cola.length() > 1) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
 		
 		return cola;
 	}
