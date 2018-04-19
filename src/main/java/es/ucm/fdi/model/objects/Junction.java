@@ -13,8 +13,8 @@ public class Junction extends SimulatedObject
 	protected List<String> incomingRoadIds;				//Ids de las carreteras entrantes, para acceder rápido con el semáforo
 	protected int semaforo;								//Índice dentro de IncomingRoads de la que tiene el semáforo verde
 	protected int numCarreterasEntrantes;				//Número de carreteras que entran a este cruce
-	protected int numVehiculos = 0;
 	
+	//CONSTRUCTORAS
 	public Junction()
 	{
 		super();
@@ -39,39 +39,32 @@ public class Junction extends SimulatedObject
 		{
 			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
 			
-			
-			if(colas.get(incomingRoadIds.get(semaforo))!= null && colas.get(incomingRoadIds.get(semaforo)).size() > 0)
-			{
-				colas.get(incomingRoadIds.get(semaforo)).pop().moverASiguienteCarretera();
-				numVehiculos--;
-			}
+			if(colaEnVerde() != null && colaEnVerde().size() > 0)
+				colaEnVerde().pop().moverASiguienteCarretera();
 			
 			semaforo = (semaforo+1)%numCarreterasEntrantes;
 		}
+	}
+	protected ArrayDeque<Vehicle> colaEnVerde()
+	{
+		return colas.get(incomingRoadIds.get(semaforo));
 	}
 	public void entraVehiculo(Vehicle car)
 	{
 		colas.get(car.actualRoad().getId()).addLast(car);
 		car.setVelocidadActual(0);
-		numVehiculos++;
 	}
 	public void añadirCarreteraEntrante(Road road)
 	{
 		incomingRoadIds.add(road.getId());
 		colas.put(road.getId(), new ArrayDeque<>());
 		numCarreterasEntrantes++;
+		
+		completarAñadirCarretera(road);
 	}
-	
-	//MÉTODOS PARA REPRESENTAR EL ESTADO
-	@Override
-	public void fillReportDetails(Map<String, String> camposValor)
+	protected void completarAñadirCarretera(Road road)
 	{
-		/* Ha caído en desuso! */
-	}
-	@Override
-	public void fillSectionDetails(IniSection s)
-	{
-		s.setValue("queues", colaCruce());
+		;
 	}
 	@Override
 	public String getHeader()
@@ -101,5 +94,17 @@ public class Junction extends SimulatedObject
 		if(vehiculos.length() > 0) vehiculos = vehiculos.substring(0, vehiculos.length()-1);	//Eliminamos la ',' final
 		
 		return vehiculos;
+	}
+	
+	//MÉTODOS QUE SOBREESCRIBIR EN LAS CLASES HIJAS
+	@Override
+	public void fillReportDetails(Map<String, String> camposValor)
+	{
+		/* Ha caído en desuso! */
+	}
+	@Override
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("queues", colaCruce());
 	}
 }

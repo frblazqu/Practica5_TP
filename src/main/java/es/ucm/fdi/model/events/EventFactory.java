@@ -12,10 +12,11 @@ import es.ucm.fdi.ini.IniSection;
 public class EventFactory
 {
 	/**Lista de constructores para todos los posibles eventos contemplados en la simulación.*/
-	private final static EventBuilder[] builder  = {new NewJunction.NewJunctionBuilder(), 	new NewRoad.NewRoadBuilder(), 
+	private final static EventBuilder[] builder  = {new NewJunction.NewJunctionBuilder(), 	new NewRoundJunction.NewRoundJunctionBuilder(),  
 												    new NewVehicle.NewVehicleBuilder(),		new MakeVehicleFaulty.NewVehicleFaulty(),
 												    new NewBike.NewBikeBuilder(),		 	new NewCar.NewCarBuilder(),
-												    new NewPath.NewPathBuilder(), 			new NewFreeway.NewFreewayBuilder()};
+												    new NewPath.NewPathBuilder(), 			new NewFreeway.NewFreewayBuilder(),
+												    new NewRoad.NewRoadBuilder(),			new NewCrowedJunction.NewCrowedJunctionBuilder()};
 	
 	/**
 	 * Dada una sección de tipo IniSection devuelve el evento que representa.
