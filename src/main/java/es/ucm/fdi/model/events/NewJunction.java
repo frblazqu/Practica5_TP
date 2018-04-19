@@ -21,12 +21,11 @@ public class NewJunction extends Event
 	}
 	public void execute(RoadMap map) throws IllegalArgumentException
 	{
-		if(!map.duplicatedId(junction_id)){
+		if(map.duplicatedId(junction_id))
+			throw new IllegalArgumentException("The id " + junction_id + " is already used");
+		
 		Junction junc = new Junction(junction_id);
 		map.addJunction(junc);
-		}else{
-			throw new IllegalArgumentException("The id " + junction_id + " is already used");
-		}
 	}
 	public static class NewJunctionBuilder implements EventBuilder{
 		public Event parse(IniSection sec)	throws IllegalArgumentException{
