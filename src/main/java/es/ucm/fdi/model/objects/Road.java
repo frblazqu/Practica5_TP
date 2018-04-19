@@ -61,11 +61,14 @@ public class Road extends SimulatedObject
 			
 			for(Vehicle v: vehiculos.innerValues())
 			{
-				if(v.averiado())	numAveriados++;
-				else 				v.setVelocidadActual(velocidadAvance(numAveriados));
+				if(v.getLocalizacion() == longitud);
+				else
+				{
+					if(v.averiado())	numAveriados++;
+					else 				v.setVelocidadActual(velocidadAvance(numAveriados));
 				
-				if(v.getLocalizacion() != longitud)
-				v.avanza(mapa);
+					v.avanza(mapa);
+				}
 
 				aux.putValue(v.getLocalizacion(), v);
 			}

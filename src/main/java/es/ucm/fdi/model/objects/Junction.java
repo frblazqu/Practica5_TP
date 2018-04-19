@@ -37,21 +37,22 @@ public class Junction extends SimulatedObject
 	{
 		if(numCarreterasEntrantes > 0)
 		{
-			if(semaforo == -1) semaforo = 0;
+			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
 			
-			//Presupone que el semáforo se ha inicializado ya
+			
 			if(colas.get(incomingRoadIds.get(semaforo))!= null && colas.get(incomingRoadIds.get(semaforo)).size() > 0)
 			{
 				colas.get(incomingRoadIds.get(semaforo)).pop().moverASiguienteCarretera();
 				numVehiculos--;
 			}
-		
+			
 			semaforo = (semaforo+1)%numCarreterasEntrantes;
 		}
 	}
 	public void entraVehiculo(Vehicle car)
 	{
 		colas.get(car.actualRoad().getId()).addLast(car);
+		car.setVelocidadActual(0);
 		numVehiculos++;
 	}
 	public void añadirCarreteraEntrante(Road road)
