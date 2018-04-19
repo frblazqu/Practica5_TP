@@ -15,6 +15,7 @@ public class Junction extends SimulatedObject
 	protected int numCarreterasEntrantes;				//Número de carreteras que entran a este cruce
 	protected int numVehiculos = 0;
 	
+	//CONSTRUCTORAS
 	public Junction()
 	{
 		super();
@@ -38,7 +39,6 @@ public class Junction extends SimulatedObject
 		if(numCarreterasEntrantes > 0)
 		{
 			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
-			
 			
 			if(colas.get(incomingRoadIds.get(semaforo))!= null && colas.get(incomingRoadIds.get(semaforo)).size() > 0)
 			{

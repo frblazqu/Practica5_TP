@@ -117,11 +117,9 @@ public class NewVehicle extends Event
 		{
 			if (!sec.getTag().equals(TAG) || !esDeEsteTipo(sec))
 				return null;
-			else 
-			{			   
+			   
 				leerAtributosComunes(sec);
 		 return leerAtributosEspecificos(sec);
-			}
 		}
 		
 		//MÉTODOS A SOBREESCRIBIR POR LAS CLASES HIJAS
