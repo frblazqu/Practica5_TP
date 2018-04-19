@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.events.Event;
-import es.ucm.fdi.model.objects.Junction;
+import es.ucm.fdi.model.objects.*;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
