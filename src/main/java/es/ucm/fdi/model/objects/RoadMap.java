@@ -20,14 +20,9 @@ public class RoadMap
 	//ATRIBUTOS DE LA CLASE
 	private Map<String, SimulatedObject> simObjects;					//Búsqueda por ids, unicidad
 	private Map<String, List<ConexionCruces>> connectedJunctions;		//Cruces y carreteras que los unen
-
-	private List<Junction> junctions;									//Listados reales
-	private List<Road> roads;
-	private List<Vehicle> vehicles;
-	
-	private List<Junction> junctionsRO;									//Listados read-only, via Collections.unmodifiableList();
-	private List<Road> roadsRO;
-	private List<Vehicle> vehiclesRO;
+	private List<Junction> junctions;									//Listado de cruces
+	private List<Road> roads;											//Listado de carreteras
+	private List<Vehicle> vehicles;										//Listado de vehículos
 	
 	//CONSTRUCTORAS
 	/**Genera un RoadMap contenedor vacío, sin objetos iniciales.*/
@@ -40,32 +35,10 @@ public class RoadMap
 		junctions = new ArrayList<>();
 		roads = new ArrayList<>();
 		vehicles = new ArrayList<>();
-		
-		junctionsRO = Collections.unmodifiableList(junctions);
-		roadsRO =     Collections.unmodifiableList(roads);
-		vehiclesRO =  Collections.unmodifiableList(vehicles);
 	}
 	
-	//MÉTODOS
-	public void addJunction(Junction junc)
-	{
-		simObjects.put(junc.getId(), junc);
-		junctions.add(junc);
-		junctionsRO = Collections.unmodifiableList(junctions);
-	}
-	public void addRoad(Road road)
-	{
-		simObjects.put(road.getId(), road);
-		roads.add(road);
-		roadsRO = Collections.unmodifiableList(roads);
-	}
-	public void addVehicle(Vehicle vehic)
-	{
-		simObjects.put(vehic.getId(), vehic);
-		vehicles.add(vehic);
-		vehiclesRO = Collections.unmodifiableList(vehicles);
-		
-	}
+	//MÉTODOS BUENOS
+	/**It doesn't matter whether the object is an vehicle, junction or a road. This method just adds it to the map.*/
 	public void addObject(SimulatedObject simObject)
 	{
 		simObjects.put(simObject.getId(), simObject);
@@ -73,52 +46,97 @@ public class RoadMap
 		if(simObject instanceof Vehicle)
 		{
 			vehicles.add((Vehicle)simObject);
-			vehiclesRO = Collections.unmodifiableList(vehicles);
 		}
 		else if(simObject instanceof Road)
 		{
 			roads.add((Road)simObject);
-			roadsRO = Collections.unmodifiableList(roads);
 		}
 		else if(simObject instanceof Junction)
 		{
 			junctions.add((Junction)simObject);
-			junctionsRO = Collections.unmodifiableList(junctions);
 		}
 	}
-	public SimulatedObject getSimulatedObject(String id)
-	{
-		return simObjects.get(id);
-	}
-	public Vehicle getVehicle(String id)
-	{
-		return (Vehicle)simObjects.get(id);
-	}
-	public Junction getJunction(String id)
-	{
-		return (Junction)simObjects.get(id);
-	}
-	public Road getRoad(String id)
-	{
-		return (Road)simObjects.get(id);
-	}
-	public List<Road> getRoads()
-	{
-		return roadsRO;
-	}
-	public List<Junction> getJunctions()
-	{
-		return junctionsRO;
-	}
-	public List<Vehicle> getVehicles()
-	{
-		return vehiclesRO;
-	}
+	/**Method to check whether an Id is already in the map or not.
+	 * 
+	 * @return true if the key is already used.
+	 * 		   False in other case.
+	 */
 	public boolean duplicatedId(String id)
 	{
 		return simObjects.containsKey(id);
 	}
+	/**
+	 * Method to access to the roads of the simulation.
+	 * 
+	 * @return All the roads stored in the simulation.
+	 */
+	public List<Road> getRoads()
+	{
+		return Collections.unmodifiableList(roads);
+	}
+	/**
+	 * Method to access to the Junction of the simulation.
+	 * 
+	 * @return All the junctions stored in the simulation.
+	 */
+	public List<Junction> getJunctions()
+	{
+		return Collections.unmodifiableList(junctions);
+	}
+	/**
+	 * Method to access to the vehicles of the simulation.
+	 * 
+	 * @return All the vehicles stored in the simulation.
+	 */
+	public List<Vehicle> getVehicles()
+	{
+		return Collections.unmodifiableList(vehicles);
+	}
+	/** Adds a junction to the map.*/
+	public void addJunction(Junction junc)
+	{
+		simObjects.put(junc.getId(), junc);
+		junctions.add(junc);
+	}
+	/** Adds a road to the map.*/
+	public void addRoad(Road road)
+	{
+		simObjects.put(road.getId(), road);
+		roads.add(road);
+	}
+	/** Adds a vehicle to the map.*/
+	public void addVehicle(Vehicle vehic)
+	{
+		simObjects.put(vehic.getId(), vehic);
+		vehicles.add(vehic);		
+	}
+	/**As an usual map does, this returns the mapped object or null if there is no vehicle in the map with that id.*/
+	public Vehicle getVehicle(String id)
+	{
+		if(simObjects.get(id) instanceof Vehicle)
+			return (Vehicle)simObjects.get(id);
+		else
+			return null;
+	}
+	/**As an usual map does, this returns the mapped object or null if there is no Junction in the map with that id.*/
+	public Junction getJunction(String id)
+	{
+		if(simObjects.get(id) instanceof Junction)
+			return (Junction)simObjects.get(id);
+		else
+			return null;
+	}
+	/**As an usual map does, this returns the mapped object or null if there is no Road in the map with that id.*/
+	public Road getRoad(String id)
+	{
+		if(simObjects.get(id) instanceof Road)
+			return (Road)simObjects.get(id);
+		else
+			return null;
+	}
 	
+	
+	//MÉTODOS COMPLICADOS	
 	public Road getRoad(String junctionIniId, String junctionFinId) throws IllegalArgumentException
 	{
 		if(connectedJunctions.containsKey(junctionIniId)){
@@ -134,6 +152,20 @@ public class RoadMap
 		else
 			throw new IllegalArgumentException("El cruce " + junctionIniId + " no existe o no está comunicado");
 	}
+	public boolean validJuctionsForRoad(String idIni, String idDest)
+	{
+		if(getJunction(idIni) != null && getJunction(idDest)!= null)
+			return true;
+		
+		else if(getJunction(idIni) == null)
+			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idIni);
+		
+		else
+			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idDest);
+	}
+	public Map<String, List<ConexionCruces>> getConectionMap(){
+		return connectedJunctions;
+	}
 	public Junction getJunctionDest(Road r){
 		for(String s: connectedJunctions.keySet()){
 			for(ConexionCruces c: connectedJunctions.get(s)){
@@ -144,20 +176,7 @@ public class RoadMap
 		}
 		return null;
 	}
-	public boolean validJuctionsForRoad(String idIni, String idDest){
-		if(simObjects.containsKey(idIni) && simObjects.containsKey(idDest)){
-			return true;
-		}
-		else if(!simObjects.containsKey(idIni)){
-			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idIni);
-		}
-		else{
-			throw new IllegalArgumentException("The map doesn´t contain a junction with the id " + idDest);
-		}
-	}
-	public Map<String, List<ConexionCruces>> getConectionMap(){
-		return connectedJunctions;
-	}
+	
 	//Par junction con carretera entrante
 	public static class ConexionCruces{
 		String idDest;

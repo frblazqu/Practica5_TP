@@ -6,16 +6,48 @@ import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewCar extends NewVehicle{
-	public static class NewCarBuilder implements EventBuilder
+	public static class NewCarBuilder extends NewVehicle.NewVehicleBuilder
 	{
-
+	//	ATRIBUTOS
+	//	protected final String TAG = "new_vehicle";
+	//	protected int time;
+	//	protected String id;
+	//	protected int mSpeed;
+	//	protected String[] it;
+		
+		/**
+		 * Método que indica si estamos (dentro de los vehículos) en la instancia adecuada para generar a
+		 * partir de esta seccion.
+		 * 
+		 * @param sec Sección formato IniSection por parsear.
+		 * @return true Si la sección se corresponde con un evento NewCar.
+		 */
 		@Override
-		public Event parse(IniSection sec)
+		protected boolean esDeEsteTipo(IniSection sec)
 		{
-			// TODO Auto-generated method stub
-			return null;
+			return sec.getValue("type").equals("car");
 		}
-
+		/**
+		 * Debe terminar de parsear la sección IniSection con los atributos necesarios para generar un nuevo
+		 * evento de la instancia que estemos considerando y devolver este.
+		 * 
+		 * @param sec La sección formato IniSection que estamos parseando.
+		 * @return El evento representado por la sección.
+		 */
+		protected Event leerAtributosEspecificos(IniSection sec)
+		{
+			int resist 	 = EventBuilder.parseIntValue(sec.getValue("resistance"));
+			double fProb = EventBuilder.parseDoubleValue(sec.getValue("fault_probability"));
+			int mFDur	 = EventBuilder.parseIntValue(sec.getValue("max_fault_duration"));
+			
+			if(sec.getValue("seed") != null)
+			{
+				long seed = Long.parseLong(sec.getValue("seed"));
+				return new NewCar(resist, fProb, mFDur, seed, time, id, mSpeed, it);
+			}
+			else
+				return new NewCar(resist, fProb, mFDur, time, id, mSpeed, it);
+		}
 	}
 	private int resistance;
 	private double fault_probability;

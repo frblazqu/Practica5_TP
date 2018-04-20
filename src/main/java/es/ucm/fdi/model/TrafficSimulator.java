@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.events.Event;
-import es.ucm.fdi.model.objects.Junction;
+import es.ucm.fdi.model.objects.*;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
@@ -12,10 +12,10 @@ import es.ucm.fdi.util.MultiTreeMap;
 
 /**
  * Clase encargada del propio simulador de tráfico. 
- * */
+ */
 public class TrafficSimulator
 {
-	//ARGUMENTOS POR DEFECTO
+	//ATRIBUTOS POR DEFECTO
 	private static final int DEFAULT_SET_TIME = 0;
 	
 	//ATRIBUTOS
@@ -43,8 +43,10 @@ public class TrafficSimulator
 	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el estado 
 	 * de los objetos de la simulación y se escriben los informes generados en este paso.
 	 * 
-	 * @throws IOException */
-	public void ejecuta(int numTicks, OutputStream out) throws IOException, IllegalArgumentException
+	 * @throws IllegalStateException Si no se consigue ejecutar correctamente un evento o no se puede escribir el informe
+	 * de un paso de la simulación por el flujo de salida.
+	  */
+	public void ejecuta(int numTicks, OutputStream out)
 	{
 		try{
 			for(int i = 0; i<numTicks; ++i){
@@ -68,9 +70,10 @@ public class TrafficSimulator
 				// 5. esciribir un informe en OutputStream
 				generaInforme(out);
 			}
-		}
-		catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("Something is wrong with one of the events", e);
+		} catch(IllegalArgumentException e){
+			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
+		} catch(IOException e) {
+			throw new IllegalStateException("No se pudo escribir el informe generado en el tiempo " + reloj + " ticks.", e);
 		}
 
 	}
@@ -104,7 +107,7 @@ public class TrafficSimulator
 		}
 		catch(IOException e)
 		{
-			throw new IOException("Almacenando el report del tiempo "+ reloj + "\n" + e.getMessage());
+			throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n" + e.getMessage());
 		}
 	}
 	

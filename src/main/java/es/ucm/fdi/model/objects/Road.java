@@ -31,9 +31,10 @@ public class Road extends SimulatedObject
 	}
  	/**Constructora usual, genera una carretera vacía con la ordenación de vehículos por distancia al origen decreciente y
  	 * vacía de vehículos.*/
-	public Road(String id, int maxSpeed, int size, RoadMap map)
+	public Road(String id, int maxSpeed, int size, Junction junc)
 	{
 		super(id, ObjectType.ROAD);
+		cruceFin = junc;
 		maxVelocidad = maxSpeed;
 		longitud = size;
 		vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> a - b);					
@@ -51,35 +52,35 @@ public class Road extends SimulatedObject
 	}
 	
 	//MÉTODOS
-	public void avanza(RoadMap mapa)																
+	public void avanza(RoadMap mapa)															
 	{
 		if(vehiculos.sizeOfValues() > 0)
 		{
 			MultiTreeMap<Integer,Vehicle> aux = new MultiTreeMap<>(new MayorAMenor()); 
-			int velocidadBase = Math.min(maxVelocidad, ((int)(maxVelocidad/vehiculos.sizeOfValues()))+1);
 			int numAveriados = 0;
 			
-			//Esto no va a funcionar bien porque si un vehículo tiene a otro averiado en la misma localización en la carretera
-			//NO debería tener el factor de reducción.
 			for(Vehicle v: vehiculos.innerValues())
 			{
-				//Ajustamos la velocidad
-				if(v.averiado())	numAveriados++;
-				else if(numAveriados == 0)
-					v.setVelocidadActual(velocidadBase);
+				if(v.getLocalizacion() == longitud);
 				else
-					v.setVelocidadActual(velocidadBase/2);
-				
-				//Avanzamos y si no cambia de carretera lo insertamos en el nuevo Mtm
-				v.avanza(mapa);
-				
-				if(v.getLocalizacion() != this.longitud)
 				{
-					aux.putValue(v.getLocalizacion(), v);
+					if(v.averiado())	numAveriados++;
+					else 				v.setVelocidadActual(velocidadAvance(numAveriados));
+				
+					v.avanza(mapa);
 				}
+
+				aux.putValue(v.getLocalizacion(), v);
 			}
 			vehiculos = aux;
 		}
+	}
+	public int velocidadAvance(int numAveriados)
+	{
+		int velocidadBase = Math.min(maxVelocidad, ((int)(maxVelocidad/vehiculos.sizeOfValues()))+1);
+		
+		if(numAveriados == 0)	return velocidadBase;
+		else 					return velocidadBase/2;
 	}
 	/** Introduce un vehículo en la carretera. Siempre al comienzo de esta.	 */
 	public void entraVehiculo(Vehicle vehicle)								
@@ -92,18 +93,21 @@ public class Road extends SimulatedObject
 		return vehiculos.removeValue(longitud, vehicle);
 	}
 	public int getLongitud() 		{return longitud;}
-	public MultiTreeMap<Integer, Vehicle> getVehicles(){
-		return vehiculos;
+	public Junction getJunctionFin()
+	{
+		return cruceFin;
 	}
 	public void fillReportDetails(Map<String, String> camposValor)						
 	{
 		camposValor.put("state", vehiclesInRoad());
 	}
-	public String vehiclesInRoad(){
+	protected String vehiclesInRoad(){
 		String aux = "";
 		
-		for(Vehicle v: vehiculos.innerValues()){
-			aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
+		for(Vehicle v: vehiculos.innerValues())
+		{
+			if(v != null)
+				aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
 		}
 		
 		if(aux.length() != 0){
@@ -123,9 +127,9 @@ public class Road extends SimulatedObject
 	private class MayorAMenor implements Comparator<Integer>							
 	{
 		public int compare(Integer arg0, Integer arg1)
-		{																				//Debe devolver:
-			return arg1 - arg0;															//Negativo si arg0 < arg1
-																						//Positivo si arg0 > arg1
+		{												//Debe devolver:
+			return arg1 - arg0;							//Negativo si arg0 < arg1
+														//Positivo si arg0 > arg1
 		}
 	}
 }

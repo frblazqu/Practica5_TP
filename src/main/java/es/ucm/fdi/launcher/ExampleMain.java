@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import es.ucm.fdi.control.Controller;
 import es.ucm.fdi.ini.Ini;
-
+import es.ucm.fdi.model.exceptions.SimulationFailedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -53,7 +53,7 @@ public class ExampleMain {
 	 * maven? Dudas para el bueno de ManuFreire. 
 	 */
 	public static void parseArgs(String[] args) {
-		//SI HAY ALGÚN ERROR DE PARSEO HACE QUE TODo TERMINE (VER CATCH FINAL)
+		//SI HAY ALGÚN ERROR DE PARSEO HACE QUE TODO TERMINE (VER CATCH FINAL)
 		
 		// define the valid command line options
 		Options cmdLineOptions = buildOptions();
@@ -91,12 +91,6 @@ public class ExampleMain {
 		}
 
 	}
-	/**
-	 * DUDAS:
-	 * 
-	 * Lo mismo que antes, ¿Dónde se ha sacado de la manga la clase Options?
-	 * 
-	 */
 	private static Options buildOptions() 
 	{
 		Options cmdLineOptions = new Options();
@@ -194,21 +188,45 @@ public class ExampleMain {
 	 * repositorio.
 	 * 
 	 */
-	private static void test(String inFile, String outFile, String expectedOutFile, int timeLimit) throws IOException {
+	private static void test(String inFile, String outFile, String expectedOutFile, int timeLimit) throws IOException 
+	{
+		//Parámetros para el controlador que vamos a crear
 		_outFile = outFile;
 		_inFile = inFile;
 		_timeLimit = timeLimit;
-		startBatchMode();
-		boolean equalOutput = (new Ini(_outFile)).equals(new Ini(expectedOutFile));
-		System.out.println("Result for: '" + _inFile + "' : "
-				+ (equalOutput ? "OK!" : ("not equal to expected output +'" + expectedOutFile + "'")));
+		
+		try 
+		{ 
+			//Ejecutamos la simulación
+			startBatchMode();
+			
+			//Comparamos la salida generada y la esperada
+			boolean equalOutput = (new Ini(_outFile)).equals(new Ini(expectedOutFile));
+			
+			//Mostramos el resultado obtenido
+			System.out.println("Result for: '" + _inFile.substring(_inFile.lastIndexOf('\\') + 1)  + "':\n" +
+			"-> " + (equalOutput ? "OK!" : ("FAIL! :(")));
+		
+		} 
+		catch(SimulationFailedException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		catch(Exception e) 
+		{
+			//Si está aquí no es por startBatchMode, ha fallado la comparación o en especial 
+			//_inFile.substring(_inFile.lastIndexOf('\\') + 1)  (ver última línea del try)
+			
+			System.out.println("\nHa ocurrido un error comprobando la corrección de la simulación:\n");
+			e.printStackTrace();			
+		}
 	}
 	/**
-	 * Run the simulator in batch mode
+	 * Run the simulator in batch mode.
 	 * 
-	 * @throws IOException
+	 * @throws SimulationFailedException If the simulation ended abruptly to notice the cause.
 	 */
-	private static void startBatchMode() throws IOException
+	private static void startBatchMode() throws SimulationFailedException
 	{
 		try
 		{
@@ -216,16 +234,16 @@ public class ExampleMain {
 			controller.leerDatosSimulacion();
 			controller.run();
 		}
-		catch(FileNotFoundException e)
+		catch(Exception e)
 		{
-			System.out.println("La ruta introducida no es válida:");
-			System.out.println(e.getMessage());
-		}
-		catch(IllegalArgumentException e)
-		{
-			System.out.println("Something went wrong whith the simulation:\n");
 			e.printStackTrace();
-			System.exit(1);
+			throw new SimulationFailedException(_inFile, _outFile, _timeLimit, e);
+			
+			/*
+			 * Construye una excepción en la que pone:
+			 * 		Mira con estos parámetros no hemos podido ejecutar la simulación.
+			 * 		El motivo ha sido este: y pinta el mensaje de la excepción.
+			 */
 		}
 	}
 	/**
@@ -234,9 +252,15 @@ public class ExampleMain {
 	 * @throws IllegalArgumentException Si no se parsean correctamente estos argumentos.
 	 * @throws IOException Si no se pueden leer los eventos en la ruta especificada.
 	 */
-	private static void start(String[] args) throws IOException, IllegalArgumentException {
-		parseArgs(args);
-		startBatchMode();
+	private static void start(String[] args) {
+		try	{
+			parseArgs(args);
+			startBatchMode();
+		} catch (SimulationFailedException e){
+			e.printStackTrace();
+		} catch(Exception e) {
+			System.err.println("Se ha producido un fallo durante el parseo de argumentos de entrada:\n" + args);
+		}
 	}
 	
 	public static void main(String[] args) throws IOException, InvocationTargetException, InterruptedException 
@@ -256,7 +280,7 @@ public class ExampleMain {
 		test(DEFAULT_READ_DIRECTORY + "examples/advanced/");
 
 		// Call start to start the simulator from command line, etc.
-		//start(args);
+		// start(args);
 	}
 
 	//MÉTODOS QUE SOLO DEBEN SER USADOS PARA EL TESTEO

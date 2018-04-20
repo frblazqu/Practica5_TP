@@ -12,6 +12,7 @@ public class Car extends Vehicle{
 	private long seed;
 	private Random numAleatorio;
 	
+	//CONSTRUCTORAS
 	//Constructora con Seed
 	public Car(int res, double fProb, int mFDur, long s, String id, int maxSpeed, String[] trayecto, RoadMap map){
 		super(id, maxSpeed, trayecto, map);
@@ -36,6 +37,7 @@ public class Car extends Vehicle{
 	{
 		super();
 	}
+	
 	public int tiempoAveria(){
 		return numAleatorio.nextInt(max_fault_duration) + 1;
 	}
@@ -43,7 +45,7 @@ public class Car extends Vehicle{
 		return numAleatorio.nextDouble();
 	}
 	public void avanza(RoadMap map){
-		int aux = this.getKilometrage();
+		int aux = kilometrage;
 		if(!this.averiado() && kmSinceLastFaulty>resistance && posibleProbAveria() < fault_probability){
 			this.setTiempoAveria(tiempoAveria());
 			kmSinceLastFaulty = 0;
@@ -54,21 +56,17 @@ public class Car extends Vehicle{
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
 		camposValor.put("type", "car");
-		camposValor.put("speed", Integer.toString(this.getVelActual()));
-		camposValor.put("kilometrage", Integer.toString(this.getKilometrage()));
-		camposValor.put("faulty", Integer.toString(this.getTiempoAveria()));
-		if(this.getEnDestino()){
-			camposValor.put("location", "arrived");
-		}else{
-		camposValor.put("location", "(" + this.getItinerario().get(this.getIndIti()).getId() + "," + Integer.toString(this.getLocalizacion())  + ")");		
-		}
+		camposValor.put("speed", Integer.toString(velActual));
+		camposValor.put("kilometrage", Integer.toString(kilometrage));
+		camposValor.put("faulty", Integer.toString(tiempoAveria));
+		camposValor.put("location", localizacionString());
 	}
 	public void fillSectionDetails(IniSection s)
 	{
 		s.setValue("type", "car");
-		s.setValue("speed", this.getVelActual());
-		s.setValue("kilometrage", this.getKilometrage());
-		s.setValue("faulty", this.getTiempoAveria());
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
 		s.setValue("location", localizacionString());
 	}	
 }
