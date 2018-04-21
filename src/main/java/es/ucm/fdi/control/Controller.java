@@ -45,7 +45,7 @@ public class Controller
 	 * @param saveFilePath	localización del fichero de escritura de informes
 	 * @param numTicks		duración de la simulación a ejecutar
 	 * 
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException Si la ruta de entrada o salida de datos que se ha introducido no es alcanzable.
 	 */
 	public Controller(String loadFilePath, String saveFilePath, int numTicks) throws FileNotFoundException 
 	{
@@ -53,6 +53,8 @@ public class Controller
 		outputStream = new FileOutputStream(new File(saveFilePath));
 		simulador = new TrafficSimulator();
 		ticksSimulacion = numTicks;
+		
+		//Dejamos que lance excepción libremente si se diera el caso (la controlamos en startBatchMode)
 	}
 	/**
 	 * Crea un nuevo simulador con entrada de eventos, flujo de salida y duración de la simulación por defecto.
@@ -83,6 +85,7 @@ public class Controller
 	//MÉTODOS
 	/**
 	 *Lee el fichero .ini del flujo de entrada y parsea cada una de sus secciones en eventos que inserta en el simulador.
+	 *Dejamos que se lancen las excepciones sin ser modificadas para que lleguen a donde se crea el objeto controller.
 	 * 
 	 * @throws IOException Si no se consigue leer correctamente el fichero de entrada.
 	 * @throws IllegalArgumentException Si alguna sección no se consigue parsear bien.
@@ -93,30 +96,13 @@ public class Controller
 		Ini ini = new Ini(inputStream);
 		
 		//Parseamos uno a uno los eventos de las secciones
-		try
-		{
-			Event evento;
-			
-			for(IniSection s: ini.getSections())
-			{
-				evento = EventFactory.buildEvent(s);
-				simulador.insertaEvento(evento);	
-			}
-				
-		}
-		catch(IllegalArgumentException e)
-		{
-			throw new IllegalArgumentException("Something went wrong with the ini file:\n\n" + ini.toString(), e);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Excepción inesperada!!");
-			System.out.println(e.getMessage());
-			System.out.println(e.getLocalizedMessage());
-			e.printStackTrace();
-		}
+		Event evento;
 		
-		//Recordamos que en getEvento(s) se lanza una IllegalArgumentException si no se puede parsear alguna sección.
+		for(IniSection s: ini.getSections())
+		{
+			evento = EventFactory.buildEvent(s); //throw IllegalArgumentException()
+			simulador.insertaEvento(evento);	
+		}
 	}
 	/**
 	 * Ejecuta la simulación.
@@ -125,17 +111,9 @@ public class Controller
 	 * @throws IOException si hay problemas de escritura de reports de la simulación.
 	 * @throws IllegalArgumentException si algún parámetro de la simulación no es válido.
 	 * */
-	public void run() 
+	public void run()
 	{
-		try{
-		simulador.ejecuta(ticksSimulacion, outputStream);	
-		}
-		catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("Something went wrong while executing the simulation", e);
-		}
-		catch(IOException e){
-			//???
-		}
+		simulador.ejecuta(ticksSimulacion, outputStream);
 	}
 }
 

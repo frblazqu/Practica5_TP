@@ -1,9 +1,8 @@
 package es.ucm.fdi.model.objects;
 
-//A currar a partir de aquí!
-
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
@@ -17,14 +16,14 @@ import es.ucm.fdi.ini.IniSection;
 public class Vehicle extends SimulatedObject
 {
 	//ATRIBUTOS
-	private ArrayList<Road> itinerario;						//Carreteras que forman el itinerario del vehículo.
-	private int indiceItinerario;							//itinerario(indiceItinerario) debe ser siempre la carretera actual.
-	private int localizacion;								//Distancia recorrida en la carretera actual.
-	private int kilometrage;								//Distancia total recorrida por el vehículo.
-	private int velActual;									//Velocidad actual del vehículo (debe estar siempre actualizada!!).
-	private int velMaxima;									//Velocidad máxima de un determinado vehículo.
-	private int tiempoAveria;								//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
-	private boolean enDestino;								//True si y sólo si el vehículo está al final de la última carretera de itinerario.
+	protected ArrayList<Road> itinerario;		//Carreteras que forman el itinerario del vehículo.
+	protected int indiceItinerario;				//itinerario(indiceItinerario) debe ser siempre la carretera actual.
+	protected int localizacion;					//Distancia recorrida en la carretera actual.
+	protected int kilometrage;					//Distancia total recorrida por el vehículo.
+	protected int velActual;					//Velocidad actual del vehículo (debe estar siempre actualizada!!).
+	protected int velMaxima;					//Velocidad máxima de un determinado vehículo.
+	protected int tiempoAveria;					//Ticks restantes hasta que el vehículo pueda seguir su itinerario.
+	protected boolean enDestino;				//True si y sólo si el vehículo está al final de la última carretera de itinerario.
 	
 	//CONSTRUCTORAS
 	/**
@@ -47,7 +46,8 @@ public class Vehicle extends SimulatedObject
 	 * vehículo con estos datos. El itinerario se completará con las carreteras que unen dos índices consecutivos del trayecto y
 	 * se lanzará una excepción si esta o uno de los cruces no existen.
 	 * 
-	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo.
+	 * @param id El identificador del vehículo que vamos a crear.
+	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo. 
 	 */
 	public Vehicle(String id, int maxSpeed, String[] trayecto, RoadMap map)
 	{
@@ -66,6 +66,25 @@ public class Vehicle extends SimulatedObject
 		localizacion = 0;
 		enDestino = false;		//Salvo caso patolóooogico muy patológico.
 		velMaxima = maxSpeed;
+	}
+	/**
+	 * Constructora usual, genera un nuevo vehículo con un itinerario concreto. ADVERTENCIA! no incorpora el vehículo a su
+	 * primera carretera.
+	 */
+	public Vehicle(String id, int maxSpeed, List<Road> trayecto)
+	{
+		super(id, ObjectType.VEHICLE);
+		
+		itinerario = (ArrayList<Road>) trayecto;
+		indiceItinerario = 0;
+		kilometrage = 0;
+		velActual = 0;
+		tiempoAveria = 0;
+		localizacion = 0;
+		enDestino = false;
+		velMaxima = maxSpeed;
+		
+		actualRoad().entraVehiculo(this);
 	}
 	/**
 	 * Método realizado para facilitar el testeo de la funcionalidad. No debe ser usado.
@@ -94,53 +113,44 @@ public class Vehicle extends SimulatedObject
 	 */
 	public void avanza(RoadMap map)
 	{
-		if(tiempoAveria > 0) 
-		{	
-			--tiempoAveria;
-		} 
+		if(tiempoAveria > 0)  --tiempoAveria; 	//No avanza si está averiado
 		else 
 		{
-			//itinerario.get(indiceItinerario).getLongitud() 	~ longitud de la carretera actual
-			//itinerario.get(indiceItinerario).getJunctionFin() ~ cruce en el que termina la carretera actual
+			//itinerario.get(indiceItinerario) ~ carretera actual ~ acualRoad()
 			
 			//1. Hacemos que propiamente avance en la carretera actual
 			int aux = localizacion;
 			localizacion += velActual;
 			
-			//2. Si ha llegado al final de la carretera se introduce en el cruce de final de carretera
-			if(localizacion >= itinerario.get(indiceItinerario).getLongitud())
+			//2. Si ha llegado al final de la carretera espera en el cruce 
+			if(localizacion >= actualRoad().getLongitud())
 			{
-				localizacion = itinerario.get(indiceItinerario).getLongitud();
-				map.getJunctionDest(actualRoad()).entraVehiculo(this);
+				localizacion = actualRoad().getLongitud();
 				velActual = 0;
+				actualRoad().getJunctionFin().entraVehiculo(this);
 			}
 			
 			//La distancia recorrida en la carretera se suma a la distancia recorrida en total
 			kilometrage += localizacion - aux;
 		}
 	}
-	/**Permite realizar un cambio de carretera del vehículo, mueve este a su siguiente carretera determinada en el itinerario. En
+	/**
+	 * Permite realizar un cambio de carretera del vehículo, mueve este a su siguiente carretera determinada en el itinerario. En
 	 * el caso de que se llegue al final se marca el vehículo como situado en destino. Con la disposición actual del código está 
-	 * pensada para ser llamada desde un cruce del que después se eliminará el vehículo. (donde este está esperando)*/
+	 * pensada para ser llamada desde un cruce del que después se eliminará el vehículo (donde este está esperando).
+	 */
 	public void moverASiguienteCarretera()
 	{
-		//OJO! Por cómo lo hemos hecho no esta preparado para ser llamado nada más crear el vehículo, la constructora se encarga
-		//de ponerlo en la primera carretera en su posición.
+		velActual = 0;	localizacion = 0;
+		actualRoad().saleVehiculo(this);
+		
 		if(indiceItinerario + 1 < itinerario.size())
 		{
-			//Esto es solo si vamos a tener el vehículo en la carretera y el cruce a la vez.
-			//itinerario.get(indiceItinerario).saleVehiculo(this);
-			
-			localizacion = 0;
-			velActual = 0;
 			++indiceItinerario;
-			itinerario.get(indiceItinerario).entraVehiculo(this);
+			actualRoad().entraVehiculo(this);
 		}
 		else
-		{
 			enDestino = true;
-			//itinerario.get(indiceItinerario).saleVehiculo(this);
-		}
 	}
 	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/
 	public Road actualRoad()
@@ -181,6 +191,23 @@ public class Vehicle extends SimulatedObject
 	}
 	/**Devuelve la distancia al origen de la carretera actual del vehículo.*/
 	public int getLocalizacion() { return localizacion;}
+	public void fillSectionDetails(IniSection s)
+	{
+		s.setValue("speed", velActual);
+		s.setValue("kilometrage", kilometrage);
+		s.setValue("faulty", tiempoAveria);
+		s.setValue("location", localizacionString());
+	}	
+	protected String localizacionString()
+	{
+		if(enDestino)	return  "arrived";
+		else			return "(" + actualRoad().getId() + "," + localizacion  + ")";				
+	}
+	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
+	public String getHeader()
+	{
+		return "vehicle_report";
+	}
 	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
@@ -193,50 +220,5 @@ public class Vehicle extends SimulatedObject
 		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
 		}
 	}
-	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
-	public String getHeader()
-	{
-		return "vehicle_report";
-	}
-	public int getVelActual(){
-		return velActual;
-	}
-	public int getVelMax(){
-		return velMaxima;
-	}
-	public boolean getEnDestino(){
-		return enDestino;
-	}
-	public ArrayList<Road> getItinerario(){
-		return itinerario;
-	}
-	public int getIndIti(){
-		return indiceItinerario;
-	}
-	public int getTiempoAveria(){
-		return tiempoAveria;
-	}
-	public int getKilometrage()
-	{
-		return kilometrage;
-	}
-	public void fillSectionDetails(IniSection s)
-	{
-		s.setValue("speed", velActual);
-		s.setValue("kilometrage", kilometrage);
-		s.setValue("faulty", tiempoAveria);
-		s.setValue("location", localizacionString());
-	}	
-	public String localizacionString()
-	{
-		if(enDestino)
-		{
-			return  "arrived";
-		}
-		else
-		{
-			return "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")";		
-		}
-		
-	}
+
 }

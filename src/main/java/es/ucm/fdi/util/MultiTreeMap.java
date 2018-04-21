@@ -38,16 +38,20 @@ public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
      *              element that is equals to this one will be removed.
      * @return true if removed, false if not found
      */
-    public boolean removeValue(K key, V value) {
-        if ( ! containsKey(key)) {
-            return false;
+    public boolean removeValue(K key, V value) 
+    {
+        if ( ! containsKey(key)) 
+        	return false;
+        else
+        {
+        	boolean eliminado = get(key).remove(value);
+        	
+        	if(get(key).size() == 0)
+        		this.remove(key);
+        	
+        	return eliminado;
         }
-        ArrayList<V> bucket = get(key);
-        boolean removed = bucket.remove(value);
-        if (bucket.isEmpty()) {
-            remove(key);
-        }
-        return removed;
+        	
     }
 
     /**

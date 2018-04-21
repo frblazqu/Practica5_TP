@@ -12,10 +12,11 @@ import es.ucm.fdi.ini.IniSection;
 public class EventFactory
 {
 	/**Lista de constructores para todos los posibles eventos contemplados en la simulación.*/
-	private final static EventBuilder[] builder  = {new NewJunction.NewJunctionBuilder(), 	new NewRoad.NewRoadBuilder(), 
+	private final static EventBuilder[] builder  = {new NewJunction.NewJunctionBuilder(), 	new NewRoundJunction.NewRoundJunctionBuilder(),  
 												    new NewVehicle.NewVehicleBuilder(),		new MakeVehicleFaulty.NewVehicleFaulty(),
 												    new NewBike.NewBikeBuilder(),		 	new NewCar.NewCarBuilder(),
-												    new NewPath.NewPathBuilder(), 			new NewFreeway.NewFreewayBuilder()};
+												    new NewPath.NewPathBuilder(), 			new NewFreeway.NewFreewayBuilder(),
+												    new NewRoad.NewRoadBuilder(),			new NewCrowedJunction.NewCrowedJunctionBuilder()};
 	
 	/**
 	 * Dada una sección de tipo IniSection devuelve el evento que representa.
@@ -23,25 +24,21 @@ public class EventFactory
 	 * @param s	Sección a parsear.
 	 * @throws IllegalArgumentException Si no se consigue parsear la sección o se produce un error parseando esta. 
 	 */
-	public static Event buildEvent(IniSection s)
+	public static Event buildEvent(IniSection s) throws IllegalArgumentException
 	{
 		Event event;
-		try
+		
+		for(EventBuilder e: builder)
 		{
-			for(EventBuilder e: builder)
-			{
-				//Parsea el evento con el correspondiente builder
-				event = e.parse(s);
-			
-				//Si se consigue parsear correctamente lo devuelve
-				if(event != null)
-					return event;
-			}
+			//Parsea el evento con el correspondiente builder (puede lanzar IllegalArgumentException)
+			event = e.parse(s);
+		
+			//Si se consigue parsear correctamente lo devuelve
+			if(event != null)
+				return event;
 		}
-		catch(IllegalArgumentException e){
-			throw new IllegalArgumentException("There was an error while parsing the iniSection:\n\n" + s.toString(), e);
-		}
+		
 		//Si llega aquí es porque no ha podido parsear esta sección correctamente
-		throw new IllegalArgumentException(new Throwable("No se ha podido parsear la sección:\n" + s.toString()));
+		throw new IllegalArgumentException("No se ha podido parsear la sección:\n" + s.toString());
 	}
 }

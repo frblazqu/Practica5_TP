@@ -2,16 +2,23 @@ package es.ucm.fdi.model.events;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.ini.*;
 
+/**
+ * Clase encargada de encapsular toda la información y funcionalidad relativa al evento del simulador de añadir
+ * un nuevo cruce simple, incluyendo la propia construccción de este tipo de eventos.
+ * 
+ * @author Francisco Javier Blázquez
+ */
 public class NewJunction extends Event
 {
-	String junction_id;
-	
-	public NewJunction(){
+	protected String junction_id;
+
+	//CONSTRUCTORAS
+	public NewJunction()
+	{
 		junction_id = null;
 	}
 	public NewJunction(String junctionId, int time)
@@ -19,41 +26,66 @@ public class NewJunction extends Event
 		super(time, EventType.NEW_JUNCTION);
 		junction_id = junctionId;
 	}
+	
+	//MÉTODOS PUBLICOS Y GENERALES
 	public void execute(RoadMap map) throws IllegalArgumentException
 	{
-		if(!map.duplicatedId(junction_id)){
-		Junction junc = new Junction(junction_id);
-		map.addJunction(junc);
-		}else{
+		if (map.duplicatedId(junction_id))
 			throw new IllegalArgumentException("The id " + junction_id + " is already used");
-		}
+
+		Junction junc = construyeElemento();
+		map.addJunction(junc);
 	}
-	public static class NewJunctionBuilder implements EventBuilder{
-		public Event parse(IniSection sec)	throws IllegalArgumentException{
-			if(!sec.getTag().equals("new_junction")){
-				return null;
-			}else{
-				int tm	= EventBuilder.parseTime(sec.getValue("time"));
-				try{
-					String id = EventBuilder.parseId(sec.getValue("id"));
-					return new NewJunction(id, tm);
-				}
-				catch(IllegalArgumentException e){
-					throw new IllegalArgumentException("There was something wrong with one of the atributes.", e);
-				}
-			}
-		}
-	}
+
 	@Override
 	public String getTag()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "new_junction";
 	}
+
 	@Override
 	public void fillSectionDetails(IniSection s)
 	{
-		// TODO Auto-generated method stub
+		/* Ha caido en desuso */
+	}
+
+	//MÉTODOS QUE DEBEN SOBREESCRIBIR LAS CLASES HIJAS
+	protected Junction construyeElemento()
+	{
+		return new Junction(junction_id);
+	}
+	
+	//BUILDER
+	public static class NewJunctionBuilder implements EventBuilder
+	{	
+		//ATRIBUTOS DE JUNCTION, COMUNES A TODOS LOS CRUCES
+		protected final String TAG = "new_junction";
+		protected int time;
+		protected String id;
 		
+		//MÉTODO GENERAL PARA CONSTRUIR TODOS LOS CRUCES
+		public Event parse(IniSection sec) throws IllegalArgumentException
+		{
+			if (!sec.getTag().equals(TAG) || !esDeEsteTipo(sec))
+				return null;
+	
+				   leerAtributosComunes(sec);
+			return leerAtributosEspecificos(sec);
+		}
+		public void leerAtributosComunes(IniSection sec)
+		{
+			time = EventBuilder.parseTime(sec.getValue("time"));
+			id   = EventBuilder.parseId(sec.getValue("id"));
+		}
+		
+		//MÉTODOS QUE DEBEN SER SOBREESCRITOS PARA LOS DEMÁS CRUCES
+		protected boolean esDeEsteTipo(IniSection sec)
+		{
+			return sec.getValue("type") == null;
+		}
+		protected Event leerAtributosEspecificos(IniSection sec)
+		{
+			return new NewJunction(id, time);
+		}
 	}
 }
