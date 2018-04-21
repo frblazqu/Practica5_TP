@@ -2,6 +2,7 @@ package es.ucm.fdi.model.objects;
 
 import java.util.Comparator;
 import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.util.MultiTreeMap;;
 
@@ -132,4 +133,18 @@ public class Road extends SimulatedObject
 														//Positivo si arg0 > arg1
 		}
 	}
-}
+	
+	public class DescribableRoad implements Describable {
+
+		@Override
+		public void describe(Map<String, String> out) {
+			out.put("ID", getId());
+			//out.put("Source", );			Método para obtener junctions
+			out.put("Target", cruceFin.getId());
+			out.put("Lenght", Integer.toString(longitud));
+			out.put("Max Speed", Integer.toString(maxVelocidad));
+			out.put("Vehicles", vehiclesInRoad());
+		}
+		
+	}
+ }

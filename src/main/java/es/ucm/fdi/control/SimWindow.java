@@ -16,7 +16,7 @@ import javax.swing.*;
 
 import es.ucm.fdi.extra.texteditor.TextEditor;
 
-//Prueba
+
 public class SimWindow extends JFrame {
 	
 	TextEditor eventsArea;

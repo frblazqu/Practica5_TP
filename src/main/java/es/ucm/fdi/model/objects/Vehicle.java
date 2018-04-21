@@ -4,6 +4,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
 
 /**
@@ -219,6 +220,27 @@ public class Vehicle extends SimulatedObject
 		}else{
 		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
 		}
+	}
+	
+	public String itineraryDesc() {
+		String aux = "";
+		aux += "[";
+		for()
+	}
+	
+	public class DescribableVehicle implements Describable {
+
+		@Override
+		public void describe(Map<String, String> out) {
+			out.put("ID", getId());
+			out.put("Road", actualRoad().getId());
+			out.put("Location", Integer.toString(localizacion));
+			out.put("Speed", Integer.toString(velActual));
+			out.put("Km", Integer.toString(kilometrage));
+			out.put("Faulty units", Integer.toString(tiempoAveria));
+			out.put("Itinerary", itinerario.toString());
+		}
+		
 	}
 
 }
