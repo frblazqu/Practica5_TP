@@ -19,7 +19,7 @@ import javax.swing.border.Border;
 
 import es.ucm.fdi.control.SimulatorAction;
 
-public class TextEditor extends JScrollPane {
+public class TextEditor extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -34,8 +34,7 @@ public class TextEditor extends JScrollPane {
 	boolean editable;
 	
 	public TextEditor(String n, boolean e, JFileChooser f){
-		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		super(new BorderLayout());
 		name = n;
 		editable = e;
 		fc = f;
@@ -43,7 +42,7 @@ public class TextEditor extends JScrollPane {
 	}
 	
 	private void initGUI(){
-		setPreferredSize(new Dimension(300, 200));
+		this.setPreferredSize(new Dimension(300, 200));
 		
 		textArea = new JTextArea("");
 		textArea.setEnabled(editable);
@@ -102,7 +101,8 @@ public class TextEditor extends JScrollPane {
 		
 		}
 		
-		this.setViewportView(textArea);
+		JScrollPane scroll = new JScrollPane(textArea);
+		this.add(scroll);
 	}
 
 	private void saveFile() {

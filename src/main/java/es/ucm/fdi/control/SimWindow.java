@@ -10,11 +10,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.*;
 
+import es.ucm.fdi.extra.tablecomponent.ComponentTable;
 import es.ucm.fdi.extra.texteditor.TextEditor;
+import es.ucm.fdi.model.objects.SimulatedObject.Describable;
 
 
 public class SimWindow extends JFrame {
@@ -24,6 +28,10 @@ public class SimWindow extends JFrame {
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane topSplit;
+	ComponentTable vehiclesTable;
+	ComponentTable roadsTable;
+	ComponentTable junctionsTable;
+	
 	
 	public SimWindow() {
 		super("Traffic Simulator");
@@ -31,7 +39,8 @@ public class SimWindow extends JFrame {
 		
 		fc = new JFileChooser();
 		
-		addPanels();
+		addLowerPanel();
+		addUpperPanel();
 		addBars();
 		
 		setSize(1000, 1000);
@@ -106,15 +115,10 @@ public class SimWindow extends JFrame {
 	}
 	
 	//Establece el layout básico de la práctica
-	public void addPanels() {
+	public void addUpperPanel() {
 		
 		JPanel upperPanel = new JPanel(new GridLayout(1, 3));
 		
-		JPanel graphPanel = new JPanel();
-		
-		JPanel tablePanel = new JPanel(new GridLayout(3, 1));
-		
-		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
 		topSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
 		
 		add(topSplit);
@@ -122,16 +126,34 @@ public class SimWindow extends JFrame {
 		eventsArea = new TextEditor("Events", true, fc);
 		TextEditor events1 = new TextEditor("Events Queue", false, fc);
 		reportsArea = new TextEditor("Reports", false, fc);
-		TextEditor events3 = new TextEditor("Events", false, fc);
-		TextEditor events4 = new TextEditor("Events", false, fc);
-		TextEditor events5 = new TextEditor("Events", false, fc);
-		tablePanel.add(events3);
-		tablePanel.add(events4);
-		tablePanel.add(events5);
+
 		upperPanel.add(eventsArea);
 		upperPanel.add(events1);
 		upperPanel.add(reportsArea);
 	
+	}
+	
+	public void addLowerPanel() {
+		
+		JPanel graphPanel = new JPanel();
+		JPanel tablePanel = new JPanel(new GridLayout(3, 1));
+		
+		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
+		
+		String[] vehicDescrib = {"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"};
+		String[] roadDescrib = {"ID", "Source", "Target", "Lenght", "Max Speed", "Vehicles"};
+		String[] junctDescrib = {"ID", "Green", "Red"};
+		
+		//Lista vacía (luego se pondría la lista de simObject respectiva)
+		List<Describable> l = new ArrayList<>();		
+		vehiclesTable = new ComponentTable(vehicDescrib, l, "Vehicles");
+		roadsTable = new ComponentTable(roadDescrib, l, "Roads");
+		junctionsTable = new ComponentTable(junctDescrib, l, "Junctions");
+		
+		tablePanel.add(vehiclesTable);
+		tablePanel.add(roadsTable);
+		tablePanel.add(junctionsTable);
+		
 	}
 	
 	private void loadFile(TextEditor text) {

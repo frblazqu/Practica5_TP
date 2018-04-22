@@ -222,10 +222,9 @@ public class Vehicle extends SimulatedObject
 		}
 	}
 	
+	//Arreglar (falta método para que dada una carretera obtener las junctions)
 	public String itineraryDesc() {
-		String aux = "";
-		aux += "[";
-		for()
+		return "";
 	}
 	
 	public class DescribableVehicle implements Describable {
