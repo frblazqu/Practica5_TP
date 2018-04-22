@@ -60,10 +60,12 @@ public class SimWindow extends JFrame {
 				"Load Events", "open.png", "Cargar eventos",
 				KeyEvent.VK_L, "control L",
 				()-> loadFile(eventsArea));
+		
 		SimulatorAction guardar = new SimulatorAction(
 				"Save Events", "save.png", "Guardar cosas",
 				KeyEvent.VK_S, "control S", 
 				()-> saveFile(eventsArea));
+		
 		SimulatorAction clear = new SimulatorAction(
 				"Clear Events", "clear.png", "Borrar eventos",
 				KeyEvent.VK_B, "control B",
@@ -75,7 +77,7 @@ public class SimWindow extends JFrame {
 				()-> System.out.println("Insertando..."));
 		
 		SimulatorAction executeSim = new SimulatorAction(
-				"Execute Sim", "play.png", "Ejecutar simulador",
+				"Run", "play.png", "Ejecutar simulador",
 				KeyEvent.VK_E, "control E",
 				()-> System.out.println("Ejecutando..."));
 		
@@ -84,10 +86,33 @@ public class SimWindow extends JFrame {
 				KeyEvent.VK_R, "control R",
 				()-> System.out.println("Reiniciando..."));
 		
+		SimulatorAction report = new SimulatorAction(
+				"Generate", "report.png", "Genera reports",
+				KeyEvent.VK_G, "control G",
+				()-> System.out.println("Generando..."));
+		
+		SimulatorAction clearReport = new SimulatorAction(
+				"Clear", "delete_report.png", "Borra reports",
+				KeyEvent.VK_D, "control D",
+				()-> reportsArea.setText(""));
+		
+		SimulatorAction saveReport = new SimulatorAction(
+				"Save Report", "save_report.png", "Guarda reports",
+				KeyEvent.VK_S, "control S",
+				()-> System.out.println("Guardando..."));
+		
 		SimulatorAction salir = new SimulatorAction(
 				"Exit", "exit.png", "Salir de la aplicacion",
 				KeyEvent.VK_A, "control shift X", 
 				()-> System.exit(0));
+		
+		JLabel steps = new JLabel(" Steps: ");
+		JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 1000, 1));
+		
+		JLabel time = new JLabel(" Time: ");
+		JTextField timeText = new JTextField("0");	
+		timeText.setPreferredSize(new Dimension(75, 10));
+		timeText.setEnabled(false);
 		
 		// add actions to toolbar, and bar to window.
 		JToolBar bar = new JToolBar();
@@ -97,6 +122,13 @@ public class SimWindow extends JFrame {
 		bar.add(insertEvents);
 		bar.add(executeSim);
 		bar.add(restartSim);
+		bar.add(steps);
+		bar.add(stepSpinner);
+		bar.add(time);
+		bar.add(timeText);
+		bar.add(report);
+		bar.add(clearReport);
+		bar.add(saveReport);
 		bar.add(salir);
 		add(bar, BorderLayout.NORTH);
 
@@ -105,12 +137,21 @@ public class SimWindow extends JFrame {
 		file.add(cargar);
 		file.add(guardar);
 		file.addSeparator();
-		file.add(salir);		
+		file.add(salir);	
+		
 		JMenu simulator = new JMenu("Simulator");
+		simulator.add(executeSim);
+		simulator.add(restartSim);
+		
+		JMenu reports = new JMenu("Reports");
+		reports.add(report);
+		reports.add(clearReport);
+		
 		//añadir acciones de simulator
 		JMenuBar menu = new JMenuBar();
 		menu.add(file);
 		menu.add(simulator);
+		menu.add(reports);
 		setJMenuBar(menu);
 	}
 	

@@ -43,6 +43,7 @@ public class SimulatorAction extends AbstractAction {
         this.callback = callback;
     }
     
+    // Constructora sin icono
     public SimulatorAction(Object name,
                            String tooltip, Integer mnemonic,
                            Runnable callback) {
