@@ -222,22 +222,22 @@ public class Vehicle extends SimulatedObject
 		}
 	}
 	
-	//Arreglar (falta método para que dada una carretera obtener las junctions)
-	public String itineraryDesc() {
-		return "";
-	}
-	
 	public class DescribableVehicle implements Describable {
 
 		@Override
 		public void describe(Map<String, String> out) {
 			out.put("ID", getId());
 			out.put("Road", actualRoad().getId());
-			out.put("Location", Integer.toString(localizacion));
-			out.put("Speed", Integer.toString(velActual));
-			out.put("Km", Integer.toString(kilometrage));
-			out.put("Faulty units", Integer.toString(tiempoAveria));
-			out.put("Itinerary", itinerario.toString());
+			out.put("Location", "" + localizacion);
+			out.put("Speed", "" + velActual);
+			out.put("Km", "" + kilometrage);
+			out.put("Faulty units", "" + tiempoAveria);
+			out.put("Itinerary", itineraryDesc());
+		}
+		
+		//Arreglar (falta método para que dada una carretera obtener las junctions)
+		private String itineraryDesc() {
+			return "";
 		}
 		
 	}

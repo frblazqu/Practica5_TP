@@ -31,7 +31,7 @@ public class SimWindow extends JFrame {
 	ComponentTable vehiclesTable;
 	ComponentTable roadsTable;
 	ComponentTable junctionsTable;
-	
+	ComponentTable eventsQueue;
 	
 	public SimWindow() {
 		super("Traffic Simulator");
@@ -165,11 +165,14 @@ public class SimWindow extends JFrame {
 		add(topSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
-		TextEditor events1 = new TextEditor("Events Queue", false, fc);
 		reportsArea = new TextEditor("Reports", false, fc);
-
+		
+		List<Describable> l = new ArrayList<>();
+		String[] eventsDescrib = {"#", "Time", "Type"};
+		eventsQueue = new ComponentTable(eventsDescrib, l, "Events Queue");
+		
 		upperPanel.add(eventsArea);
-		upperPanel.add(events1);
+		upperPanel.add(eventsQueue);
 		upperPanel.add(reportsArea);
 	
 	}

@@ -141,9 +141,25 @@ public class Road extends SimulatedObject
 			out.put("ID", getId());
 			//out.put("Source", );			Método para obtener junctions
 			out.put("Target", cruceFin.getId());
-			out.put("Lenght", Integer.toString(longitud));
-			out.put("Max Speed", Integer.toString(maxVelocidad));
-			out.put("Vehicles", vehiclesInRoad());
+			out.put("Lenght", "" + longitud);
+			out.put("Max Speed", "" + maxVelocidad);
+			out.put("Vehicles", vehiclesInRoadDesc());
+		}
+		
+		private String vehiclesInRoadDesc(){
+			String aux = "";
+			
+			for(Vehicle v: vehiculos.innerValues())
+			{
+				if(v != null)
+					aux += '[' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "],";
+			}
+			
+			if(aux.length() != 0){
+				aux = aux.substring(0, aux.length() - 1);
+			}
+				
+			return aux;
 		}
 		
 	}
