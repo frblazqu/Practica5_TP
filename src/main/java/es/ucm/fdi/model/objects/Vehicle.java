@@ -235,9 +235,15 @@ public class Vehicle extends SimulatedObject
 			out.put("Itinerary", itineraryDesc());
 		}
 		
-		//Arreglar (falta método para que dada una carretera obtener las junctions)
 		private String itineraryDesc() {
-			return "";
+			String aux = "";
+			aux += '[' + itinerario.get(0).cruceIniId;
+			for(Road r: itinerario) {
+				aux += ',' + r.cruceFin.getId();
+			}
+			aux += ']';
+			
+			return aux;
 		}
 		
 	}

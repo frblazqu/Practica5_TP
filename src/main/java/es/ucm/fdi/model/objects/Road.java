@@ -19,6 +19,7 @@ public class Road extends SimulatedObject
 	protected int longitud;									//Longitud de la carretera
 	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
 	protected Junction cruceFin;							//Cruce en el que termina la carretera
+	protected String cruceIniId;							//Id del cruce del que parte la carretera
 	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
@@ -32,10 +33,11 @@ public class Road extends SimulatedObject
 	}
  	/**Constructora usual, genera una carretera vacía con la ordenación de vehículos por distancia al origen decreciente y
  	 * vacía de vehículos.*/
-	public Road(String id, int maxSpeed, int size, Junction junc)
+	public Road(String id, int maxSpeed, int size, Junction junc, String ini)
 	{
 		super(id, ObjectType.ROAD);
 		cruceFin = junc;
+		cruceIniId = ini;
 		maxVelocidad = maxSpeed;
 		longitud = size;
 		vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> a - b);					
@@ -139,7 +141,7 @@ public class Road extends SimulatedObject
 		@Override
 		public void describe(Map<String, String> out) {
 			out.put("ID", getId());
-			//out.put("Source", );			Método para obtener junctions
+			out.put("Source", cruceIniId);			
 			out.put("Target", cruceFin.getId());
 			out.put("Lenght", "" + longitud);
 			out.put("Max Speed", "" + maxVelocidad);
