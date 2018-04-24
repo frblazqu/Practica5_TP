@@ -107,7 +107,7 @@ public class TrafficSimulator
 		}
 		catch(IOException e)
 		{
-			throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n" + e.getMessage());
+			throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n", e);
 		}
 	}
 	

@@ -14,9 +14,5 @@ public class SimulatedObjectTest
 	public void escribeInformeTest1() throws IOException
 	{
 		Vehicle car = new Vehicle();
-		
-		OutputStream out = new FileOutputStream(new File("src/main/resources/writeStr/out.ini"));
-		
-		car.escribeInforme(out, 15);
 	}
 }
