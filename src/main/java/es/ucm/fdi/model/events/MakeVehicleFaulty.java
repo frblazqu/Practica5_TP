@@ -1,7 +1,10 @@
 package es.ucm.fdi.model.events;
 
+import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.model.objects.SimulatedObject.Describable;
 
 public class MakeVehicleFaulty extends Event
 {
@@ -64,4 +67,28 @@ public class MakeVehicleFaulty extends Event
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public class DescribableVehicleFaulty implements Describable {
+
+		@Override
+		public void describe(Map<String, String> out) {
+			out.put("#", "");
+			out.put("Time", "" + getTime());
+			out.put("Type", "Break Vehicles " + vehiclesForFaultyDesc());
+		}
+		
+		private String vehiclesForFaultyDesc() {
+			
+			String aux = "";
+			aux += "[";
+			for(int i = 0; i < vehicleId.length; ++i) {
+				aux += vehicleId[i] + ",";
+			}
+			aux = aux.substring(0, aux.length()-1);
+			aux += "]";
+			
+			return aux;
+		}
+	}
+	
 }

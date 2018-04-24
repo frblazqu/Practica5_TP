@@ -9,9 +9,9 @@ public class Freeway extends Road
 	
 	//CONSTRUCTORAS
 	public Freeway() { super();	}
-	public Freeway(String id, int maxSpeed, int size, int lanes, Junction junc)
+	public Freeway(String id, int maxSpeed, int size, int lanes, Junction junc, String ini)
 	{
-		super(id, maxSpeed, size, junc);			
+		super(id, maxSpeed, size, junc, ini);			
 		this.lanes = lanes;
 	}
 	

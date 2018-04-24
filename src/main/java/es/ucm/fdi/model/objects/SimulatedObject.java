@@ -76,4 +76,13 @@ public abstract class SimulatedObject
 	public abstract String getHeader();
 	/**Completa los aspectos únicos de cada informe. Específico para cada objeto.*/
 	public abstract void fillSectionDetails(IniSection s);
+	
+	public interface Describable {
+		/**
+		* @param out - a map to fill in with key- value pairs
+		* @return the passed- in map, with all fields filled out.
+		*/
+		void describe(Map<String, String> out);
+
+	}
 }

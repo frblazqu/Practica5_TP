@@ -49,7 +49,7 @@ public class NewRoad extends Event
 				Junction junc = map.getJunction(junctionDestId);
 				
 				//Creamos la carretera, la añadimos al mapa y como entrante al cruce de destino
-				Road road = new Road(road_id, maxSpeed, length, junc);
+				Road road = new Road(road_id, maxSpeed, length, junc, junctionIniId);
 				map.addRoad(road);
 				junc.añadirCarreteraEntrante(road);
 				ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
