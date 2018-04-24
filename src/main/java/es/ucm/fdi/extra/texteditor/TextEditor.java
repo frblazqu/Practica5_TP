@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,7 +17,9 @@ import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class TextEditor extends JPanel implements ActionListener{
+import es.ucm.fdi.control.SimulatorAction;
+
+public class TextEditor extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -23,45 +28,81 @@ public class TextEditor extends JPanel implements ActionListener{
 	private final String CLEAR = "clear";
 	private final String QUIT = "quit";
 
-	private JFileChooser fc;
+	private JFileChooser fc;			
 	private JTextArea textArea;
 	String name;
 	boolean editable;
 	
-	public TextEditor(String n, boolean e){
-		super();
+	public TextEditor(String n, boolean e, JFileChooser f){
+		super(new BorderLayout());
 		name = n;
 		editable = e;
+		fc = f;
 		initGUI();
 	}
 	
 	private void initGUI(){
+		this.setPreferredSize(new Dimension(300, 200));
+		
 		textArea = new JTextArea("");
-		textArea.setEditable(editable);
+		textArea.setEnabled(editable);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
-		add(textArea);
-		
-		JScrollPane area = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		area.setPreferredSize(new Dimension(300, 200));
-		add(area);
 		
 		Border b = BorderFactory.createLineBorder(Color.black, 2);
-		area.setBorder(BorderFactory.createTitledBorder(b, name));
+		textArea.setBorder(BorderFactory.createTitledBorder(b, name));
 		
-		fc = new JFileChooser();
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		if (LOAD.equals(e.getActionCommand()))
-			loadFile();
-		else if (SAVE.equals(e.getActionCommand()))
-			saveFile();
-		else if (CLEAR.equals(e.getActionCommand()))
-			textArea.setText("");
-		else if (QUIT.equals(e.getActionCommand()))
-			System.exit(0);
+		if(editable) {
+			JPopupMenu optionsPopup = new JPopupMenu();
+		
+			SimulatorAction loadOption = new SimulatorAction("Load", "Cargar eventos",
+					KeyEvent.VK_L, ()-> loadFile());
+		
+			SimulatorAction saveOption = new SimulatorAction("Save", "Guardar eventos",
+					KeyEvent.VK_S, ()-> saveFile());
+
+			SimulatorAction clearOption = new SimulatorAction("Clear", "Vaciar eventos",
+					KeyEvent.VK_B, ()-> textArea.setText(""));
+		
+			optionsPopup.add(loadOption);
+			optionsPopup.add(saveOption);
+			optionsPopup.add(clearOption);
+		
+			textArea.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					showPopup(e);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					showPopup(e);
+				}
+
+				private void showPopup(MouseEvent e) {
+					if (e.isPopupTrigger() && optionsPopup.isEnabled()) {
+						optionsPopup.show(e.getComponent(), e.getX(), e.getY());
+					}
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+		
+		}
+		
+		JScrollPane scroll = new JScrollPane(textArea);
+		this.add(scroll);
 	}
 
 	private void saveFile() {
@@ -104,5 +145,9 @@ public class TextEditor extends JPanel implements ActionListener{
 	
 	public void setText(String s){
 		textArea.setText(s);
+	}
+	
+	public String getText(){
+		return textArea.getText();
 	}
 }

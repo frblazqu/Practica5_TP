@@ -42,6 +42,16 @@ public class SimulatorAction extends AbstractAction {
         putValue(Action.SMALL_ICON, new ImageIcon(small));
         this.callback = callback;
     }
+    
+    // Constructora sin icono
+    public SimulatorAction(Object name,
+                           String tooltip, Integer mnemonic,
+                           Runnable callback) {
+    	super(""+name);
+        putValue(Action.SHORT_DESCRIPTION, tooltip);
+        putValue(Action.MNEMONIC_KEY, mnemonic);
+        this.callback = callback;
+    }
 
     // adapted from https://stackoverflow.com/a/35637914/15472
     private static BufferedImage scaleImage(BufferedImage original, int w, int h) {
