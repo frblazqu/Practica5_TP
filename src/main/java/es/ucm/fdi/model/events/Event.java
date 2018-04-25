@@ -61,7 +61,6 @@ public abstract class Event implements Describable
 	public abstract void fillSectionDetails(IniSection s);
 	
 	public void describe(Map<String, String> out) {
-		out.put("#", "");
 		out.put("Time", "" + time);
 	}
 }

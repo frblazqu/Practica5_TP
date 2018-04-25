@@ -79,6 +79,10 @@ public class Controller
 		this(loadFilePath, saveFilePath, DEFAULT_TICKS);
 	}
 	
+	public Controller(String loadFilePath, int numTicks) {
+		this(loadFilePath, null, numTicks);
+	}
+	
 	//MÉTODOS
 	/**
 	 *Lee el fichero .ini del flujo de entrada y parsea cada una de sus secciones en eventos que inserta en el simulador.
