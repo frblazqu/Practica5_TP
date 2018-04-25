@@ -120,6 +120,14 @@ public class Controller
 	{
 		return inputStream;
 	}
+	public OutputStream getOutputStream()
+	{
+		return outputStream;
+	}
+	public void setOutputStream(OutputStream flujoEscritura)
+	{
+		outputStream = flujoEscritura;
+	}
 }
 
 

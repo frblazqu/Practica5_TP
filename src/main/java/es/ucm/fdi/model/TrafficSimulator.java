@@ -86,7 +86,8 @@ public class TrafficSimulator
 				fireUpdateEvent(EventType.ADVANCED, null);
 
 				// 5. esciribir un informe en OutputStream
-				generaInforme(out);
+				if(out != null)
+					generaInforme(out);
 			}
 		} catch (IllegalArgumentException e)
 		{

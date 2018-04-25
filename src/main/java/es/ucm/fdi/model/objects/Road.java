@@ -1,6 +1,7 @@
 package es.ucm.fdi.model.objects;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
@@ -20,7 +21,7 @@ public class Road extends SimulatedObject
 	protected int longitud;									//Longitud de la carretera
 	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
 	protected Junction cruceFin;							//Cruce en el que termina la carretera
-	protected String cruceIniId;							//Id del cruce del que parte la carretera
+	protected Junction cruceIni;							//Id del cruce del que parte la carretera
 	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
@@ -34,11 +35,11 @@ public class Road extends SimulatedObject
 	}
  	/**Constructora usual, genera una carretera vacía con la ordenación de vehículos por distancia al origen decreciente y
  	 * vacía de vehículos.*/
-	public Road(String id, int maxSpeed, int size, Junction junc, String ini)
+	public Road(String id, int maxSpeed, int size, Junction junc, Junction ini)
 	{
 		super(id, ObjectType.ROAD);
 		cruceFin = junc;
-		cruceIniId = ini;
+		cruceIni = ini;
 		maxVelocidad = maxSpeed;
 		longitud = size;
 		vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> a - b);					
@@ -128,6 +129,10 @@ public class Road extends SimulatedObject
 	{
 		return "road_report";
 	}
+	public Junction getJunctionIni()
+	{
+		return cruceIni;
+	}
 	private class MayorAMenor implements Comparator<Integer>							
 	{
 		public int compare(Integer arg0, Integer arg1)
@@ -139,13 +144,16 @@ public class Road extends SimulatedObject
 	
 	public void describe(Map<String, String> out) {
 		super.describe(out);;
-		out.put("Source", cruceIniId);			
+		out.put("Source", cruceIni.getId());			
 		out.put("Target", cruceFin.getId());
 		out.put("Lenght", "" + longitud);
 		out.put("Max Speed", "" + maxVelocidad);
 		out.put("Vehicles", vehiclesInRoadDesc());
 	}
-		
+	public List<Vehicle> vehicles()
+	{
+		return vehiculos.valuesList();
+	}
 	private String vehiclesInRoadDesc(){
 		String aux = "";
 			
@@ -161,5 +169,5 @@ public class Road extends SimulatedObject
 				
 		return aux;
 	}
-		
+	
  }
