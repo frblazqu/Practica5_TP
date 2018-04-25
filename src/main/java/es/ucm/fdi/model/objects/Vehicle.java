@@ -236,7 +236,7 @@ public class Vehicle extends SimulatedObject implements Describable
 		
 	private String itineraryDesc() {
 		String aux = "";
-		aux += '[' + itinerario.get(0).cruceIniId;
+		aux += '[' + itinerario.get(0).getJunctionIni().getId();
 		for(Road r: itinerario) {
 			aux += ',' + r.cruceFin.getId();
 		}

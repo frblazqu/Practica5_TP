@@ -43,7 +43,8 @@ public class NewPath extends NewRoad
 				if (map.validJuctionsForRoad(junctionIniId, junctionDestId))
 				{
 					Junction junc = map.getJunction(junctionDestId);
-					Road road = new Path(road_id, maxSpeed, length, junc, junctionIniId);
+					Junction ini = map.getJunction(junctionIniId);
+					Road road = new Path(road_id, maxSpeed, length, junc, ini);
 					map.addRoad(road);
 					junc.añadirCarreteraEntrante(road);
 					ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);

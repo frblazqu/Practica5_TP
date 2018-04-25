@@ -1,23 +1,33 @@
 package es.ucm.fdi.control;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
+import es.ucm.fdi.extra.graphlayout.Dot;
+import es.ucm.fdi.extra.graphlayout.Edge;
+import es.ucm.fdi.extra.graphlayout.Graph;
+import es.ucm.fdi.extra.graphlayout.GraphComponent;
+import es.ucm.fdi.extra.graphlayout.Node;
 import es.ucm.fdi.extra.tablecomponent.ComponentTable;
 import es.ucm.fdi.extra.texteditor.TextEditor;
 import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 import es.ucm.fdi.model.events.Event;
+import es.ucm.fdi.model.objects.Junction;
+import es.ucm.fdi.model.objects.Road;
+import es.ucm.fdi.model.objects.Vehicle;
 
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
@@ -26,8 +36,11 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
-	JSplitPane topSplit;
+	JSplitPane mainPanel;
 	
+	JLabel statusBarReport;
+	JPanel graphPanel;
+	GraphComponent graphComp;
 	TextEditor eventsArea;
 	TextEditor reportsArea;
 	ComponentTable eventsQueue;
@@ -48,13 +61,15 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		addUpperPanel();
 		addBars();
 		
-		setSize(1000, 1000);
+		add(mainPanel);
 		
 		pack();
 		setVisible(true);
 		
-		topSplit.setDividerLocation(.3);
-		bottomSplit.setDividerLocation(.5);
+		mainPanel.setDividerLocation(.3);	//30% de espacio al panel superior
+		mainPanel.setResizeWeight(.3);		//A pesar de que cambiemos la ventana
+		bottomSplit.setDividerLocation(.5);	//50% de espacio para tablas en el panel inferior
+		bottomSplit.setResizeWeight(0.5);	//A pesar de que cambiemos la ventana
 		
 		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
 		control.simulador().addSimulatorListener(this);
@@ -121,6 +136,14 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 				KeyEvent.VK_A, "control shift X", 
 				()-> System.exit(0));
 		
+		JCheckBoxMenuItem redirectOutput = new JCheckBoxMenuItem("Redirect output");
+		redirectOutput.addActionListener((e)-> {
+			if(control.getOutputStream() == null)
+				control.setOutputStream(reportsArea.flujoEscritura());
+			else
+				control.setOutputStream(null);
+		});
+		
 		JLabel steps = new JLabel(" Steps: ");
 		JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 1000, 1));
 		
@@ -157,6 +180,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		JMenu simulator = new JMenu("Simulator");
 		simulator.add(executeSim);
 		simulator.add(restartSim);
+		simulator.add(redirectOutput);
 		
 		JMenu reports = new JMenu("Reports");
 		reports.add(report);
@@ -168,6 +192,20 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		menu.add(simulator);
 		menu.add(reports);
 		setJMenuBar(menu);
+		
+		//añadir statusBar al final
+		JPanel statusBar = new JPanel();
+		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));		//Aparentemente más bajo, efecto visual.
+		statusBar.setPreferredSize(new Dimension(this.getWidth(), 25)); //Ajustamos dimensiones
+		statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));//Boxlayout en el eje x. Los pone a continuación
+		add(statusBar, BorderLayout.SOUTH);
+		
+		JLabel statusLabel = new JLabel("Status: ");					//Etiqueta con en la izquierda
+		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		statusBar.add(statusLabel);
+		
+		statusBarReport = new JLabel("");
+		statusBar.add(statusBarReport);
 	}
 	/**
 	 * Inicializa el panel superior con los paneles de eventos y de informes. 
@@ -176,9 +214,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		
 		JPanel upperPanel = new JPanel(new GridLayout(1, 3));
 		
-		topSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
-		
-		add(topSplit);
+		mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
 		eventsArea.setText(TextEditor.readFile(new File(INPUT_FILE)));
@@ -197,25 +233,49 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	 */
 	public void addLowerPanel() {
 		
-		JPanel graphPanel = new JPanel();
 		JPanel tablePanel = new JPanel(new GridLayout(3, 1));
-		
-		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
-		
 		String[] vehicDescrib = {"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"};
 		String[] roadDescrib  = {"ID", "Source", "Target", "Lenght", "Max Speed", "Vehicles"};
 		String[] junctDescrib = {"ID", "Green", "Red"};
 		
 		//Lista vacía (luego se pondría la lista de simObject respectiva)
 		List<Describable> l = new ArrayList<>();		
-		vehiclesTable = new ComponentTable(vehicDescrib, l, "Vehicles");
-		roadsTable = new ComponentTable(roadDescrib, l, "Roads");
+		vehiclesTable  = new ComponentTable(vehicDescrib, l, "Vehicles");
+		roadsTable     = new ComponentTable(roadDescrib, l, "Roads");
 		junctionsTable = new ComponentTable(junctDescrib, l, "Junctions");
 		
 		tablePanel.add(vehiclesTable);
 		tablePanel.add(roadsTable);
 		tablePanel.add(junctionsTable);
+	
+		graphComp = new GraphComponent();
+		graphComp.setPreferredSize(new Dimension (400,600));
 		
+		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphComp);
+	}
+	
+	public void generateGraph(UpdateEvent ue)
+	{
+		Graph g = new Graph();		
+		
+		Map<Junction, Node> js = new HashMap<>();
+		for (Junction j : ue.getRoadMap().getJunctions()) 
+		{
+			Node n = new Node(j.getId());
+			js.put(j, n); // <-- para convertir Junction a Node en aristas
+			g.addNode(n);
+		}
+		for (Road r : ue.getRoadMap().getRoads()) 
+		{				
+			Edge e = new Edge(r.getId(), js.get(r.getJunctionIni()), js.get(r.getJunctionFin()), r.getLongitud());
+			
+			for(Vehicle v: r.vehicles())
+				e.addDot(new Dot(v.getId(), v.getLocalizacion()));			
+			
+			g.addEdge(e);
+		}
+		
+		graphComp.setGraph(g);
 	}
 	
 	/* MAIN */
@@ -237,6 +297,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void registered(UpdateEvent ue)
 	{
+    
 		List<Describable> v = (List<Describable>)(List) ue.getRoadMap().getVehicles();
 		List<Describable> r = (List<Describable>)(List) ue.getRoadMap().getRoads();
 		List<Describable> j = (List<Describable>)(List) ue.getRoadMap().getJunctions();
