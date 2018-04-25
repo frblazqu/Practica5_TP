@@ -94,7 +94,6 @@ public class TrafficSimulator
 			fireUpdateEvent(EventType.ERROR, "No se pudo ejecutar un evento en el tiempo " + reloj + " ticks:\n" + e.getMessage());
 			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
 		}
-
 	}
 	/**
 	 * Escribe en el flujo de salida un informe de la situación de todos los objetos en el instante de la llamada.
