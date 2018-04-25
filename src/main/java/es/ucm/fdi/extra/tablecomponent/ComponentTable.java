@@ -72,6 +72,16 @@ public class ComponentTable extends JPanel{
 		this.add(scroll);
 	}
 	
+	public void addElement(Describable d) {
+		elements.add(d);
+		elementsTable.updateTable();
+	}
+	
+	public void pop(){
+		elements.remove(0);
+		elementsTable.updateTable();
+	}
+	
 	public void updateTable(List<Describable> desc) {
 		elements = desc;
 		elementsTable.updateTable();

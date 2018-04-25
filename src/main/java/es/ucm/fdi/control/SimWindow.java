@@ -17,11 +17,12 @@ import es.ucm.fdi.extra.texteditor.TextEditor;
 import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
+import es.ucm.fdi.model.events.Event;
 
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
+	private final static String INPUT_FILE = "C:/Users/Usuario/git/Practica5_TP/src/main/resources/readStr/examples/basic/"
 										   + "00_helloWorld.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
@@ -244,6 +245,11 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	public void newEvent(UpdateEvent ue)
 	{
 		//Aquí debemos coger el evento añadido al simulador y cargarlo en nuestras tablas
+		
+		List<Event> eventQueue = ue.getEvenQueue();
+		Event event = eventQueue.get(eventQueue.size()-1);
+		
+		eventsQueue.addElement(event);
 	}
 	public void advanced(UpdateEvent ue)
 	{
