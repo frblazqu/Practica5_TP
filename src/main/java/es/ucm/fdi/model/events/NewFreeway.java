@@ -48,9 +48,10 @@ public class NewFreeway extends NewRoad
 				{
 					//Cogemos el cruce de destino
 					Junction junc = map.getJunction(junctionDestId);
+					Junction ini = map.getJunction(junctionIniId);
 					
 					//Creamos la nueva autopista y la añadimos al mapa y como entrante al cruce de destino
-					Road road = new Freeway(road_id, maxSpeed, length, lanes, junc, junctionIniId);
+					Road road = new Freeway(road_id, maxSpeed, length, lanes, junc, ini);
 					map.addRoad(road);
 					junc.añadirCarreteraEntrante(road);
 					ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);

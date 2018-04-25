@@ -8,29 +8,39 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
+import es.ucm.fdi.extra.graphlayout.Dot;
+import es.ucm.fdi.extra.graphlayout.Edge;
+import es.ucm.fdi.extra.graphlayout.Graph;
+import es.ucm.fdi.extra.graphlayout.GraphComponent;
+import es.ucm.fdi.extra.graphlayout.Node;
 import es.ucm.fdi.extra.tablecomponent.ComponentTable;
 import es.ucm.fdi.extra.texteditor.TextEditor;
 import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 import es.ucm.fdi.model.events.Event;
+import es.ucm.fdi.model.objects.Junction;
+import es.ucm.fdi.model.objects.Road;
+import es.ucm.fdi.model.objects.Vehicle;
 
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	private final static String INPUT_FILE = "C:/Users/Usuario/git/Practica5_TP/src/main/resources/readStr/examples/basic/"
-										   + "00_helloWorld.ini";
+	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
+										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane mainPanel;
 	
 	JLabel statusBarReport;
+	JPanel graphPanel;
+	GraphComponent graphComp;
 	TextEditor eventsArea;
 	TextEditor reportsArea;
 	ComponentTable eventsQueue;
@@ -194,7 +204,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		statusBar.add(statusLabel);
 		
-		statusBarReport = new JLabel("Manu es feo");
+		statusBarReport = new JLabel("");
 		statusBar.add(statusBarReport);
 	}
 	/**
@@ -223,25 +233,49 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	 */
 	public void addLowerPanel() {
 		
-		JPanel graphPanel = new JPanel();
 		JPanel tablePanel = new JPanel(new GridLayout(3, 1));
-		
-		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
-		
 		String[] vehicDescrib = {"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"};
 		String[] roadDescrib  = {"ID", "Source", "Target", "Lenght", "Max Speed", "Vehicles"};
 		String[] junctDescrib = {"ID", "Green", "Red"};
 		
 		//Lista vacía (luego se pondría la lista de simObject respectiva)
 		List<Describable> l = new ArrayList<>();		
-		vehiclesTable = new ComponentTable(vehicDescrib, l, "Vehicles");
-		roadsTable = new ComponentTable(roadDescrib, l, "Roads");
+		vehiclesTable  = new ComponentTable(vehicDescrib, l, "Vehicles");
+		roadsTable     = new ComponentTable(roadDescrib, l, "Roads");
 		junctionsTable = new ComponentTable(junctDescrib, l, "Junctions");
 		
 		tablePanel.add(vehiclesTable);
 		tablePanel.add(roadsTable);
 		tablePanel.add(junctionsTable);
+	
+		graphComp = new GraphComponent();
+		graphComp.setPreferredSize(new Dimension (400,600));
 		
+		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphComp);
+	}
+	
+	public void generateGraph(UpdateEvent ue)
+	{
+		Graph g = new Graph();		
+		
+		Map<Junction, Node> js = new HashMap<>();
+		for (Junction j : ue.getRoadMap().getJunctions()) 
+		{
+			Node n = new Node(j.getId());
+			js.put(j, n); // <-- para convertir Junction a Node en aristas
+			g.addNode(n);
+		}
+		for (Road r : ue.getRoadMap().getRoads()) 
+		{				
+			Edge e = new Edge(r.getId(), js.get(r.getJunctionIni()), js.get(r.getJunctionFin()), r.getLongitud());
+			
+			for(Vehicle v: r.vehicles())
+				e.addDot(new Dot(v.getId(), v.getLocalizacion()));			
+			
+			g.addEdge(e);
+		}
+		
+		graphComp.setGraph(g);
 	}
 	
 	/* MAIN */
@@ -282,6 +316,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void advanced(UpdateEvent ue)
 	{
+		generateGraph(ue);
 		//Aquí debemos refrescar las tablas
 	}
 	public void error(UpdateEvent ue, String error)

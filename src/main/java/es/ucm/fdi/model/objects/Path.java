@@ -7,7 +7,7 @@ public class Path extends Road
 {
 	//CONSTRUCTORAS
 	public Path() { super();}
-	public Path(String id, int maxSpeed, int size, Junction junc, String ini)
+	public Path(String id, int maxSpeed, int size, Junction junc, Junction ini)
 	{
 		super(id, maxSpeed, size, junc, ini);				
 	}
