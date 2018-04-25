@@ -18,7 +18,6 @@ import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 import es.ucm.fdi.model.events.Event;
-import es.ucm.fdi.model.objects.Vehicle;
 
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
