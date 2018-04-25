@@ -22,16 +22,11 @@ import es.ucm.fdi.control.SimulatorAction;
 public class TextEditor extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
-	
-	private final String LOAD = "load";
-	private final String SAVE = "save";
-	private final String CLEAR = "clear";
-	private final String QUIT = "quit";
 
 	private JFileChooser fc;			
 	private JTextArea textArea;
-	String name;
-	boolean editable;
+	private String name;
+	private boolean editable;
 	
 	public TextEditor(String n, boolean e, JFileChooser f){
 		super(new BorderLayout());
@@ -176,6 +171,7 @@ public class TextEditor extends JPanel {
 	public void setText(String s){
 		textArea.setText(s);
 	}
+	
 	/**@see http://www.codejava.net/java-se/swing/redirect-standard-output-streams-to-jtextarea*/
 	public OutputStream flujoEscritura()
 	{
@@ -188,6 +184,7 @@ public class TextEditor extends JPanel {
 			}
 		};
 	}
+	/** Devuelve un flujo de lectura al contenido del editor de texto. */
 	public InputStream flujoLectura()
 	{
 		return new ByteArrayInputStream(textArea.getText().getBytes());
