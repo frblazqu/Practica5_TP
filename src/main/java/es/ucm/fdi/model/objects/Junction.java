@@ -51,7 +51,7 @@ public class Junction extends SimulatedObject
 	{
 		return colas.get(incomingRoadIds.get(semaforo));
 	}
-	public void entraVehiculo(Vehicle car)
+	public void entraVehiculo(Vehicle car) 
 	{
 		colas.get(car.actualRoad().getId()).addLast(car);
 		car.setVelocidadActual(0);
@@ -122,7 +122,7 @@ public class Junction extends SimulatedObject
 		String aux = "";
 		aux += "[";
 		if(semaforo != -1){
-		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + "]";
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + ")]";
 		}
 		aux += "]";
 		

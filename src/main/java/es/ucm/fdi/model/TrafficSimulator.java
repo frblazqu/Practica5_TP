@@ -89,8 +89,9 @@ public class TrafficSimulator
 				if(out != null)
 					generaInforme(out);
 			}
-		} catch (IllegalArgumentException e)
+		} catch (Exception e)
 		{
+			fireUpdateEvent(EventType.ERROR, "No se pudo ejecutar un evento en el tiempo " + reloj + " ticks:\n" + e.getMessage());
 			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
 		}
 
@@ -125,6 +126,8 @@ public class TrafficSimulator
 		{
 			ini.store(out);
 		} catch (IOException e)	{
+			fireUpdateEvent(EventType.ERROR, "No se ha podido almacenar el informe del tiempo " + reloj + ".\n");
+			System.err.println("No se ha podido almacenar el informe del tiempo " + reloj + ".\n");
 			// throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n", e);
 		}
 	}
@@ -146,9 +149,14 @@ public class TrafficSimulator
 				evento = EventFactory.buildEvent(s); // throw IllegalArgumentException()
 				insertaEvento(evento);
 			}
-		} catch (Exception e)
-		{
-			// IOException o IllegalArgumentException
+		} catch (IllegalArgumentException e) {
+			fireUpdateEvent(EventType.ERROR, "Error al cargar uno de los eventos:\n" + e.getMessage());
+			throw new IllegalStateException("Error al cargar uno de los eventos." , e);
+			
+		}
+		catch (IOException e) {
+			fireUpdateEvent(EventType.ERROR, "Error al leer el fichero de eventos.");
+			System.err.println("Error al leer el fichero de eventos.");
 		}
 	}
 	/**
