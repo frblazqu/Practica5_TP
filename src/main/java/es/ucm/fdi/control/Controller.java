@@ -116,9 +116,9 @@ public class Controller
 	{
 		return simulador;
 	}
-	public void ejecutaUnPaso()
+	public void ejecutaKPasos(int k)
 	{
-		simulador.ejecuta(1, outputStream);
+		simulador.ejecuta(k, outputStream);
 	}
 	public InputStream getInputStream()
 	{
