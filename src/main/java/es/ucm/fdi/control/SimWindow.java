@@ -1,43 +1,46 @@
 package es.ucm.fdi.control;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.swing.*;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import es.ucm.fdi.extra.tablecomponent.ComponentTable;
 import es.ucm.fdi.extra.texteditor.TextEditor;
 import es.ucm.fdi.model.objects.SimulatedObject.Describable;
+import es.ucm.fdi.model.TrafficSimulator;
+import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 
 
-public class SimWindow extends JFrame {
+public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	TextEditor eventsArea;
-	TextEditor reportsArea;
+	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
+										   + "00_helloWorld.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane topSplit;
+	
+	TextEditor eventsArea;
+	TextEditor reportsArea;
+	ComponentTable eventsQueue;
 	ComponentTable vehiclesTable;
 	ComponentTable roadsTable;
 	ComponentTable junctionsTable;
-	ComponentTable eventsQueue;
+	
+	Controller control;
 	
 	public SimWindow() {
 		super("Traffic Simulator");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		fc = new JFileChooser();
+		fc.setFileFilter(new FileNameExtensionFilter("INI File","ini"));
 		
 		addLowerPanel();
 		addUpperPanel();
@@ -50,21 +53,26 @@ public class SimWindow extends JFrame {
 		
 		topSplit.setDividerLocation(.3);
 		bottomSplit.setDividerLocation(.5);
+		
+		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
 	}
 	
+	/* MÉTODOS DE INICIALIZACIÓN. */
+	/**
+	 * Añade un menuBar y toolBar a la ventana con las acciones predefinidas. 
+	 */
 	private void addBars() {
 		
 		// instantiate actions
-	
 		SimulatorAction cargar = new SimulatorAction(
 				"Load Events", "open.png", "Cargar eventos",
 				KeyEvent.VK_L, "control L",
-				()-> loadFile(eventsArea));
+				()-> eventsArea.loadFile());
 		
 		SimulatorAction guardar = new SimulatorAction(
 				"Save Events", "save.png", "Guardar cosas",
 				KeyEvent.VK_S, "control S", 
-				()-> saveFile(eventsArea));
+				()-> eventsArea.saveFile());
 		
 		SimulatorAction clear = new SimulatorAction(
 				"Clear Events", "clear.png", "Borrar eventos",
@@ -74,22 +82,26 @@ public class SimWindow extends JFrame {
 		SimulatorAction insertEvents = new SimulatorAction(
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
-				()-> System.out.println("Insertando..."));
+				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
+				//Aquí además habrá que hacer que lo guarde en un fichero auxiliar y
+				//cargar la simulación de este. O leerlo del eventsArea.
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
 				KeyEvent.VK_E, "control E",
-				()-> System.out.println("Ejecutando..."));
+				()-> control.ejecutaUnPaso());
+				//Aquí no debe ejecutar un paso sino que debe ejecutar tantos como haya
+				//de diferencia entre el número del JSpinner y el del reloj actual.
 		
 		SimulatorAction restartSim = new SimulatorAction(
 				"Reset Sim", "reset.png", "Reiniciar simulador",
 				KeyEvent.VK_R, "control R",
-				()-> System.out.println("Reiniciando..."));
+				()-> control.simulador().reset());
 		
 		SimulatorAction report = new SimulatorAction(
 				"Generate", "report.png", "Genera reports",
 				KeyEvent.VK_G, "control G",
-				()-> System.out.println("Generando..."));
+				()-> control.simulador().generaInforme(reportsArea.flujoEscritura()));
 		
 		SimulatorAction clearReport = new SimulatorAction(
 				"Clear", "delete_report.png", "Borra reports",
@@ -99,7 +111,7 @@ public class SimWindow extends JFrame {
 		SimulatorAction saveReport = new SimulatorAction(
 				"Save Report", "save_report.png", "Guarda reports",
 				KeyEvent.VK_S, "control S",
-				()-> System.out.println("Guardando..."));
+				()-> reportsArea.saveFile());
 		
 		SimulatorAction salir = new SimulatorAction(
 				"Exit", "exit.png", "Salir de la aplicacion",
@@ -154,8 +166,9 @@ public class SimWindow extends JFrame {
 		menu.add(reports);
 		setJMenuBar(menu);
 	}
-	
-	//Establece el layout básico de la práctica
+	/**
+	 * Inicializa el panel superior con los paneles de eventos y de informes. 
+	 */
 	public void addUpperPanel() {
 		
 		JPanel upperPanel = new JPanel(new GridLayout(1, 3));
@@ -165,6 +178,7 @@ public class SimWindow extends JFrame {
 		add(topSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
+		eventsArea.setText(TextEditor.readFile(new File(INPUT_FILE)));
 		reportsArea = new TextEditor("Reports", false, fc);
 		
 		List<Describable> l = new ArrayList<>();
@@ -174,9 +188,10 @@ public class SimWindow extends JFrame {
 		upperPanel.add(eventsArea);
 		upperPanel.add(eventsQueue);
 		upperPanel.add(reportsArea);
-	
 	}
-	
+	/**
+	 * Inicializa el panel inferior con las tablas de los objetos y el grafo de la simulación. 
+	 */
 	public void addLowerPanel() {
 		
 		JPanel graphPanel = new JPanel();
@@ -185,7 +200,7 @@ public class SimWindow extends JFrame {
 		bottomSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, graphPanel);
 		
 		String[] vehicDescrib = {"ID", "Road", "Location", "Speed", "Km", "Faulty Units", "Itinerary"};
-		String[] roadDescrib = {"ID", "Source", "Target", "Lenght", "Max Speed", "Vehicles"};
+		String[] roadDescrib  = {"ID", "Source", "Target", "Lenght", "Max Speed", "Vehicles"};
 		String[] junctDescrib = {"ID", "Green", "Red"};
 		
 		//Lista vacía (luego se pondría la lista de simObject respectiva)
@@ -200,46 +215,42 @@ public class SimWindow extends JFrame {
 		
 	}
 	
-	private void loadFile(TextEditor text) {
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			String s = readFile(file);
-			text.setText(s);
-		}
-	}
-
-	public static String readFile(File file) {
-		String s = "";
-		try {
-			s = new Scanner(file).useDelimiter("\\A").next();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		return s;
-	}
-	
-	private void saveFile(TextEditor text) {
-		int returnVal = fc.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			writeFile(file, text.getText());
-		}
-	}
-	
-	public static void writeFile(File file, String content) {
-		try {
-			PrintWriter pw = new PrintWriter(file);
-			pw.print(content);
-			pw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	/* MAIN */
 	public static void main(String ... args) {
 		SwingUtilities.invokeLater(() -> new SimWindow());
+	}
+	
+	/* MÉTODOS DE LISTENER */
+	public void update(UpdateEvent ue, String error)
+	{
+		switch(ue.getType())
+		{
+		case ADVANCED: 		advanced(ue);		break;
+		case NEW_EVENT:		newEvent(ue);		break;
+		case ERROR:			error(ue, error);   break;
+		case REGISTERED:	registered(ue); 	break;
+		case RESET:			reset(ue);			break;
+		}
+	}
+	public void registered(UpdateEvent ue)
+	{
+		//control.simulador().addSimulatorListener(this);
+	}
+	public void reset(UpdateEvent ue)
+	{
+		//Aquí tenemos que refrescar las tablas y el grafo
+	}
+	public void newEvent(UpdateEvent ue)
+	{
+		//Aquí debemos coger el evento añadido al simulador y cargarlo en nuestras tablas
+	}
+	public void advanced(UpdateEvent ue)
+	{
+		//Aquí debemos refrescar las tablas
+	}
+	public void error(UpdateEvent ue, String error)
+	{
+		//Aquí debemos notificar el error y rezar
 	}
 	
 }

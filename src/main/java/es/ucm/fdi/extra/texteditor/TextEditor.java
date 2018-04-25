@@ -3,20 +3,20 @@ package es.ucm.fdi.extra.texteditor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-
 import es.ucm.fdi.control.SimulatorAction;
 
 public class TextEditor extends JPanel {
@@ -104,16 +104,29 @@ public class TextEditor extends JPanel {
 		JScrollPane scroll = new JScrollPane(textArea);
 		this.add(scroll);
 	}
-
-	private void saveFile() {
+	
+	
+	/**
+	 * Abre un selector de fichero y guarda el contenido del TextEditor en la carpeta seleccionada.
+	 * 
+	 *  @param text El editor de texto del que queremos guardar la información.
+	 */
+	public void saveFile() {
 		int returnVal = fc.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			writeFile(file, textArea.getText());
 		}
 	}
-
-	private void loadFile() {
+	/**
+	 * Abre un selector de fichero y carga en el TextEditor que pasan como parámetro el fichero
+	 * seleccionado.
+	 * 
+	 * @param text El editor de texto que va a cargar la información.
+	 * @throws NoSuchElementException Si no es capaz de abrir el archivo seleccionado.
+	 * Esto sucede por ejemplo en los archivos de formato .pdf.
+	 */
+	public void loadFile() {
 		int returnVal = fc.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
@@ -121,7 +134,11 @@ public class TextEditor extends JPanel {
 			textArea.setText(s);
 		}
 	}
-
+	/**
+	 * Lee un fichero y devulve el string generado en la lectura del archivo completo.
+	 * 
+	 * @param file El fichero a leer.
+	 */
 	public static String readFile(File file) {
 		String s = "";
 		try {
@@ -132,7 +149,12 @@ public class TextEditor extends JPanel {
 
 		return s;
 	}
-
+	/**
+	 * Escribe el contenido (String) que le pasemos en el fichero introducido.
+	 * 
+	 * @param file Fichero en el que escribir.
+	 * @param content Contenido a escribir.
+	 */
 	public static void writeFile(File file, String content) {
 		try {
 			PrintWriter pw = new PrintWriter(file);
@@ -142,12 +164,32 @@ public class TextEditor extends JPanel {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Accedente para visualizar el contenido del TextEditor. 
+	 */
+	public String getText(){
+		return textArea.getText();
+	}
+	/**
+	 * Permite modificar el contenido del TextEditor. 
+	 */
 	public void setText(String s){
 		textArea.setText(s);
 	}
-	
-	public String getText(){
-		return textArea.getText();
+	/**@see http://www.codejava.net/java-se/swing/redirect-standard-output-streams-to-jtextarea*/
+	public OutputStream flujoEscritura()
+	{
+		return new OutputStream()
+		{
+			public void write(int arg) throws IOException
+			{
+				textArea.append(String.valueOf((char)arg));
+		        textArea.setCaretPosition(textArea.getDocument().getLength());
+			}
+		};
+	}
+	public InputStream flujoLectura()
+	{
+		return new ByteArrayInputStream(textArea.getText().getBytes());
 	}
 }
