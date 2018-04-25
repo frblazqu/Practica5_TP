@@ -18,12 +18,13 @@ import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 import es.ucm.fdi.model.events.Event;
+import es.ucm.fdi.model.objects.Vehicle;
 
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
 	private final static String INPUT_FILE = "C:/Users/Usuario/git/Practica5_TP/src/main/resources/readStr/examples/basic/"
-										   + "00_helloWorld.ini";
+										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane topSplit;
@@ -57,6 +58,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		bottomSplit.setDividerLocation(.5);
 		
 		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
+		control.simulador().addSimulatorListener(this);
 	}
 	
 	/* MÉTODOS DE INICIALIZACIÓN. */
@@ -236,7 +238,14 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void registered(UpdateEvent ue)
 	{
-		//control.simulador().addSimulatorListener(this);
+		List<Describable> v = (List<Describable>)(List) ue.getRoadMap().getVehicles();
+		List<Describable> r = (List<Describable>)(List) ue.getRoadMap().getRoads();
+		List<Describable> j = (List<Describable>)(List) ue.getRoadMap().getJunctions();
+		
+		vehiclesTable.setElementsList(v);
+		roadsTable.setElementsList(r);
+		junctionsTable.setElementsList(j);
+		
 	}
 	public void reset(UpdateEvent ue)
 	{
@@ -253,7 +262,9 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void advanced(UpdateEvent ue)
 	{
-		//Aquí debemos refrescar las tablas
+		vehiclesTable.updateTable();
+		roadsTable.updateTable();
+		junctionsTable.updateTable();
 	}
 	public void error(UpdateEvent ue, String error)
 	{

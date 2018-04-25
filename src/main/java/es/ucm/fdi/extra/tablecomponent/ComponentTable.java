@@ -31,6 +31,10 @@ public class ComponentTable extends JPanel{
 		initGUI();
 	}
 	
+	public void setElementsList(List<Describable> l) {
+		elements = l;
+	}
+	
 	private class ListOfMapsTableModel extends AbstractTableModel {
 
 		@Override 
@@ -48,6 +52,7 @@ public class ComponentTable extends JPanel{
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Map<String, String> out = new HashMap<>();
+			out.put("#", "" + rowIndex);
 			elements.get(rowIndex).describe(out);
 			return out.get((columns[columnIndex]));
 		}
@@ -82,8 +87,7 @@ public class ComponentTable extends JPanel{
 		elementsTable.updateTable();
 	}
 	
-	public void updateTable(List<Describable> desc) {
-		elements = desc;
+	public void updateTable() {
 		elementsTable.updateTable();
 	}
 }

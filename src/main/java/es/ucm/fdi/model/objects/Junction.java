@@ -121,7 +121,10 @@ public class Junction extends SimulatedObject
 	private String estadoVerde() {
 		String aux = "";
 		aux += "[";
-		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + vehiculosCola(semaforo);
+		if(semaforo != -1){
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + "]";
+		}
+		aux += "]";
 		
 		return aux;
 	}
@@ -129,10 +132,10 @@ public class Junction extends SimulatedObject
 		String aux = "";
 		aux += "[";
 		for(int i = 0; i < semaforo; ++i) {
-			aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
+			aux += "(" + incomingRoadIds.get(i) + ",red," + "[" + vehiculosCola(i) + "]" + "),";
 		}
 		for(int i = semaforo + 1; i < incomingRoadIds.size(); ++i) {
-			aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
+			aux += "(" + incomingRoadIds.get(i) + ",red," + "[" + vehiculosCola(i) + "]" +  "),";
 		}
 		if (aux.length() > 1)	aux = aux.substring(0, aux.length()-1);
 		aux += "]";

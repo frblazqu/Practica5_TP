@@ -15,7 +15,7 @@ import es.ucm.fdi.model.Describable;
  * @author Manuel Ortega
  * @version 26/03/18
  */
-public class Vehicle extends SimulatedObject
+public class Vehicle extends SimulatedObject implements Describable
 {
 	//ATRIBUTOS
 	protected ArrayList<Road> itinerario;		//Carreteras que forman el itinerario del vehículo.
@@ -227,7 +227,7 @@ public class Vehicle extends SimulatedObject
 	public void describe(Map<String, String> out) {
 		super.describe(out);
 		out.put("Road", actualRoad().getId());
-		out.put("Location", "" + localizacion);
+		out.put("Location", "" + location());
 		out.put("Speed", "" + velActual);
 		out.put("Km", "" + kilometrage);
 		out.put("Faulty units", "" + tiempoAveria);
@@ -243,7 +243,14 @@ public class Vehicle extends SimulatedObject
 		aux += ']';
 			
 		return aux;
-		
-}
+	}
+	
+	private String location(){
+		if(enDestino) {
+			return "arrived";
+		}else{
+			return "" + localizacion;
+		}
+	}
 
 }
