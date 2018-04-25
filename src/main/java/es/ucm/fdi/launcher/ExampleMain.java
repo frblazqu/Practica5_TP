@@ -6,9 +6,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.SwingUtilities;
+
 import es.ucm.fdi.control.Controller;
+import es.ucm.fdi.control.SimWindow;
 import es.ucm.fdi.ini.Ini;
 import es.ucm.fdi.model.exceptions.SimulationFailedException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -34,11 +38,15 @@ public class ExampleMain {
 	private final static String DEFAULT_WRITE_DIRECTORY = "src/main/resources/writeStr/";
 	private final static String DEFAULT_INI_FILE = "iniFile.ini";
 	private final static String DEFAULT_OUT_FILE = "outFile.ini";
+	private final static String DEFAULT_SIM_MODE = "batch";
 	
 	//ATRIBUTOS DE LA CLASE
 	public static Integer _timeLimit = DEFAULT_TIME_VALUE;		//Duración de las simulaciones a ejecutar
 	public static String _inFile = DEFAULT_INI_FILE;			//Fichero de entrada del que leer los datos
 	public static String _outFile = DEFAULT_OUT_FILE;			//Fichero en el que escribir los datos
+	public static String _simMode = DEFAULT_SIM_MODE;			//Modo de ejecución	
+	
+	
 
 	//MÉTODOS
 	/**
@@ -68,6 +76,7 @@ public class ExampleMain {
 			parseInFileOption(line);
 			parseOutFileOption(line);
 			parseStepsOption(line);
+			parseModeOption(line);
 
 			//Aquí ya está todo parseado, es solo que no haya basura y controlar casos raros
 			
@@ -100,6 +109,7 @@ public class ExampleMain {
 		cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("Events input file").build());
 		cmdLineOptions.addOption(Option.builder("o").longOpt("output").hasArg().desc("Output file, where reports are written.").build());
 		cmdLineOptions.addOption(Option.builder("t").longOpt("ticks").hasArg().desc("Ticks to execute the simulator's main loop (default value is " + DEFAULT_TIME_VALUE + ").").build());
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg().desc("’batch’ for batch mode and ’gui’ for GUI mode (default value is ’batch’)").build());
 
 		return cmdLineOptions;
 	}
@@ -151,6 +161,20 @@ public class ExampleMain {
 			throw new ParseException("Invalid value for time limit: " + t);
 		}
 	}	
+	/**
+	 * Parsea el modo de ejecución de la simulación. Si no se introduce nada lo inicializa a default ("batch").
+	 * 
+	 *@throws ParseException Si no se parsea bien el modo.
+	 *
+	 */
+	public static void parseModeOption(CommandLine line)throws ParseException {
+		String m = line.getOptionValue("m", DEFAULT_SIM_MODE);
+		if(m != DEFAULT_SIM_MODE && m != "gui"){
+			throw new ParseException("Invalid value for sim mode: " + m);
+		} else {
+			_simMode = m;
+		}
+	}
 	/**
 	 * This method run the simulator on all files that ends with .ini if the given
 	 * path, and compares that output to the expected output. It assumes that for
@@ -247,6 +271,29 @@ public class ExampleMain {
 		}
 	}
 	/**
+	 * Run the simulator in GUI mode.
+	 * 
+	 * @throws SimulationFailedException If the simulation ended abruptly to notice the cause.
+	 */
+	private static void startGUIMode() throws SimulationFailedException {
+		try
+		{
+			Controller controller = new Controller(_inFile, _timeLimit);
+			//SwingUtilities.invokeLater(() -> new SimWindow(controller));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			throw new SimulationFailedException(_inFile, _outFile, _timeLimit, e);
+			
+			/*
+			 * Construye una excepción en la que pone:
+			 * 		Mira con estos parámetros no hemos podido ejecutar la simulación.
+			 * 		El motivo ha sido este: y pinta el mensaje de la excepción.
+			 */
+		}
+	}
+	/**
 	 * Parsea los argumentos introducidos y ejecuta la simulación partiendo de estos.
 	 * 
 	 * @throws IllegalArgumentException Si no se parsean correctamente estos argumentos.
@@ -255,7 +302,11 @@ public class ExampleMain {
 	private static void start(String[] args) {
 		try	{
 			parseArgs(args);
-			startBatchMode();
+			if(_simMode.equals("batch")){
+				startBatchMode();
+			}else if(_simMode.equals("gui")){
+				startGUIMode();
+			}
 		} catch (SimulationFailedException e){
 			e.printStackTrace();
 		} catch(Exception e) {

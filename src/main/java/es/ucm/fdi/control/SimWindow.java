@@ -249,7 +249,17 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void reset(UpdateEvent ue)
 	{
-		//Aquí tenemos que refrescar las tablas y el grafo
+		List<Describable> v = (List<Describable>)(List) ue.getRoadMap().getVehicles();
+		List<Describable> r = (List<Describable>)(List) ue.getRoadMap().getRoads();
+		List<Describable> j = (List<Describable>)(List) ue.getRoadMap().getJunctions();
+		
+		vehiclesTable.setElementsList(v);
+		roadsTable.setElementsList(r);
+		junctionsTable.setElementsList(j);
+		
+		vehiclesTable.updateTable();
+		roadsTable.updateTable();
+		junctionsTable.updateTable();
 	}
 	public void newEvent(UpdateEvent ue)
 	{
