@@ -6,9 +6,11 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -185,5 +187,9 @@ public class TextEditor extends JPanel {
 		        textArea.setCaretPosition(textArea.getDocument().getLength());
 			}
 		};
+	}
+	public InputStream flujoLectura()
+	{
+		return new ByteArrayInputStream(textArea.getText().getBytes());
 	}
 }

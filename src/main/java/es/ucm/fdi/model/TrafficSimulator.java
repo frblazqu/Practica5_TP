@@ -116,8 +116,9 @@ public class TrafficSimulator
 	/**
 	 * Carga los eventos guardados en formato ini en el fichero del inputStream y los inserta en el simulador. 
 	 */
-	public void leerDatosSimulacion(InputStream inputStream) throws IOException
+	public void leerDatosSimulacion(InputStream inputStream)
 	{
+		try {
 		//Cargamos todo el fichero en la variable ini (Puede lanzar IOException)
 		Ini ini = new Ini(inputStream);
 		
@@ -128,6 +129,11 @@ public class TrafficSimulator
 		{
 			evento = EventFactory.buildEvent(s); //throw IllegalArgumentException()
 			insertaEvento(evento);	
+		}
+		}
+		catch(Exception e)
+		{
+			
 		}
 		
 		//fireUpdateEvent(EventType.NEW_EVENT, null);		//Notificamos que se ha añadido un evento		

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
+	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
+										   + "00_helloWorld.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane topSplit;
@@ -51,7 +54,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		topSplit.setDividerLocation(.3);
 		bottomSplit.setDividerLocation(.5);
 		
-		control = new Controller("src/main/resources/readStr/00_helloWorld" + "","src/main/resources/writeStr/"+ "SimWindow");
+		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
 	}
 	
 	/* MÉTODOS DE INICIALIZACIÓN. */
@@ -79,9 +82,9 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		SimulatorAction insertEvents = new SimulatorAction(
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
-				()-> control.leerDatosSimulacion());
+				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
 				//Aquí además habrá que hacer que lo guarde en un fichero auxiliar y
-				//cargar la simulación de este.
+				//cargar la simulación de este. O leerlo del eventsArea.
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
@@ -108,7 +111,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		SimulatorAction saveReport = new SimulatorAction(
 				"Save Report", "save_report.png", "Guarda reports",
 				KeyEvent.VK_S, "control S",
-				()-> System.out.println("Guardando..."));
+				()-> reportsArea.saveFile());
 		
 		SimulatorAction salir = new SimulatorAction(
 				"Exit", "exit.png", "Salir de la aplicacion",
@@ -175,6 +178,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		add(topSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
+		eventsArea.setText(TextEditor.readFile(new File(INPUT_FILE)));
 		reportsArea = new TextEditor("Reports", false, fc);
 		
 		List<Describable> l = new ArrayList<>();
@@ -230,7 +234,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void registered(UpdateEvent ue)
 	{
-		control.simulador().addSimulatorListener(this);
+		//control.simulador().addSimulatorListener(this);
 	}
 	public void reset(UpdateEvent ue)
 	{

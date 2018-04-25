@@ -116,6 +116,10 @@ public class Controller
 	{
 		simulador.ejecuta(1, outputStream);
 	}
+	public InputStream getInputStream()
+	{
+		return inputStream;
+	}
 }
 
 
