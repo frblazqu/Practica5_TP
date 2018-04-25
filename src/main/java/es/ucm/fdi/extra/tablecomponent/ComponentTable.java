@@ -12,8 +12,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 
-import es.ucm.fdi.model.objects.SimulatedObject.Describable;
-import es.ucm.fdi.model.objects.Vehicle.DescribableVehicle;
+import es.ucm.fdi.model.Describable;
 
 public class ComponentTable extends JPanel{
 	
@@ -73,7 +72,18 @@ public class ComponentTable extends JPanel{
 		this.add(scroll);
 	}
 	
-	public void updateTable() {
+	public void addElement(Describable d) {
+		elements.add(d);
+		elementsTable.updateTable();
+	}
+	
+	public void pop(){
+		elements.remove(0);
+		elementsTable.updateTable();
+	}
+	
+	public void updateTable(List<Describable> desc) {
+		elements = desc;
 		elementsTable.updateTable();
 	}
 }

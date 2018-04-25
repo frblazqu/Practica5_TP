@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import es.ucm.fdi.ini.IniSection;
 
-public abstract class SimulatedObject
+import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
+
+public abstract class SimulatedObject implements Describable
 {
 	//ATRIBUTOS
 	private String id;				//Id del objeto
@@ -77,12 +79,8 @@ public abstract class SimulatedObject
 	/**Completa los aspectos únicos de cada informe. Específico para cada objeto.*/
 	public abstract void fillSectionDetails(IniSection s);
 	
-	public interface Describable {
-		/**
-		* @param out - a map to fill in with key- value pairs
-		* @return the passed- in map, with all fields filled out.
-		*/
-		void describe(Map<String, String> out);
-
+	public void describe(Map<String, String> out) {
+		out.put("ID", id);
 	}
+	
 }
