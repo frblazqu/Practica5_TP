@@ -7,11 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import es.ucm.fdi.ini.Ini;
-import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.TrafficSimulator;
-import es.ucm.fdi.model.events.Event;
-import es.ucm.fdi.model.events.EventFactory;
 
 /**
  * Controla toda la simulación que se va a ejecutar. Tiene las siguientes responsabilidades:
@@ -45,16 +41,18 @@ public class Controller
 	 * @param saveFilePath	localización del fichero de escritura de informes
 	 * @param numTicks		duración de la simulación a ejecutar
 	 * 
-	 * @throws FileNotFoundException Si la ruta de entrada o salida de datos que se ha introducido no es alcanzable.
 	 */
-	public Controller(String loadFilePath, String saveFilePath, int numTicks) throws FileNotFoundException 
+	public Controller(String loadFilePath, String saveFilePath, int numTicks) 
 	{
-		inputStream  = new FileInputStream( new File(loadFilePath));
-		outputStream = new FileOutputStream(new File(saveFilePath));
-		simulador = new TrafficSimulator();
-		ticksSimulacion = numTicks;
-		
-		//Dejamos que lance excepción libremente si se diera el caso (la controlamos en startBatchMode)
+		try  
+		{
+			inputStream  = new FileInputStream( new File(loadFilePath));
+			outputStream = new FileOutputStream(new File(saveFilePath));
+			simulador = new TrafficSimulator();
+			ticksSimulacion = numTicks;
+		}catch (Exception e) {
+			//Aquí debe crearse un string de error y llamar a fireUpdateEvent
+		}
 	}
 	/**
 	 * Crea un nuevo simulador con entrada de eventos, flujo de salida y duración de la simulación por defecto.
@@ -64,9 +62,8 @@ public class Controller
 	 * Duración simulación por defecto -> 10
 	 * 
 	 * @see #Controller(String, String, int)
-	 * @throws FileNotFoundException
 	 */
-	public Controller() throws FileNotFoundException 
+	public Controller()
 	{
 		this(DEFAULT_READ_DIRECTORY  + DEFAULT_INI_FILE/**/, DEFAULT_WRITE_DIRECTORY + DEFAULT_OUT_FILE /**/, DEFAULT_TICKS);
 	}
@@ -77,7 +74,7 @@ public class Controller
 	 * @see #Controller(String, String, int)
 	 * @throws FileNotFoundException
 	 */
-	public Controller(String loadFilePath, String saveFilePath) throws FileNotFoundException 
+	public Controller(String loadFilePath, String saveFilePath) 
 	{
 		this(loadFilePath, saveFilePath, DEFAULT_TICKS);
 	}
@@ -90,18 +87,13 @@ public class Controller
 	 * @throws IOException Si no se consigue leer correctamente el fichero de entrada.
 	 * @throws IllegalArgumentException Si alguna sección no se consigue parsear bien.
 	 */
-	public void leerDatosSimulacion() throws IOException, IllegalArgumentException
+	public void leerDatosSimulacion() 
 	{
-		//Cargamos todo el fichero en la variable ini (Puede lanzar IOException)
-		Ini ini = new Ini(inputStream);
-		
-		//Parseamos uno a uno los eventos de las secciones
-		Event evento;
-		
-		for(IniSection s: ini.getSections())
-		{
-			evento = EventFactory.buildEvent(s); //throw IllegalArgumentException()
-			simulador.insertaEvento(evento);	
+		try {
+		simulador.leerDatosSimulacion(inputStream);
+
+		}catch (Exception e) {
+			//Aquí debe crearse un string de error y llamar a fireUpdateEvent
 		}
 	}
 	/**
@@ -114,6 +106,19 @@ public class Controller
 	public void run()
 	{
 		simulador.ejecuta(ticksSimulacion, outputStream);
+	}
+	
+	public TrafficSimulator simulador()
+	{
+		return simulador;
+	}
+	public void ejecutaUnPaso()
+	{
+		simulador.ejecuta(1, outputStream);
+	}
+	public InputStream getInputStream()
+	{
+		return inputStream;
 	}
 }
 

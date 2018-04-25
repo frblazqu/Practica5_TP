@@ -1,9 +1,13 @@
 package es.ucm.fdi.model;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import es.ucm.fdi.ini.Ini;
+import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.events.Event;
+import es.ucm.fdi.model.events.EventFactory;
 import es.ucm.fdi.model.objects.*;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
@@ -22,6 +26,7 @@ public class TrafficSimulator
 	private MultiTreeMap<Integer, Event> listaEventos;		//Eventos a ejecutar (ordenados por tiempo ascendente y orden de insercción)
 	private RoadMap mapa;									//Contenedor para todos los objetos de la simulación (identificaros por id único)
 	private int reloj;										//Reloj que indica el paso de la simulación actual
+	private List<Listener> observadores;					//Lista de observadores que notificar
 	
 	/**Inicializa el objeto a una simulación vacía. Tiempo inicial nulo (0 por defecto), contenedor de objetos vacío 
 	 * y listado de eventos vacío.*/
@@ -72,8 +77,6 @@ public class TrafficSimulator
 			}
 		} catch(IllegalArgumentException e){
 			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
-		} catch(IOException e) {
-			throw new IllegalStateException("No se pudo escribir el informe generado en el tiempo " + reloj + " ticks.", e);
 		}
 
 	}
@@ -84,7 +87,7 @@ public class TrafficSimulator
 	 * @param out Flujo de salida para los datos.
 	 * @throws IOException Si no se consigue almacenar bien el informe generado.
 	 * */
-	public void generaInforme(OutputStream out) throws IOException
+	public void generaInforme(OutputStream out)
 	{
 		Ini ini = new Ini();
 		
@@ -107,25 +110,88 @@ public class TrafficSimulator
 		}
 		catch(IOException e)
 		{
-			throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n", e);
+			//throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n", e);
 		}
 	}
+	/**
+	 * Carga los eventos guardados en formato ini en el fichero del inputStream y los inserta en el simulador. 
+	 */
+	public void leerDatosSimulacion(InputStream inputStream)
+	{
+		try {
+		//Cargamos todo el fichero en la variable ini (Puede lanzar IOException)
+		Ini ini = new Ini(inputStream);
+		
+		//Parseamos uno a uno los eventos de las secciones
+		Event evento;
+		
+		for(IniSection s: ini.getSections())
+		{
+			evento = EventFactory.buildEvent(s); //throw IllegalArgumentException()
+			insertaEvento(evento);	
+		}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		//fireUpdateEvent(EventType.NEW_EVENT, null);		//Notificamos que se ha añadido un evento		
+		/* Esto lo podemos poner aquí y no en insertaEvento porque la única foma que contemplamos de 
+		 * momento de insertar eventos el leyendo un ini de un archivo.
+		 */
+	}
 	
-	public enum SimEventType {
+	
+	private void fireUpdateEvent(EventType type, String error) 
+	{
+		UpdateEvent ue = new UpdateEvent(type);
+		
+		for(int i = 0; i < observadores.size(); i++)
+			observadores.get(i).update(ue, error);	
+	}
+	public void addSimulatorListener(Listener listener)
+	{
+		observadores.add(listener);
+	}
+	public void removeSimulatorListener(Listener listener)
+	{
+		observadores.remove(listener);
+	}
+	public void reset()
+	{
+		reloj = DEFAULT_SET_TIME;
+		mapa = new RoadMap();
+	}
+		
+	
+	/* PARA MVC */
+	public enum EventType 
+	{
 		REGISTERED, RESET, NEW_EVENT, ADVANCED, ERROR;
 	}
 	
-	public interface Listener {
-		
+	public interface Listener 
+	{
+		void update(UpdateEvent ue, String error);
+		void registered(UpdateEvent ue);
+		void reset(UpdateEvent ue);
+		void newEvent(UpdateEvent ue);
+		void advanced(UpdateEvent ue);
+		void error(UpdateEvent ue, String error);
 	}
 	
-	public class UpdateEvent {
-		SimEventType eventType;
+	public class UpdateEvent 
+	{
+		private EventType tipoEvento;
 		
-		UpdateEvent(SimEventType type){
-			eventType = type;
+		public UpdateEvent(EventType tipo)
+		{
+			tipoEvento = tipo;
 		}
-		
-		
+		public EventType getType() { return tipoEvento;}
+		public RoadMap getRoadMap() {return mapa;}
+		public List<Event> getEvenQueue() {return listaEventos.valuesList();}
+		public int getCurrentTime() {return reloj;}
 	}
 }
