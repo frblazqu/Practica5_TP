@@ -32,7 +32,7 @@ import es.ucm.fdi.model.objects.Vehicle;
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	private final static String INPUT_FILE = "C:/Users/Usuario/git/Practica5_TP/src/main/resources/readStr/examples/basic/"
+	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
 										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
@@ -81,6 +81,14 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	 */
 	private void addBars() {
 		
+		JLabel steps = new JLabel(" Steps: ");
+		JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 1000, 1));
+		
+		JLabel time = new JLabel(" Time: ");
+		JTextField timeText = new JTextField("0");	
+		timeText.setPreferredSize(new Dimension(75, 10));
+		timeText.setEnabled(false);
+		
 		// instantiate actions
 		SimulatorAction cargar = new SimulatorAction(
 				"Load Events", "open.png", "Cargar eventos",
@@ -101,15 +109,11 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
 				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
-				//Aquí además habrá que hacer que lo guarde en un fichero auxiliar y
-				//cargar la simulación de este. O leerlo del eventsArea.
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
 				KeyEvent.VK_E, "control E",
-				()-> control.ejecutaUnPaso());
-				//Aquí no debe ejecutar un paso sino que debe ejecutar tantos como haya
-				//de diferencia entre el número del JSpinner y el del reloj actual.
+				()-> control.ejecutaKPasos((Integer) stepSpinner.getValue()));
 		
 		SimulatorAction restartSim = new SimulatorAction(
 				"Reset Sim", "reset.png", "Reiniciar simulador",
@@ -143,14 +147,6 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 			else
 				control.setOutputStream(null);
 		});
-		
-		JLabel steps = new JLabel(" Steps: ");
-		JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 1000, 1));
-		
-		JLabel time = new JLabel(" Time: ");
-		JTextField timeText = new JTextField("0");	
-		timeText.setPreferredSize(new Dimension(75, 10));
-		timeText.setEnabled(false);
 		
 		// add actions to toolbar, and bar to window.
 		JToolBar bar = new JToolBar();
@@ -306,6 +302,9 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		roadsTable.setElementsList(r);
 		junctionsTable.setElementsList(j);
 		
+		generateGraph(ue);
+		
+		statusBarReport.setText(" Se ha vinculado correctamente al simulador.");
 	}
 	public void reset(UpdateEvent ue)
 	{
@@ -320,6 +319,11 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		vehiclesTable.updateTable();
 		roadsTable.updateTable();
 		junctionsTable.updateTable();
+		
+		reportsArea.setText("");
+		generateGraph(ue);
+		
+		statusBarReport.setText(" Se ha reiniciado el estado de la simulación.");
 	}
 	public void newEvent(UpdateEvent ue)
 	{
@@ -329,16 +333,26 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		Event event = eventQueue.get(eventQueue.size()-1);
 		
 		eventsQueue.addElement(event);
+		
+		statusBarReport.setText(" Se han añadido eventos al simulador.");
 	}
 	public void advanced(UpdateEvent ue)
 	{
 		vehiclesTable.updateTable();
 		roadsTable.updateTable();
 		junctionsTable.updateTable();
+		
+		generateGraph(ue);
+
+		statusBarReport.setText(" Se ha avanzado en el estado de la simulación");
 	}
 	public void error(UpdateEvent ue, String error)
 	{
-		//Aquí debemos notificar el error y rezar
+		JOptionPane.showMessageDialog(this, error + "\n Reinicie el estado del simulador para volver al funcionamiento normal.",
+									  "Fallo en la simulación!", JOptionPane.ERROR_MESSAGE);
+		
+		statusBarReport.setText("ERROR! Reinicie el simulador para poder volver al funcionamiento normal del sistema.");
+		statusBarReport.setForeground(Color.red);
 	}
 	
 }
