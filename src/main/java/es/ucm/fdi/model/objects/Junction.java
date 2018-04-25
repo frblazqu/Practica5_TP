@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 
 public class Junction extends SimulatedObject
 {
@@ -110,37 +111,34 @@ public class Junction extends SimulatedObject
 		s.setValue("queues", colaCruce());
 	}
 	
-	public class DescribableJunction implements Describable {
 
-		@Override
-		public void describe(Map<String, String> out) {
-			out.put("ID", getId());
-			out.put("Green", estadoVerde());
-			out.put("Red", estadoRojo());
-		}
-		
-		private String estadoVerde() {
-			String aux = "";
-			aux += "[";
-			aux += "(" + incomingRoadIds.get(semaforo) + ",green," + vehiculosCola(semaforo);
-		
-			return aux;
-		}
-		private String estadoRojo() {
-			String aux = "";
-			aux += "[";
-			for(int i = 0; i < semaforo; ++i) {
-				aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
-			}
-			for(int i = semaforo + 1; i < incomingRoadIds.size(); ++i) {
-				aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
-			}
-			if (aux.length() > 1)	aux = aux.substring(0, aux.length()-1);
-			aux += "]";
-			
-			return aux;
-			
-		}
-		
+	public void describe(Map<String, String> out) {
+		super.describe(out);
+		out.put("Green", estadoVerde());
+		out.put("Red", estadoRojo());
 	}
+		
+	private String estadoVerde() {
+		String aux = "";
+		aux += "[";
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + vehiculosCola(semaforo);
+		
+		return aux;
+	}
+	private String estadoRojo() {
+		String aux = "";
+		aux += "[";
+		for(int i = 0; i < semaforo; ++i) {
+			aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
+		}
+		for(int i = semaforo + 1; i < incomingRoadIds.size(); ++i) {
+			aux += "(" + incomingRoadIds.get(semaforo) + ",red," + vehiculosCola(semaforo) + "),";
+		}
+		if (aux.length() > 1)	aux = aux.substring(0, aux.length()-1);
+		aux += "]";
+			
+		return aux;
+			
+	}
+		
 }

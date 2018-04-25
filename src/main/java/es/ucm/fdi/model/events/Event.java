@@ -1,6 +1,9 @@
 package es.ucm.fdi.model.events;
 
+import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.RoadMap;
 
 /**
@@ -10,7 +13,7 @@ import es.ucm.fdi.model.objects.RoadMap;
  * @author Francisco Javier Blázquez
  * @version 23/03/18
  */
-public abstract class Event
+public abstract class Event implements Describable
 {
 	//ATRIBUTOS DE LA CLASE
 	private int time;				//Momento de ejecución
@@ -57,5 +60,8 @@ public abstract class Event
 	public abstract String getTag();
 	public abstract void fillSectionDetails(IniSection s);
 	
-	//no es necesario el javadoc en varios métodos por ser obvio.
+	public void describe(Map<String, String> out) {
+		out.put("#", "");
+		out.put("Time", "" + time);
+	}
 }

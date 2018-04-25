@@ -11,9 +11,10 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import es.ucm.fdi.extra.tablecomponent.ComponentTable;
 import es.ucm.fdi.extra.texteditor.TextEditor;
-import es.ucm.fdi.model.objects.SimulatedObject.Describable;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.TrafficSimulator;
 import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.RoadMap;
-import es.ucm.fdi.model.objects.SimulatedObject.Describable;
 import es.ucm.fdi.ini.*;
 
 /**
@@ -91,16 +91,10 @@ public class NewJunction extends Event
 			return new NewJunction(id, time);
 		}
 	}
-	
-	public class DescribableNewJunction implements Describable {
 
-		@Override
-		public void describe(Map<String, String> out) {
-			out.put("#", "");
-			out.put("Time", "" + getTime());
-			out.put("Type", "New Junction " + junction_id);
-		}
-		
+	public void describe(Map<String, String> out) {
+		super.describe(out);
+		out.put("Type", "New Junction " + junction_id);
 	}
 	
 }
