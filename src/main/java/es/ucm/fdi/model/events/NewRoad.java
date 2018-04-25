@@ -2,7 +2,10 @@ package es.ucm.fdi.model.events;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
@@ -122,4 +125,10 @@ public class NewRoad extends Event
 		s.setValue("max_speed", "" + maxSpeed);
 		s.setValue("length", "" + length);
 	}
+
+	public void describe(Map<String, String> out) {
+		super.describe(out);
+		out.put("Type", "New Road " + road_id);
+	}
+	
 }

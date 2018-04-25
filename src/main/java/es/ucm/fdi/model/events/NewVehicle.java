@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.Car;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
-import es.ucm.fdi.model.objects.SimulatedObject.Describable;
 import es.ucm.fdi.model.objects.Vehicle;
 
 public class NewVehicle extends Event
@@ -150,15 +150,9 @@ public class NewVehicle extends Event
 		}
 	}
 	
-	public class DescribableNewVehicle implements Describable {
-
-		@Override
-		public void describe(Map<String, String> out) {
-			out.put("#", "");
-			out.put("Time", "" + getTime());
-			out.put("Type", "New Vehicle " + vehicleId);
-		}
-		
+	public void describe(Map<String, String> out) {
+		super.describe(out);
+		out.put("Type", "New Vehicle " + vehicleId);
 	}
 	
 }
