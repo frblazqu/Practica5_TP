@@ -32,7 +32,7 @@ import es.ucm.fdi.model.objects.Vehicle;
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
+	private final static String INPUT_FILE = "C:/Users/Usuario/git/Practica5_TP/src/main/resources/readStr/examples/basic/"
 										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
@@ -297,13 +297,29 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void registered(UpdateEvent ue)
 	{
-		//Aquí tenemos que notificarlo en la barra inferior
+    
+		List<Describable> v = (List<Describable>)(List) ue.getRoadMap().getVehicles();
+		List<Describable> r = (List<Describable>)(List) ue.getRoadMap().getRoads();
+		List<Describable> j = (List<Describable>)(List) ue.getRoadMap().getJunctions();
 		
+		vehiclesTable.setElementsList(v);
+		roadsTable.setElementsList(r);
+		junctionsTable.setElementsList(j);
 		
 	}
 	public void reset(UpdateEvent ue)
 	{
-		//Aquí tenemos que refrescar las tablas y el grafo
+		List<Describable> v = (List<Describable>)(List) ue.getRoadMap().getVehicles();
+		List<Describable> r = (List<Describable>)(List) ue.getRoadMap().getRoads();
+		List<Describable> j = (List<Describable>)(List) ue.getRoadMap().getJunctions();
+		
+		vehiclesTable.setElementsList(v);
+		roadsTable.setElementsList(r);
+		junctionsTable.setElementsList(j);
+		
+		vehiclesTable.updateTable();
+		roadsTable.updateTable();
+		junctionsTable.updateTable();
 	}
 	public void newEvent(UpdateEvent ue)
 	{
@@ -316,8 +332,9 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	}
 	public void advanced(UpdateEvent ue)
 	{
-		generateGraph(ue);
-		//Aquí debemos refrescar las tablas
+		vehiclesTable.updateTable();
+		roadsTable.updateTable();
+		junctionsTable.updateTable();
 	}
 	public void error(UpdateEvent ue, String error)
 	{
