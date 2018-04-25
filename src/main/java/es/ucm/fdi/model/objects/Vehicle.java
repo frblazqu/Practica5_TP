@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 
 /**
  * Representación y funcionalidad de un vehículo en el simulador.
@@ -222,30 +223,27 @@ public class Vehicle extends SimulatedObject
 		}
 	}
 	
-	public class DescribableVehicle implements Describable {
-
-		@Override
-		public void describe(Map<String, String> out) {
-			out.put("ID", getId());
-			out.put("Road", actualRoad().getId());
-			out.put("Location", "" + localizacion);
-			out.put("Speed", "" + velActual);
-			out.put("Km", "" + kilometrage);
-			out.put("Faulty units", "" + tiempoAveria);
-			out.put("Itinerary", itineraryDesc());
-		}
-		
-		private String itineraryDesc() {
-			String aux = "";
-			aux += '[' + itinerario.get(0).cruceIniId;
-			for(Road r: itinerario) {
-				aux += ',' + r.cruceFin.getId();
-			}
-			aux += ']';
-			
-			return aux;
-		}
-		
+	@Override
+	public void describe(Map<String, String> out) {
+		super.describe(out);
+		out.put("Road", actualRoad().getId());
+		out.put("Location", "" + localizacion);
+		out.put("Speed", "" + velActual);
+		out.put("Km", "" + kilometrage);
+		out.put("Faulty units", "" + tiempoAveria);
+		out.put("Itinerary", itineraryDesc());
 	}
+		
+	private String itineraryDesc() {
+		String aux = "";
+		aux += '[' + itinerario.get(0).cruceIniId;
+		for(Road r: itinerario) {
+			aux += ',' + r.cruceFin.getId();
+		}
+		aux += ']';
+			
+		return aux;
+		
+}
 
 }

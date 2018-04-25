@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
+import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.util.MultiTreeMap;;
 
 /**
@@ -13,7 +14,7 @@ import es.ucm.fdi.util.MultiTreeMap;;
  * @author Manuel Ortega
  * @version 26/03/18
  */
-public class Road extends SimulatedObject
+public class Road extends SimulatedObject 
 {	
 	//ATRIBUTOS
 	protected int longitud;									//Longitud de la carretera
@@ -136,33 +137,29 @@ public class Road extends SimulatedObject
 		}
 	}
 	
-	public class DescribableRoad implements Describable {
-
-		@Override
-		public void describe(Map<String, String> out) {
-			out.put("ID", getId());
-			out.put("Source", cruceIniId);			
-			out.put("Target", cruceFin.getId());
-			out.put("Lenght", "" + longitud);
-			out.put("Max Speed", "" + maxVelocidad);
-			out.put("Vehicles", vehiclesInRoadDesc());
-		}
-		
-		private String vehiclesInRoadDesc(){
-			String aux = "";
-			
-			for(Vehicle v: vehiculos.innerValues())
-			{
-				if(v != null)
-					aux += '[' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "],";
-			}
-			
-			if(aux.length() != 0){
-				aux = aux.substring(0, aux.length() - 1);
-			}
-				
-			return aux;
-		}
-		
+	public void describe(Map<String, String> out) {
+		super.describe(out);;
+		out.put("Source", cruceIniId);			
+		out.put("Target", cruceFin.getId());
+		out.put("Lenght", "" + longitud);
+		out.put("Max Speed", "" + maxVelocidad);
+		out.put("Vehicles", vehiclesInRoadDesc());
 	}
+		
+	private String vehiclesInRoadDesc(){
+		String aux = "";
+			
+		for(Vehicle v: vehiculos.innerValues())
+		{
+			if(v != null)
+				aux += '[' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "],";
+		}
+		
+		if(aux.length() != 0){
+			aux = aux.substring(0, aux.length() - 1);
+		}
+				
+		return aux;
+	}
+		
  }
