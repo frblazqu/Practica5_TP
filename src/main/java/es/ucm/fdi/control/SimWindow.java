@@ -136,7 +136,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		SimulatorAction insertEvents = new SimulatorAction(
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
-				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
+				()-> {control.simulador().leerDatosSimulacion(eventsArea.flujoLectura());
+				      eventsArea.setText("");});
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
@@ -310,6 +311,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	/* MÉTODOS DE LISTENER */
 	public void update(UpdateEvent ue, String error)
 	{
+		statusBarReport.setForeground(Color.black);
+		
 		switch(ue.getType())
 		{
 		case ADVANCED: 		advanced(ue);		break;
