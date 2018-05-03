@@ -6,18 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.model.Describable;
 
 /**
- * Representación y funcionalidad de un vehículo en el simulador.
+ * Representación y funcionalidad de un vehículo básico en el simulador.
  * 
  * @author Francisco Javier Blázquez
  * @author Manuel Ortega
- * @version 26/03/18
+ * @version 02/05/18
  */
-public class Vehicle extends SimulatedObject implements Describable
+public class Vehicle extends SimulatedObject 
 {
-	//ATRIBUTOS
 	protected ArrayList<Road> itinerario;		//Carreteras que forman el itinerario del vehículo.
 	protected int indiceItinerario;				//itinerario(indiceItinerario) debe ser siempre la carretera actual.
 	protected int localizacion;					//Distancia recorrida en la carretera actual.
@@ -29,11 +27,12 @@ public class Vehicle extends SimulatedObject implements Describable
 	
 	//CONSTRUCTORAS
 	/**
-	 * Constructora por defecto, genera un itinerario vacío y un identificador "" para el vehículo, no preparada para usarse.
+	 * Constructora por defecto. NO DEBE USARSE SIN PRECAUCIÓN.
+	 * 
+	 * @deprecated Pues los inicializa sus atributos a parámetros no válidos para ser ejecutados en el simulador.
 	 */
 	public Vehicle()
 	{
-		super();
 		kilometrage = 0;
 		velActual = 0;
 		velMaxima = 0;
@@ -44,16 +43,19 @@ public class Vehicle extends SimulatedObject implements Describable
 		indiceItinerario = 0;
 	}
 	/**
-	 * Constructora usual, dada un id, velocidad máxima, mapa de objetos y listado de ids de cruces inicializa las variables del
-	 * vehículo con estos datos. El itinerario se completará con las carreteras que unen dos índices consecutivos del trayecto y
-	 * se lanzará una excepción si esta o uno de los cruces no existen.
+	 * Genera un vehículo dados los siguientes parámetros:
 	 * 
-	 * @param id El identificador del vehículo que vamos a crear.
-	 * @param trayecto Es la representación del itinerario como ids de los cruces por los que debe pasar el vehículo. 
+	 * @param id Identificador del vehículo a crear (debe ser alfanumérico).
+	 * @param maxSpeed Velocidad máxima del vehículo a crear.
+	 * @param trayecto Identificadores de los cruces que el vehículo debe atravesar por orden.
+	 * @param map Mapa de carreteras/cruces/vehículos del simulador.
+	 * 
+	 * @deprecated Pues requiere del mapa entero para generar el vehículo y aumenta el acoplamiento
+	 * de todo nuestro código.
 	 */
 	public Vehicle(String id, int maxSpeed, String[] trayecto, RoadMap map)
 	{
-		super(id, ObjectType.VEHICLE);
+		super(id);
 		
 		itinerario = new ArrayList<>();
 		//Esto no debe permitir saltarse el mapa a la torera. Lanzar excepciones si no existe la carretera.
@@ -70,12 +72,15 @@ public class Vehicle extends SimulatedObject implements Describable
 		velMaxima = maxSpeed;
 	}
 	/**
-	 * Constructora usual, genera un nuevo vehículo con un itinerario concreto. ADVERTENCIA! no incorpora el vehículo a su
-	 * primera carretera.
+	 * Genera un vehículo dados los siguientes parámetros:
+	 * 
+	 * @param id Identificador del vehículo a crear (debe ser alfanumérico).
+	 * @param maxSpeed Velocidad máxima del vehículo a crear.
+	 * @param trayecto Lista ordenada de carreteras que el vehículo debe atravesar por orden.
 	 */
 	public Vehicle(String id, int maxSpeed, List<Road> trayecto)
 	{
-		super(id, ObjectType.VEHICLE);
+		super(id);
 		
 		itinerario = (ArrayList<Road>) trayecto;
 		indiceItinerario = 0;
@@ -88,38 +93,18 @@ public class Vehicle extends SimulatedObject implements Describable
 		
 		actualRoad().entraVehiculo(this);
 	}
-	/**
-	 * Método realizado para facilitar el testeo de la funcionalidad. No debe ser usado.
-	 * 
-	 * @deprecated Solo válido para el testeo.*/
-	public Vehicle(String id, int maxSpeed, Road[] trayecto)
-	{
-		super(id, ObjectType.VEHICLE);
-		
-		for(Road r: trayecto)
-			itinerario.add(r);
 
-		indiceItinerario = 0;
-		kilometrage = 0;
-		velActual = 0;
-		tiempoAveria = 0;
-		localizacion = 0;
-		enDestino = false;
-		velMaxima = maxSpeed;
-	}
-	
-	//MÉTODOS
+	//FUNCIONALIDAD
 	/**
-	 * Permite al vehículo continuar su itinerario, avanzando en la carretera actual, incorporándose a cruces, esperando cambios
-	 * de semáforo... Todo conforme a su itinerario predefinido y teniendo en consideración posibles estados de avería.
+	 * Hace avanzar al vehículo, esto es, actualiza sus atributos para que reflejen fielmente la nueva posición que pasa
+	 * a ocupar en la carretera. 
 	 */
-	public void avanza(RoadMap map)
+	public void avanza()
 	{
-		if(tiempoAveria > 0)  --tiempoAveria; 	//No avanza si está averiado
+		if(tiempoAveria > 0)  --tiempoAveria; 
+			//No avanzamos su posición en la carretera si está averiado
 		else 
 		{
-			//itinerario.get(indiceItinerario) ~ carretera actual ~ acualRoad()
-			
 			//1. Hacemos que propiamente avance en la carretera actual
 			int aux = localizacion;
 			localizacion += velActual;
@@ -132,19 +117,24 @@ public class Vehicle extends SimulatedObject implements Describable
 				actualRoad().getJunctionFin().entraVehiculo(this);
 			}
 			
-			//La distancia recorrida en la carretera se suma a la distancia recorrida en total
+			//3. La distancia recorrida en la carretera se suma a la distancia recorrida en total
 			kilometrage += localizacion - aux;
 		}
 	}
 	/**
-	 * Permite realizar un cambio de carretera del vehículo, mueve este a su siguiente carretera determinada en el itinerario. En
-	 * el caso de que se llegue al final se marca el vehículo como situado en destino. Con la disposición actual del código está 
-	 * pensada para ser llamada desde un cruce del que después se eliminará el vehículo (donde este está esperando).
+	 * Mueve el vehículo a la siguiente carretera de su itinerario o marca este como situado en destino si no hay ninguna
+	 * carretera siguiente especificada.
+	 * 
+	 * @throws IllegalStateException Si el vehículo no se encuentra al final de la carretera o la que debería ser su
+	 * carretera actual no lo contiene.
 	 */
 	public void moverASiguienteCarretera()
 	{
+		if(!actualRoad().saleVehiculo(this))
+			throw new IllegalStateException("No se ha podido mover a la siguiente carretera el vehículo " + id + ".");
+		
+		//Se pasa a la siguiente o se marca en destino dependiendo de si ha llegado al final o no.
 		velActual = 0;	localizacion = 0;
-		actualRoad().saleVehiculo(this);
 		
 		if(indiceItinerario + 1 < itinerario.size())
 		{
@@ -154,13 +144,20 @@ public class Vehicle extends SimulatedObject implements Describable
 		else
 			enDestino = true;
 	}
-	/**Devuelve la carretera actual en la que se encuetra el vehículo.*/
+	/**
+	 * @return La carretera en la que se encuentra el vehículo. Si esté se encuentra en un cruce esperando se devuelve la
+	 * carretera por la que el vehículo ha llegado hasta ese cruce. 
+	 */
 	public Road actualRoad()
 	{
-		//Qué pasa si está en un cruce ??
 		return itinerario.get(indiceItinerario);
 	}
-	/**Suma el tiempo de averia al actual, no pone el tiempo de averia a este valor.*/
+	/**
+	 * Aumenta el tiempo que está averiado el vehículo.
+	 * 
+	 * @param tiempoAveria El tiempo que se incrementa la avería del vehículo.
+	 * @throws InvalidParameterException Si el tiempo de avería introducido es negativo.
+	 */
 	public void setTiempoAveria(int tiempoAveria)
 	{
 		if(tiempoAveria > 0)	
@@ -169,58 +166,78 @@ public class Vehicle extends SimulatedObject implements Describable
 			setVelocidadActual(0);
 		}
 		else if(tiempoAveria < 0)
-				throw new InvalidParameterException("Tiempo de avería negativo.");
-			
+				throw new InvalidParameterException("El vehículo " + id +" no puede tener tiempo de avería negativo: " + tiempoAveria + ".");	
 	}
-	/**Permite modificar la velocidad de circulación del vehículo, siempre a valores no negativos, lanza InvalidParameterException
-	 * si es este el caso.*/
+	/**
+	 * Permite modificar la velocidad de circulación del vehículo.
+	 * 
+	 * @param nuevaVelocidad Nueva velocidad de circulación del vehículo.
+	 * @throws InvalidParameterException Si la velocidad de criculación introducida es negativa.
+	 */
 	public void setVelocidadActual(int nuevaVelocidad)
 	{
-		if(nuevaVelocidad < 0){  
+		if(nuevaVelocidad < 0)
 			throw new InvalidParameterException("Velocidad negativa no válida.");
-		}else{
-			if (nuevaVelocidad <= velMaxima){
-				velActual = nuevaVelocidad;
-			}else{
-				velActual = velMaxima;
-			}
-		}
+				
+		if (nuevaVelocidad <= velMaxima)
+			velActual = nuevaVelocidad;
+		else
+			velActual = velMaxima;
 	}
-	/**True si el vehículo se encuentra averiado. False en caso contrario.*/
+	/**
+	 * @return True si el vehículo se encuentra averiado. False en caso contrario.
+	 */
 	public boolean averiado()
 	{
 		return tiempoAveria > 0;
 	}
-	/**Devuelve la distancia al origen de la carretera actual del vehículo.*/
+	/**
+	 * @return La distancia al origen de la carretera actual del vehículo.
+	 */
 	public int getLocalizacion() { return localizacion;}
-	public void fillSectionDetails(IniSection s)
-	{
-		s.setValue("speed", velActual);
-		s.setValue("kilometrage", kilometrage);
-		s.setValue("faulty", tiempoAveria);
-		s.setValue("location", localizacionString());
-	}	
-	protected String localizacionString()
-	{
-		if(enDestino)	return  "arrived";
-		else			return "(" + actualRoad().getId() + "," + localizacion  + ")";				
-	}
-	/**Devuelve el encabezado de los informes de los vehículos. No incluye '[' '] para remarcar el encabezado.'*/
+	
+	//INFORMES Y TABLAS
+	/**
+	 * @return "vehicle_report" como encabezado por defecto para los reports de los vehículos.
+	 */
 	public String getHeader()
 	{
 		return "vehicle_report";
 	}
-	/**Rellena el mapa @param camposValor con los campos a reportar específicos para el vehículo.*/
+	/**
+	 * Para completar el informe en formato IniSection que genera el vehículo.
+	 * 
+	 * @see es.ucm.fdi.ini.IniSection
+	 * @param sec Sección de tipo IniSection en la que completar los datos.
+	 */
+	public void fillSectionDetails(IniSection sec)
+	{
+		sec.setValue("speed", velActual);
+		sec.setValue("kilometrage", kilometrage);
+		sec.setValue("faulty", tiempoAveria);
+		sec.setValue("location", localizacionString());
+	}	
+	/**
+	 * Para completar un mapa con la información del estado de este vehículo.
+	 * 
+	 * @param camposValor Mapa en el que completar los datos.
+	 */
 	public void fillReportDetails(Map<String, String> camposValor)
 	{
 		camposValor.put("speed", Integer.toString(velActual));
 		camposValor.put("kilometrage", Integer.toString(kilometrage));
 		camposValor.put("faulty", Integer.toString(tiempoAveria));
-		if(enDestino){
-			camposValor.put("location", "arrived");
-		}else{
-		camposValor.put("location", "(" + itinerario.get(indiceItinerario).getId() + "," + Integer.toString(localizacion)  + ")");		
-		}
+		camposValor.put("location", localizacionString());
+	}
+	/**
+	 * Devuelve la representación que se dará en los informes a la localización del vehículo en los
+	 * informes.
+	 * 
+	 * @return "arrived" si el vehículo está en destino o "(Road id, localización)" en caso contrario.
+	 */
+	protected String localizacionString()
+	{
+		return enDestino ? "arrived" : "(" + actualRoad().getId() + "," + localizacion  + ")";		
 	}
 	
 	@Override
@@ -233,7 +250,6 @@ public class Vehicle extends SimulatedObject implements Describable
 		out.put("Faulty units", "" + tiempoAveria);
 		out.put("Itinerary", itineraryDesc());
 	}
-		
 	private String itineraryDesc() {
 		String aux = "";
 		aux += '[' + itinerario.get(0).getJunctionIni().getId();
@@ -244,7 +260,6 @@ public class Vehicle extends SimulatedObject implements Describable
 			
 		return aux;
 	}
-	
 	private String location(){
 		if(enDestino) {
 			return "arrived";
@@ -253,4 +268,4 @@ public class Vehicle extends SimulatedObject implements Describable
 		}
 	}
 
-}
+}//Vehicle

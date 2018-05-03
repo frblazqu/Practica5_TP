@@ -50,7 +50,7 @@ public class Car extends Vehicle{
 			this.setTiempoAveria(tiempoAveria());
 			kmSinceLastFaulty = 0;
 		}
-		super.avanza(map);
+		super.avanza();
 		kmSinceLastFaulty += this.getLocalizacion() - aux;
 	}
 	public void fillReportDetails(Map<String, String> camposValor)

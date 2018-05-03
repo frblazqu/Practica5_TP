@@ -5,19 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.model.Describable;
-import es.ucm.fdi.util.MultiTreeMap;;
+import es.ucm.fdi.util.MultiTreeMap;
 
 /**
  * Representación y funcionalidad de una carretera en el simulador.
  * 
  * @author Francisco Javier Blázquez
  * @author Manuel Ortega
- * @version 26/03/18
+ * @version 02/05/18
  */
 public class Road extends SimulatedObject 
 {	
-	//ATRIBUTOS
 	protected int longitud;									//Longitud de la carretera
 	protected int maxVelocidad;								//Velocidad máxima de circulación de la carretera
 	protected Junction cruceFin;							//Cruce en el que termina la carretera
@@ -25,7 +23,11 @@ public class Road extends SimulatedObject
 	protected MultiTreeMap<Integer,Vehicle> vehiculos;		//Todos los vehículos circulando en la carretera ordenados por su distancia al 
 															//origen de manera decreciente
 	//CONSTRUCTORAS
-	/**Constructora por defecto, inicializa a una carretera de longitud nula con identificador  vacío "" y sin vehículos.*/
+	/**
+	 * Constructora por defecto, NO DEBE USARSE SIN PRECAUCIÓN.
+	 * 
+	 * @deprecated Pues inicializa los atributos de la carretera a valores no válidos.
+	 */
  	public Road()
 	{
  		super();
@@ -33,31 +35,53 @@ public class Road extends SimulatedObject
 		maxVelocidad = 0;
 		vehiculos = new MultiTreeMap<>();
 	}
- 	/**Constructora usual, genera una carretera vacía con la ordenación de vehículos por distancia al origen decreciente y
- 	 * vacía de vehículos.*/
-	public Road(String id, int maxSpeed, int size, Junction junc, Junction ini)
+ 	/**
+ 	 * Constructora usual. Genera una carretera dados:
+ 	 * 
+ 	 * @param id Identificador de la carretera.
+ 	 * @param maxSpeed Máxima velocidad de circulación de la carretera.
+ 	 * @param size Longitud de la carretera.
+ 	 * @param fin Cruce en el que finaliza la carretera.
+ 	 * @param ini Cruce en el que comienza la carretera.
+ 	 */
+	public Road(String id, int maxSpeed, int size, Junction fin, Junction ini)
 	{
-		super(id, ObjectType.ROAD);
-		cruceFin = junc;
+		super(id);
+		cruceFin = fin;
 		cruceIni = ini;
 		maxVelocidad = maxSpeed;
 		longitud = size;
-		vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> a - b);					
+		vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> b - a);					
 		
 		//Uso con y sin lambdas!!
 		//vehiculos = new MultiTreeMap<Integer,Vehicle>((a,b) -> b - a);
 		//vehiculos = new MultiTreeMap<Integer,Vehicle>(new MayorAMenor());	
 	}
-	/**Constructora solo para testeo*/
-	public Road(String id, int maxSpeed, int size)
+
+	//FUNCIONALIDAD
+	public int getLongitud() 		{return longitud;}
+	/** @return El cruce en el que finaliza la carretera. */
+	public Junction getJunctionFin()
 	{
-		super(id, ObjectType.ROAD);
-		maxVelocidad = maxSpeed;
-		longitud = size;
+		return cruceFin;
 	}
-	
-	//MÉTODOS
-	public void avanza(RoadMap mapa)															
+	/** @return El cruce en el que comienza la carretera. */
+	public Junction getJunctionIni()
+	{
+		return cruceIni;
+	}
+	/** 
+	 * @return Una lista de vehículos ordenada por distancia al origen de la carretera de todos los vehículos 
+	 * que circulan por esta.
+	 */
+	public List<Vehicle> vehicles()
+	{
+		return vehiculos.valuesList();
+	}
+	/**
+	 * Avanza el estado de la carretera, esto es, avanzan todos los vehículos que contiene dentro de la propia carretera.
+	 */
+	public void avanza()															
 	{
 		if(vehiculos.sizeOfValues() > 0)
 		{
@@ -72,15 +96,21 @@ public class Road extends SimulatedObject
 					if(v.averiado())	numAveriados++;
 					else 				v.setVelocidadActual(velocidadAvance(numAveriados));
 				
-					v.avanza(mapa);
+					v.avanza();
 				}
 
 				aux.putValue(v.getLocalizacion(), v);
 			}
+			
 			vehiculos = aux;
 		}
 	}
-	public int velocidadAvance(int numAveriados)
+	/**
+	 * Devuelve la velocidad de avance del vehículo.
+	 * 
+	 *  @param numAveriados Número de vehículos averiados por delante del que vamos a cambiar su velocidad.
+	 */
+	protected int velocidadAvance(int numAveriados)
 	{
 		int velocidadBase = Math.min(maxVelocidad, ((int)(maxVelocidad/vehiculos.sizeOfValues()))+1);
 		
@@ -88,51 +118,24 @@ public class Road extends SimulatedObject
 		else 					return velocidadBase/2;
 	}
 	/** Introduce un vehículo en la carretera. Siempre al comienzo de esta.	 */
-	public void entraVehiculo(Vehicle vehicle)								
+	protected void entraVehiculo(Vehicle vehicle)								
 	{
 		vehiculos.putValue(0, vehicle);
 	}
-	/** Elimina un vehículo que ha llegado al final de la carretera. */
+	/** Elimina un vehículo que ha llegado al final de la carretera. 
+	 * 
+	 * @return True si elimina el vehículo de esta carretera. False en caso contrario.
+	 */
 	public boolean saleVehiculo(Vehicle vehicle)
 	{
+		//if(vehicle.actualRoad() != this || vehicle.getLocalizacion() != longitud)
+		//	  return false;
+		
 		return vehiculos.removeValue(longitud, vehicle);
 	}
-	public int getLongitud() 		{return longitud;}
-	public Junction getJunctionFin()
-	{
-		return cruceFin;
-	}
-	public void fillReportDetails(Map<String, String> camposValor)						
-	{
-		camposValor.put("state", vehiclesInRoad());
-	}
-	protected String vehiclesInRoad(){
-		String aux = "";
-		
-		for(Vehicle v: vehiculos.innerValues())
-		{
-			if(v != null)
-				aux += '(' + v.getId() + ',' + String.valueOf(v.getLocalizacion()) + "),";
-		}
-		
-		if(aux.length() != 0){
-			aux = aux.substring(0, aux.length() - 1);
-		}
-			
-		return aux;
-	}
-	public void fillSectionDetails(IniSection s)
-	{
-		s.setValue("state", vehiclesInRoad());
-	}
-	public String getHeader()
-	{
-		return "road_report";
-	}
-	public Junction getJunctionIni()
-	{
-		return cruceIni;
-	}
+	/**
+	 * Comparador de enteros de mayor a menor.
+	 */
 	private class MayorAMenor implements Comparator<Integer>							
 	{
 		public int compare(Integer arg0, Integer arg1)
@@ -142,6 +145,44 @@ public class Road extends SimulatedObject
 		}
 	}
 	
+	//INFORMES Y TABLAS
+	/**
+	 * @return "road_report" como encabezado por defecto para los reports de las carreteras. 
+	 */
+	public String getHeader()
+	{
+		return "road_report";
+	}
+	/**
+	 * Completa los detalles específicos de esta carretera en la sección pasada como parámetro.
+	 * 
+	 * @param sec Sección a completar con la información de la carretera.
+	 */
+	public void fillSectionDetails(IniSection sec)
+	{
+		sec.setValue("state", vehiclesInRoad());
+	}
+	/**
+	 * Completa los detalles específicos de esta carretera en el mapa pasado como parámetro.
+	 * 
+	 * @param camposValor Mapa en el que introducir la información de la carretera.
+	 */
+	public void fillReportDetails(Map<String, String> camposValor)						
+	{
+		camposValor.put("state", vehiclesInRoad());
+	}
+	/** @return La representación textual de los vehículos en la carretera de los reports. */
+	protected String vehiclesInRoad(){
+		String aux = "";
+		
+		for(Vehicle v: vehiculos.innerValues())
+				aux += '(' + v.getId() + ',' + v.getLocalizacion() + "),";
+		
+		if(aux.length() != 0)
+			aux = aux.substring(0, aux.length() - 1);
+			
+		return aux;
+	}
 	public void describe(Map<String, String> out) {
 		super.describe(out);;
 		out.put("Source", cruceIni.getId());			
@@ -149,10 +190,6 @@ public class Road extends SimulatedObject
 		out.put("Lenght", "" + longitud);
 		out.put("Max Speed", "" + maxVelocidad);
 		out.put("Vehicles", vehiclesInRoadDesc());
-	}
-	public List<Vehicle> vehicles()
-	{
-		return vehiculos.valuesList();
 	}
 	private String vehiclesInRoadDesc(){
 		String aux = "";
@@ -169,5 +206,4 @@ public class Road extends SimulatedObject
 				
 		return aux;
 	}
-	
- }
+ }//Road
