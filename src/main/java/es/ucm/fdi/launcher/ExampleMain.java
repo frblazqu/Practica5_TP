@@ -169,8 +169,8 @@ public class ExampleMain {
 	 */
 	public static void parseModeOption(CommandLine line)throws ParseException {
 		String m = line.getOptionValue("m", DEFAULT_SIM_MODE);
-		if(m != DEFAULT_SIM_MODE && m != "gui"){
-			throw new ParseException("Invalid value for sim mode: " + m);
+		if(m.equals(DEFAULT_SIM_MODE) && m.equals("gui")){
+			throw new ParseException("Invalid value for Sim Mode: " + m);
 		} else {
 			_simMode = m;
 		}
@@ -279,7 +279,7 @@ public class ExampleMain {
 		try
 		{
 			Controller controller = new Controller(_inFile, _timeLimit);
-			//SwingUtilities.invokeLater(() -> new SimWindow(controller));
+			SwingUtilities.invokeLater(() -> new SimWindow(controller));
 		}
 		catch(Exception e)
 		{

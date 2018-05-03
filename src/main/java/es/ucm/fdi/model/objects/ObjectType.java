@@ -1,5 +1,12 @@
 package es.ucm.fdi.model.objects;
 
+/** 
+ * Enumerado para distinguir cada uno de los distintos objetos de la simulación.
+ * 
+ * @deprecated Pues no es necesario distinguir el tipo explícitamente entre las clases que heredan de SimObject.
+ * @author Francisco Javier Blázquez Martínez
+ * @version 02/05/18
+ */
 public enum ObjectType
 {
 	VEHICLE, ROAD, JUNCTION, OBJECT_ERROR;

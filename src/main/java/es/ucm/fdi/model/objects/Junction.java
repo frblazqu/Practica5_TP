@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.model.Describable;
 
 public class Junction extends SimulatedObject
 {
@@ -17,6 +16,11 @@ public class Junction extends SimulatedObject
 	protected int numCarreterasEntrantes;				//Número de carreteras que entran a este cruce
 	
 	//CONSTRUCTORAS
+	/**
+	 * Constructora por defecto. NO DEBE USARSE SIN PRECAUCIÓN.
+	 * 
+	 * @deprecated Pues no inicializa el identificador ni el semáforo a un valor correcto.
+	 */
 	public Junction()
 	{
 		super();
@@ -25,37 +29,61 @@ public class Junction extends SimulatedObject
 		numCarreterasEntrantes = 0;
 		semaforo = -1;
 	}
+	/**
+	 * Constructora usual. Genera un nuevo cruce dado:
+	 * 
+	 * @param id Identificador del nuevo cruce a crear.
+	 */
 	public Junction(String id)
 	{
-		super(id, ObjectType.JUNCTION);
+		super(id);
 		colas = new HashMap<>();
 		incomingRoadIds = new ArrayList<>();
 		numCarreterasEntrantes = 0;
 		semaforo = -1;
 	}
 	
-	//MÉTODOS DE ESTADO
+	//FUNCIONALIDAD
+	/**
+	 * Avanza el estado del cruce en la simulación, esto es, permite avanzar a su siguiente carretera al
+	 * vehículo que más lleva esperando en la carretera con el semáforo en verde.
+	 */
 	public void avanza()
 	{
 		if(numCarreterasEntrantes > 0)
 		{
+			//Aquí deberíamos tener tal vez un método para inicializarlo o inicializarlo antes.
 			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
 			
+			//Tal vez no necesitamos el método colaEnVerde() sino algo más encapsulado.
 			if(colaEnVerde() != null && colaEnVerde().size() > 0)
 				colaEnVerde().pop().moverASiguienteCarretera();
 			
 			semaforo = (semaforo+1)%numCarreterasEntrantes;
 		}
 	}
+	/**
+	 * @return Los vehículos que se encuentran esperando al final de la carretera con semáforo en verde.
+	 */
 	protected ArrayDeque<Vehicle> colaEnVerde()
 	{
 		return colas.get(incomingRoadIds.get(semaforo));
 	}
-	public void entraVehiculo(Vehicle car)
+	/**
+	 * Inserta el vehículo pasado como parámetro al final de la cola de espera de su carretera.
+	 * 
+	 * @param car Vehículo que pasa a esperar en la cola final de la carretera en la que se encuentra.
+	 */
+	public void entraVehiculo(Vehicle car) 
 	{
 		colas.get(car.actualRoad().getId()).addLast(car);
 		car.setVelocidadActual(0);
 	}
+	/**
+	 * Añade una carretera nueva que finaliza en el cruce actual.
+	 * 
+	 * @param road Carretera entrante que vamos a añadir.
+	 */
 	public void añadirCarreteraEntrante(Road road)
 	{
 		incomingRoadIds.add(road.getId());
@@ -64,16 +92,42 @@ public class Junction extends SimulatedObject
 		
 		completarAñadirCarretera(road);
 	}
+	/**
+	 * Método para ser sobreescrito en los cruces avanzados para ejecutar sus funciones específicas.
+	 * 
+	 * @param road Carretera que se añade como entrante al cruce.
+	 */
 	protected void completarAñadirCarretera(Road road)
 	{
 		;
 	}
-	@Override
+	
+	//INFORMES Y TABLAS
+	/** @return "junction_report" como encabezado por defecto para los informes de los cruces. */
 	public String getHeader()
 	{
 		return "junction_report";
 	}
-	public String colaCruce()
+	/**
+	 * Completa los detalles específicos de este cruce en el mapa pasado como parámetro.
+	 *  
+	 * @param camposValor Mapa en el que se introducirá la información.
+	 */
+	public void fillReportDetails(Map<String, String> camposValor)
+	{
+		/* Ha caído en desuso! */
+	}
+	/** 
+	 * Completa los detalles específicos de este cruce en la sección pasada como parámetro. 
+	 * 
+	 * @param sec Sección en la que insertar la información.
+	 */
+	public void fillSectionDetails(IniSection sec)
+	{
+		sec.setValue("queues", colaCruce());
+	}
+	/** @return La representación textual de las colas de espera del cruce que se visualiza en los informes. */
+	protected String colaCruce()
 	{
 		String cola = "";
 		
@@ -86,8 +140,8 @@ public class Junction extends SimulatedObject
 		
 		return cola;
 	}
-	
-	public String vehiculosCola(int index)
+	/** @return La representación textual de una cola de vehículos esperando en el cruce. */
+	protected String vehiculosCola(int index)
 	{
 		String vehiculos = "";
 		
@@ -98,31 +152,16 @@ public class Junction extends SimulatedObject
 		
 		return vehiculos;
 	}
-	
-	//MÉTODOS QUE SOBREESCRIBIR EN LAS CLASES HIJAS
-	@Override
-	public void fillReportDetails(Map<String, String> camposValor)
-	{
-		/* Ha caído en desuso! */
-	}
-	@Override
-	public void fillSectionDetails(IniSection s)
-	{
-		s.setValue("queues", colaCruce());
-	}
-	
-
 	public void describe(Map<String, String> out) {
 		super.describe(out);
 		out.put("Green", estadoVerde());
 		out.put("Red", estadoRojo());
 	}
-		
 	private String estadoVerde() {
 		String aux = "";
 		aux += "[";
 		if(semaforo != -1){
-		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + "]";
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + ")]";
 		}
 		aux += "]";
 		
@@ -144,4 +183,4 @@ public class Junction extends SimulatedObject
 			
 	}
 		
-}
+}//Junction

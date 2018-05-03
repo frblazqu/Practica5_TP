@@ -32,6 +32,7 @@ public class Controller
 	private OutputStream outputStream;						//Flujo de salida de informes de la simulación
 	private InputStream inputStream;						//Flujo de entrada de datos para la simulación
 	private TrafficSimulator simulador;						//Simulador a controlar
+	private String inputPath;
 	//private EventFactory eventBuilder;					//Para parsear iniSection como events
 	
 	//CONSTRUCTORAS
@@ -46,12 +47,13 @@ public class Controller
 	{
 		try  
 		{
+			inputPath = loadFilePath;
 			inputStream  = new FileInputStream( new File(loadFilePath));
 			outputStream = new FileOutputStream(new File(saveFilePath));
 			simulador = new TrafficSimulator();
 			ticksSimulacion = numTicks;
 		}catch (Exception e) {
-			//Aquí debe crearse un string de error y llamar a fireUpdateEvent
+			System.err.println("Error al crear el controlador");
 		}
 	}
 	/**
@@ -80,7 +82,16 @@ public class Controller
 	}
 	
 	public Controller(String loadFilePath, int numTicks) {
-		this(loadFilePath, null, numTicks);
+		try  
+		{
+			inputPath = loadFilePath;
+			inputStream  = new FileInputStream( new File(loadFilePath));
+			outputStream = null;
+			simulador = new TrafficSimulator();
+			ticksSimulacion = numTicks;
+		}catch (Exception e) {
+			System.err.println("Error al crear el controlador");
+		}
 	}
 	
 	//MÉTODOS
@@ -94,10 +105,10 @@ public class Controller
 	public void leerDatosSimulacion() 
 	{
 		try {
-		simulador.leerDatosSimulacion(inputStream);
-
-		}catch (Exception e) {
-			//Aquí debe crearse un string de error y llamar a fireUpdateEvent
+			simulador.leerDatosSimulacion(inputStream);
+		}
+		catch(IllegalStateException e) {
+			e.printStackTrace();
 		}
 	}
 	/**
@@ -127,6 +138,14 @@ public class Controller
 	public OutputStream getOutputStream()
 	{
 		return outputStream;
+	}
+	public int getTicksSim()
+	{
+		return ticksSimulacion;
+	}
+	public String getInputPath()
+	{
+		return inputPath;
 	}
 	public void setOutputStream(OutputStream flujoEscritura)
 	{

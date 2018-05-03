@@ -47,6 +47,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	ComponentTable vehiclesTable;
 	ComponentTable roadsTable;
 	ComponentTable junctionsTable;
+	JTextField timeText;
 	
 	Controller control;
 	
@@ -56,6 +57,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		
 		fc = new JFileChooser();
 		fc.setFileFilter(new FileNameExtensionFilter("INI File","ini"));
+		
+		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
 		
 		addLowerPanel();
 		addUpperPanel();
@@ -71,7 +74,32 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		bottomSplit.setDividerLocation(.5);	//50% de espacio para tablas en el panel inferior
 		bottomSplit.setResizeWeight(0.5);	//A pesar de que cambiemos la ventana
 		
-		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
+		control.simulador().addSimulatorListener(this);
+	}
+	
+	public SimWindow(Controller c) {
+		super("Traffic Simulator");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		fc = new JFileChooser();
+		fc.setFileFilter(new FileNameExtensionFilter("INI File","ini"));
+		
+		control = c;
+		
+		addLowerPanel();
+		addUpperPanel();
+		addBars();
+		
+		add(mainPanel);
+		
+		pack();
+		setVisible(true);
+		
+		mainPanel.setDividerLocation(.3);	//30% de espacio al panel superior
+		mainPanel.setResizeWeight(.3);		//A pesar de que cambiemos la ventana
+		bottomSplit.setDividerLocation(.5);	//50% de espacio para tablas en el panel inferior
+		bottomSplit.setResizeWeight(0.5);	//A pesar de que cambiemos la ventana
+		
 		control.simulador().addSimulatorListener(this);
 	}
 	
@@ -82,10 +110,10 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	private void addBars() {
 		
 		JLabel steps = new JLabel(" Steps: ");
-		JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 1000, 1));
+		JSpinner stepsSpinner = new JSpinner(new SpinnerNumberModel(control.getTicksSim(), 1, 1000, 1));
 		
 		JLabel time = new JLabel(" Time: ");
-		JTextField timeText = new JTextField("0");	
+		timeText = new JTextField("0");	
 		timeText.setPreferredSize(new Dimension(75, 10));
 		timeText.setEnabled(false);
 		
@@ -108,12 +136,13 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		SimulatorAction insertEvents = new SimulatorAction(
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
-				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
+				()-> {control.simulador().leerDatosSimulacion(eventsArea.flujoLectura());
+				      eventsArea.setText("");});
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
 				KeyEvent.VK_E, "control E",
-				()-> control.ejecutaKPasos((Integer) stepSpinner.getValue()));
+				()-> control.ejecutaKPasos((Integer) stepsSpinner.getValue()));
 		
 		SimulatorAction restartSim = new SimulatorAction(
 				"Reset Sim", "reset.png", "Reiniciar simulador",
@@ -157,7 +186,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		bar.add(executeSim);
 		bar.add(restartSim);
 		bar.add(steps);
-		bar.add(stepSpinner);
+		bar.add(stepsSpinner);
 		bar.add(time);
 		bar.add(timeText);
 		bar.add(report);
@@ -213,7 +242,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
-		eventsArea.setText(TextEditor.readFile(new File(INPUT_FILE)));
+		eventsArea.setText(TextEditor.readFile(new File(control.getInputPath())));
 		reportsArea = new TextEditor("Reports", false, fc);
 		
 		List<Describable> l = new ArrayList<>();
@@ -282,6 +311,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	/* MÉTODOS DE LISTENER */
 	public void update(UpdateEvent ue, String error)
 	{
+		statusBarReport.setForeground(Color.black);
+		
 		switch(ue.getType())
 		{
 		case ADVANCED: 		advanced(ue);		break;
@@ -320,6 +351,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		roadsTable.updateTable();
 		junctionsTable.updateTable();
 		
+		timeText.setText("0");
 		reportsArea.setText("");
 		generateGraph(ue);
 		
@@ -342,6 +374,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		roadsTable.updateTable();
 		junctionsTable.updateTable();
 		
+		String nextTime = "" + (Integer.valueOf(timeText.getText()) + 1);
+		timeText.setText(nextTime);
 		generateGraph(ue);
 
 		statusBarReport.setText(" Se ha avanzado en el estado de la simulación");

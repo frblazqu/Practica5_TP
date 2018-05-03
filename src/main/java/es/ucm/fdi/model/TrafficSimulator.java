@@ -20,18 +20,16 @@ import es.ucm.fdi.util.MultiTreeMap;
  */
 public class TrafficSimulator
 {
-	// ATRIBUTOS POR DEFECTO
-	private static final int DEFAULT_SET_TIME = 0;
+	private static final int DEFAULT_SET_TIME = 0;		//Tiempo al que inicializar el reloj
 
-	// ATRIBUTOS
 	private MultiTreeMap<Integer, Event> listaEventos; 	// Eventos a ejecutar (ordenados por tiempo ascendente y orden de insercción)
 	private RoadMap mapa; 								// Contenedor para todos los objetos de la simulación (identificaros por id único)
 	private int reloj; 									// Reloj que indica el paso de la simulación actual
 	private List<Listener> observadores; 				// Lista de observadores a los que notificar los cambios
 
+	//CONSTRUCTORA
 	/**
-	 * Inicializa el objeto a una simulación vacía. Tiempo inicial nulo (0 por defecto), contenedor de objetos vacío y
-	 * listado de eventos vacío.
+	 * Constructora usual. Crea un simulador vacío de objetos y de eventos.
 	 */
 	public TrafficSimulator()
 	{
@@ -41,23 +39,29 @@ public class TrafficSimulator
 		observadores = new ArrayList<>();
 	}
 
-	// MÉTODOS
-	/** Inserta un evento en el simulador manteniendo la ordenación por tiempo y orden de insercción. */
+	//FUNCIONALIDAD
+	/** 
+	 * Inserta un evento en el simulador manteniendo la ordenación por tiempo y orden de insercción. Notifica
+	 * esta insercción a los observadores.
+	 * 
+	 * @param evento El evento que se inserta al simulador.
+	 * @see #fireUpdateEvent(EventType, String)
+	 */
 	public void insertaEvento(Event evento)
 	{
 		listaEventos.putValue(evento.getTime(), evento);
 		
 		fireUpdateEvent(EventType.NEW_EVENT, null);
 	}
-
 	/**
-	 * Ejecuta la simulación durante un número de pasos numTicks y escribe los datos e informes de esta en el flujo out.
-	 * En cada paso de la simulación, siguiento este orden, se ejecutan los eventos de cada tiempo, se avanza en el
-	 * estado de los objetos de la simulación y se escriben los informes generados en este paso.
+	 * Ejecuta la simulación durante un número de pasos  y escribe los datos e informes de esta en el flujo out.
+	 * Tras esto se notifica a los observadores que el estado de la simulación ha cambiado.
 	 * 
-	 * @throws IllegalStateException
-	 *             Si no se consigue ejecutar correctamente un evento o no se puede escribir el informe de un paso de la
-	 *             simulación por el flujo de salida.
+	 * @param numTicks Numero de ticks que se ejecuta la simulación.
+	 * @param out Flujo de salida en el que escribir los informes.
+	 * @see #fireUpdateEvent(EventType, String)
+	 * @throws IllegalStateException Si no se consigue ejecutar correctamente un evento o no se puede escribir el 
+	 * informe de un paso de la simulación por el flujo de salida.
 	 */
 	public void ejecuta(int numTicks, OutputStream out)
 	{
@@ -74,7 +78,7 @@ public class TrafficSimulator
 
 				// 2. invocar al método avanzar de las carreteras
 				for (Road road : mapa.getRoads())
-					road.avanza(mapa);
+					road.avanza();
 
 				// 3. invocar al método avanzar de los cruces
 				for (Junction junc : mapa.getJunctions())
@@ -89,8 +93,9 @@ public class TrafficSimulator
 				if(out != null)
 					generaInforme(out);
 			}
-		} catch (IllegalArgumentException e)
+		} catch (Exception e)
 		{
+			fireUpdateEvent(EventType.ERROR, "No se pudo ejecutar un evento en el tiempo " + reloj + " ticks:\n" + e.getMessage());
 			throw new IllegalStateException("No se pudo ejecutar un evento en el tiempo " + reloj + " ticks.", e);
 		}
 	}
@@ -98,10 +103,8 @@ public class TrafficSimulator
 	 * Escribe en el flujo de salida un informe de la situación de todos los objetos en el instante de la llamada.
 	 * Escribe primero los informes de los cruces, después los de las carreteras y por último los vehículos.
 	 * 
-	 * @param out
-	 *            Flujo de salida para los datos.
-	 * @throws IOException
-	 *             Si no se consigue almacenar bien el informe generado.
+	 * @param out Flujo de salida para los datos.
+	 * @throws IOException Si no se consigue almacenar bien el informe generado.
 	 */
 	public void generaInforme(OutputStream out)
 	{
@@ -124,11 +127,16 @@ public class TrafficSimulator
 		{
 			ini.store(out);
 		} catch (IOException e)	{
+			fireUpdateEvent(EventType.ERROR, "No se ha podido almacenar el informe del tiempo " + reloj + ".\n");
+			System.err.println("No se ha podido almacenar el informe del tiempo " + reloj + ".\n");
 			// throw new IOException("Almacenando el report del tiempo "+ reloj + ".\n", e);
 		}
 	}
 	/**
-	 * Carga los eventos guardados en formato ini en el fichero del inputStream y los inserta en el simulador.
+	 * Carga los eventos guardados en formato IniSection del inputStream y los inserta en el simulador.
+	 * 
+	 * @param inputStream Flujo de entrada de los datos de la simulación.
+	 * @throws IllegalStateException Si no se consigue cargar alguno de los eventos.
 	 */
 	public void leerDatosSimulacion(InputStream inputStream)
 	{
@@ -145,13 +153,18 @@ public class TrafficSimulator
 				evento = EventFactory.buildEvent(s); // throw IllegalArgumentException()
 				insertaEvento(evento);
 			}
-		} catch (Exception e)
-		{
-			// IOException o IllegalArgumentException
+		} catch (IllegalArgumentException e) {
+			fireUpdateEvent(EventType.ERROR, "Error al cargar uno de los eventos:\n" + e.getMessage());
+			throw new IllegalStateException("Error al cargar uno de los eventos." , e);
+			
+		}
+		catch (IOException e) {
+			fireUpdateEvent(EventType.ERROR, "Error al leer el fichero de eventos.");
+			System.err.println("Error al leer el fichero de eventos.");
 		}
 	}
 	/**
-	 * No modificamos los eventos que ya tenemos cargados pero volvemos al instante cero de la simulación.
+	 * Resetea el estado del simulador. No elimina los eventos cargados pero sí vuelve al instante inicial.
 	 */
 	public void reset()
 	{
@@ -161,39 +174,18 @@ public class TrafficSimulator
 		fireUpdateEvent(EventType.RESET, null);
 	}
 	
+	//PARA MVC
 	/**
-	 * Permite añadir observadores al estado de la simulación. Al nuevo observador le pasamos el estado actual del
-	 * simulador para que se inicialice con esta información inicial.
+	 * Enumerado con todos los eventos que se contempla notificar a los observadores. 
 	 */
-	public void addSimulatorListener(Listener listener)
-	{
-		observadores.add(listener);
-		
-		listener.update(new UpdateEvent(EventType.REGISTERED), null);
-	}
-	/** Permite eliminar simuladores al estado de la simulación. */
-	public void removeSimulatorListener(Listener listener)
-	{
-		observadores.remove(listener);
-	}
-	/**
-	 * Método para notificar a los observadores que ha ourrido un evento de un tipo determinado y mostrarles el estado
-	 * del simulador. Permitiendoles reaccionar a este evento como consideren más oportuno.
-	 */
-	private void fireUpdateEvent(EventType type, String error)
-	{
-		UpdateEvent ue = new UpdateEvent(type);
-
-		for (int i = 0; i < observadores.size(); i++)
-			observadores.get(i).update(ue, error);
-	}
-
-	/* PARA MVC */
 	public enum EventType
 	{
 		REGISTERED, RESET, NEW_EVENT, ADVANCED, ERROR;
 	}
-
+	/**
+	 * Interfaz con los métodos que los observadores deben implementar para dar respuesta a las notificaciones del 
+	 * simulador.
+	 */
 	public interface Listener
 	{
 		void update(UpdateEvent ue, String error);
@@ -206,7 +198,9 @@ public class TrafficSimulator
 		void advanced(UpdateEvent ue);
 		void error(UpdateEvent ue, String error);
 	}
-
+	/**
+	 * Clase que permite representar el estado del simulador para mandar este a los observadores. 
+	 */
 	public class UpdateEvent
 	{
 		private EventType tipoEvento;
@@ -232,4 +226,31 @@ public class TrafficSimulator
 			return reloj;
 		}
 	}
-}
+	
+	/**
+	 * Permite añadir observadores al estado de la simulación.
+	 */
+	public void addSimulatorListener(Listener listener)
+	{
+		observadores.add(listener);
+		
+		listener.update(new UpdateEvent(EventType.REGISTERED), null);
+	}
+	/** Permite eliminar simuladores al estado de la simulación. */
+	public void removeSimulatorListener(Listener listener)
+	{
+		observadores.remove(listener);
+	}
+	/**
+	 * Método para notificar a los observadores que ha ourrido un evento de un tipo determinado y mostrarles el estado
+	 * del simulador. Permitiendoles reaccionar a este evento como consideren más oportuno.
+	 */
+	private void fireUpdateEvent(EventType type, String error)
+	{
+		UpdateEvent ue = new UpdateEvent(type);
+
+		for (int i = 0; i < observadores.size(); i++)
+			observadores.get(i).update(ue, error);
+	}
+
+}//TrafficSimulator
