@@ -99,7 +99,7 @@ public class Vehicle extends SimulatedObject
 	 * Hace avanzar al vehículo, esto es, actualiza sus atributos para que reflejen fielmente la nueva posición que pasa
 	 * a ocupar en la carretera. 
 	 */
-	public void avanza()
+	protected void avanza()
 	{
 		if(tiempoAveria > 0)  --tiempoAveria; 
 			//No avanzamos su posición en la carretera si está averiado

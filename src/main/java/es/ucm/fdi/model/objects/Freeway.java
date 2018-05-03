@@ -1,14 +1,23 @@
 package es.ucm.fdi.model.objects;
 
+import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.util.MultiTreeMap;
 
 public class Freeway extends Road
 {
 	private int lanes;
 	
 	//CONSTRUCTORAS
+	/**
+	 * Constructora por defecto, NO USAR SIN PRECAUCIÓN.
+	 * 
+	 * @deprecated Porque requiere uso de la constructora por defecto de Road.
+	 */
 	public Freeway() { super();	}
+	/**
+	 * {@link Road#Road(String, int, int, Junction, Junction)}
+	 * @param lanes Número de carriles de la autopista.
+	 */
 	public Freeway(String id, int maxSpeed, int size, int lanes, Junction junc, Junction ini)
 	{
 		super(id, maxSpeed, size, junc, ini);			
@@ -21,6 +30,12 @@ public class Freeway extends Road
 	{
 		s.setValue("type", "lanes");
 		s.setValue("state", vehiclesInRoad());
+	}
+	@Override 
+	public void fillReportDetails(Map<String, String> camposValor)
+	{
+		camposValor.put("type", "lanes");
+		camposValor.put("state", vehiclesInRoad());
 	}
 	@Override
 	public int velocidadAvance(int numAveriados)
