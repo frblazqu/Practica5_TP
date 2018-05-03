@@ -3,10 +3,9 @@ package es.ucm.fdi.model.events;
 /**
  * Enumerado que representa el tipo del evento.
  * 
- *
  * @author Francisco Javier Blázquez 
  * @version 23/03/18
- *  deprecated Cada evento tiene una clase distinta, no es necesaria la distinción con un enumerado.
+ * @deprecated Cada evento tiene una clase distinta, no es necesaria la distinción con un enumerado.
  */
 public enum EventType
 {

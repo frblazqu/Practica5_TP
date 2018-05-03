@@ -1,12 +1,9 @@
 package es.ucm.fdi.model.events;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.model.Describable;
-import es.ucm.fdi.model.objects.Car;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
@@ -26,7 +23,7 @@ public class NewVehicle extends Event
 
 	public NewVehicle(int time, String vId, int mSpeed, String[] it)
 	{
-		super(time, EventType.NEW_VEHICLE);
+		super(time);
 		vehicleId = vId;
 		maxSpeed = mSpeed;
 		itinerary = it;

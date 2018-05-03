@@ -26,7 +26,7 @@ public class NewJunction extends Event
 	}
 	public NewJunction(String junctionId, int time)
 	{
-		super(time, EventType.NEW_JUNCTION);
+		super(time);
 		junction_id = junctionId;
 	}
 	

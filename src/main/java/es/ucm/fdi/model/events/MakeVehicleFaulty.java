@@ -16,7 +16,7 @@ public class MakeVehicleFaulty extends Event
 		vehicleId = null;
 	}
 	public MakeVehicleFaulty(int time, int faultDur, String[] vId){
-		super(time, EventType.NEW_FAULT);
+		super(time);
 		faultDuration = faultDur;
 		vehicleId = vId;
 	}

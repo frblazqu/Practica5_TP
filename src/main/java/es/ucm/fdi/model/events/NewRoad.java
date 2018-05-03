@@ -30,7 +30,7 @@ public class NewRoad extends Event
 
 	public NewRoad(int time, String id, String iniId, String destId, int l, int mSpeed)
 	{
-		super(time, EventType.NEW_ROAD);
+		super(time);
 		road_id = id;
 		junctionIniId = iniId;
 		junctionDestId = destId;

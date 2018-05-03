@@ -1,5 +1,6 @@
 package es.ucm.fdi.model.exceptions;
 
+@SuppressWarnings("serial")
 public class SimulationFailedException extends Exception
 {
 	public SimulationFailedException()
