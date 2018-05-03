@@ -21,15 +21,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-/**
- * Las responsabilidades de esta clase es generar un punto de comunicación del usuario con todo el programa y
- * facilitar test y pruebas de todo el conglomerado del simulador (unitarias y múltples). 
- * 
- * Permite ejecutar una simulación partiendo de una línea de comandos. 
- * 
- *@author 		Francisco Javier Blázquez
- *@version 		23/03/18
- */
 public class ExampleMain {
 
 	//ATRIBUTOS POR DEFECTO

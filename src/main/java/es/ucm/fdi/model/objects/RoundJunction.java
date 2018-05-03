@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
+/**
+ * Representación y funcionalidad de un cruce circular en la simulación. El tiempo que un
+ * semáforo está en verde es variable y favorece a las carreteras más congestionadas.
+ * 
+ * @author Francisco Javier Blázquez Martínez
+ * @version 03/05/18
+ */
 public class RoundJunction extends Junction
 {/*
 	protected Map<String, ArrayDeque<Vehicle>> colas;	//Pares de Ids de carreteras entrantes, colas de vehículos esperando

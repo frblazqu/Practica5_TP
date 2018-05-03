@@ -137,6 +137,7 @@ public class RoadMap
 	
 	
 	//MÉTODOS COMPLICADOS	
+	/* Peta al construir vehículos si lo quitas (NewVehicle) */
 	public Road getRoad(String junctionIniId, String junctionFinId) throws IllegalArgumentException
 	{
 		if(connectedJunctions.containsKey(junctionIniId)){
@@ -152,6 +153,7 @@ public class RoadMap
 		else
 			throw new IllegalArgumentException("El cruce " + junctionIniId + " no existe o no está comunicado");
 	}
+	/* Peta al construir carreteras si lo quitas */
 	public boolean validJuctionsForRoad(String idIni, String idDest)
 	{
 		if(getJunction(idIni) != null && getJunction(idDest)!= null)
@@ -165,16 +167,6 @@ public class RoadMap
 	}
 	public Map<String, List<ConexionCruces>> getConectionMap(){
 		return connectedJunctions;
-	}
-	public Junction getJunctionDest(Road r){
-		for(String s: connectedJunctions.keySet()){
-			for(ConexionCruces c: connectedJunctions.get(s)){
-				if(c.getRoadConnect().equals(r.getId())){
-					return (Junction)simObjects.get(c.getJunctionDest());
-				}
-			}
-		}
-		return null;
 	}
 	
 	//Par junction con carretera entrante

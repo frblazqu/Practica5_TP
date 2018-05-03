@@ -8,6 +8,13 @@ import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
 
+/**
+ * Representación y funcionalidad de un cruce en la simulación.
+ * 
+ * @author Francisco Javier Blázquez Martínez
+ * @author Manuel Ortega Salvador
+ * @version 03/05/18
+ */
 public class Junction extends SimulatedObject
 {
 	protected Map<String, ArrayDeque<Vehicle>> colas;	//Pares de Ids de carreteras entrantes, colas de vehículos esperando

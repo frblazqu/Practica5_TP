@@ -3,6 +3,15 @@ package es.ucm.fdi.model.objects;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
+/**
+ * Representación y funcionalidad de un cruce avanzado en la simulación. El tiempo que un
+ * semáforo está en verde se calcula para favorecer el rápido tránsito en carreteras con 
+ * una cola de vehículos grande.
+ * 
+ * @author Francisco Javier Blázquez Martínez
+ * @author Manuel Ortega Salvador
+ * @version 03/05/18
+ */
 public class CrowedJunction extends Junction
 {/*
 	protected Map<String, ArrayDeque<Vehicle>> colas;	//Pares de Ids de carreteras entrantes, colas de vehículos esperando
