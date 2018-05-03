@@ -1,8 +1,6 @@
 package es.ucm.fdi.model.objects;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 
@@ -19,6 +17,22 @@ public class RoundJunction extends Junction
 	private Map<String, Integer> intervalosVerde;		//Lleva a cada id de carretera entrante el tiempo que su semáforo estará en verde
 	
 	//CONSTRUCTORAS
+	/**
+	 * Constructora por defecto, NO UTILIZAR SIN PRECAUCIÓN.
+	 * 
+	 *  @deprecated Pues requiere usar la constructora por defecto de Junction.
+	 */
+	public RoundJunction()
+	{
+		
+	}
+	/**
+	 * Crea una rotonda en la simulación en la que los semáforos tienen una duración mínima y máxima en verde.
+	 * 
+	 *  @see Junction#Junction(String)
+	 *  @param minDurationVerde Mínima duración del semáforo en verde.
+	 *  @param maxDurationVerde Máxima duración del semáforo en verde.
+	 */
 	public RoundJunction(String junction_id, int minDurationVerde, int maxDurationVerde)
 	{
 		super(junction_id);
@@ -31,33 +45,14 @@ public class RoundJunction extends Junction
 	}
 	
 	//MÉTODOS SOBREESCRITOS
-	public void avanza()
-	{
-		if(numCarreterasEntrantes > 0) //No es un cruce de solo inicio 
-		{
-			//Primero controlar que haya alguno en verde, tenga sentido esto
-			if(semaforo == -1) 	inicializaSemaforo();
-			
-			//Avanzar el primer vehículo de la cola de la carretera en verde si lo hay
-			
-			if(colaEnVerde() != null && colaEnVerde().size() > 0)
-			{
-				colaEnVerde().pop().moverASiguienteCarretera();
-				ticksPasaVehiculo++;
-			}
-			
-			//Actualizar el semáforo si procede			
-			avanzarSemaforo();
-		}
-	}
-	/**Presupone un número de carreteras entrantes no nulo.*/
+	@Override
 	public void inicializaSemaforo()
 	{
 		tiempoConsumido = intervalosVerde.get(incomingRoadIds.get(numCarreterasEntrantes - 1)) - 1;
 		ticksPasaVehiculo = 1;
 		semaforo = numCarreterasEntrantes-1;	
 	}
-	/**Presupone un numero de carreteras entrantes no nulo.*/
+	@Override
 	public void avanzarSemaforo()
 	{
 		tiempoConsumido++;
@@ -85,6 +80,7 @@ public class RoundJunction extends Junction
 		
 		intervalosVerde.put(incomingRoadIds.get(semaforo), nuevoTiempo);
 	}
+	@Override
 	protected void completarAñadirCarretera(Road road)
 	{
 		intervalosVerde.put(road.getId(), maxDuration);
@@ -96,19 +92,15 @@ public class RoundJunction extends Junction
 		s.setValue("type", "rr");
 	}
 	@Override
-	public String colaCruce()
+	public void fillReportDetails(Map<String,String> camposValor)
 	{
-		//TAL VEZ SEA SUFICIENTE CON UNA PEQUEÑA MODIFICACION
-		String cola = ""; int aux = intervalosVerde.get(incomingRoadIds.get(semaforo)) - tiempoConsumido;
-		
-		for(int i = 0; i < incomingRoadIds.size(); i++)
-		{
-			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:" + aux : "red") + ",[" + vehiculosCola(i) + "]),";
-		}
-		
-		if(cola.length() > 1) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
-		
-		return cola;
+		camposValor.put("queues", colaCruce());
+		camposValor.put("type", "rr");
+	}
+	@Override
+	protected String fillColaDetails()
+	{
+		return ":" + (intervalosVerde.get(incomingRoadIds.get(semaforo)) - tiempoConsumido);
 	}
 	
-}
+}//RoundJunction

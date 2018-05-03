@@ -50,17 +50,35 @@ public class Junction extends SimulatedObject
 	 */
 	public void avanza()
 	{
-		if(numCarreterasEntrantes > 0)
+		if(numCarreterasEntrantes > 0) //No es un cruce de solo inicio 
 		{
-			//Aquí deberíamos tener tal vez un método para inicializarlo o inicializarlo antes.
-			if(semaforo == -1) semaforo = numCarreterasEntrantes-1;
+			//Primero controlar que haya alguno en verde, tenga sentido esto
+			if(semaforo == -1) 	inicializaSemaforo();
 			
-			//Tal vez no necesitamos el método colaEnVerde() sino algo más encapsulado.
+			//Avanzar el primer vehículo de la cola de la carretera en verde si lo hay
+			
 			if(colaEnVerde() != null && colaEnVerde().size() > 0)
+			{
 				colaEnVerde().pop().moverASiguienteCarretera();
+			}
 			
-			semaforo = (semaforo+1)%numCarreterasEntrantes;
+			//Actualizar el semáforo si procede			
+			avanzarSemaforo();
 		}
+	}
+	/**
+	 * Establece por primera vez permiso de circulación a una de las carreteras entrantes.
+	 */
+	protected void inicializaSemaforo()
+	{
+		semaforo = numCarreterasEntrantes-1;
+	}
+	/**
+	 * Avanza el estado del semáforo del cruce. Cambiando de carretera en verde si fuera necesario. 
+	 */
+	protected void avanzarSemaforo()
+	{
+		semaforo = (semaforo+1)%numCarreterasEntrantes;
 	}
 	/**
 	 * @return Los vehículos que se encuentran esperando al final de la carretera con semáforo en verde.
@@ -133,12 +151,16 @@ public class Junction extends SimulatedObject
 		
 		for(int i = 0; i < incomingRoadIds.size(); i++)
 		{
-			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green," : "red,") + "[" + vehiculosCola(i) + "]),";
+			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green" + fillColaDetails() : "red") + ",[" + vehiculosCola(i) + "]),";
 		}
 		
 		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
 		
 		return cola;
+	}
+	protected String fillColaDetails()
+	{
+		return "";
 	}
 	/** @return La representación textual de una cola de vehículos esperando en el cruce. */
 	protected String vehiculosCola(int index)
@@ -152,6 +174,7 @@ public class Junction extends SimulatedObject
 		
 		return vehiculos;
 	}
+	
 	public void describe(Map<String, String> out) {
 		super.describe(out);
 		out.put("Green", estadoVerde());

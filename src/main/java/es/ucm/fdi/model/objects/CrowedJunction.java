@@ -12,39 +12,36 @@ public class CrowedJunction extends Junction
 	private int tiempoConsumido;						//Para controlar el numTicks que lleva en verde el semáforo que permite el paso
 	private int limiteDeTiempo;							//Limite de tiempo para esta carretera para este momento.
 	
-	
+	//CONSTRUCTORAS
+	/**
+	 * Constructora por defecto, NO UTILIZAR SIN PRECAUCIÓN.
+	 * 
+	 *  @deprecated Pues requiere usar la constructora por defecto de Junction.
+	 */
+	public CrowedJunction()
+	{
+		
+	}
+	/**
+	 * Constructora usual. 
+	 * 
+	 * @see Junction#Junction(String)
+	 */
 	public CrowedJunction(String id)
 	{
 		super(id);
 		tiempoConsumido = 0;
 		limiteDeTiempo = 1;
 	}
-
-	public void avanza()
-	{
-		if(numCarreterasEntrantes > 0) //No es un cruce de solo inicio 
-		{
-			//Primero controlar que haya alguno en verde, tenga sentido esto
-			if(semaforo == -1) inicializaSemaforo();
-			
-			//Avanzar el primer vehículo de la cola de la carretera en verde si lo hay
-			
-			if(colaEnVerde() != null && colaEnVerde().size() > 0)
-			{
-				colaEnVerde().pop().moverASiguienteCarretera();
-			}
-			
-			//Actualizar el semáforo si procede			
-			avanzarSemaforo();
-		}
-	}
-	/**Presupone un número de carreteras entrantes no nulo.*/
+	
+	//MÉTODOS SOBREESCRITOS
+	@Override
 	public void inicializaSemaforo()
 	{
 		semaforo = numCarreterasEntrantes-1;
 		tiempoConsumido = 0;
 	}
-	/**Presupone un numero de carreteras entrantes no nulo.*/
+	@Override
 	public void avanzarSemaforo()
 	{
 		tiempoConsumido++;
@@ -78,19 +75,15 @@ public class CrowedJunction extends Junction
 		s.setValue("type", "mc");
 	}
 	@Override
-	public String colaCruce()
+	public void fillReportDetails(Map<String,String> camposValor)
 	{
-		//TAL VEZ SEA SUFICIENTE CON UNA PEQUEÑA MODIFICACION
-		String cola = ""; int aux = (limiteDeTiempo - tiempoConsumido);
-		
-		for(int i = 0; i < incomingRoadIds.size(); i++)
-		{
-			cola += "(" + incomingRoadIds.get(i) + "," + (i == semaforo ? "green:" + aux  : "red") + ",[" + vehiculosCola(i) + "]),";
-		}
-		
-		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
-		
-		return cola;
+		camposValor.put("queues", colaCruce());
+		camposValor.put("type", "mc");
+	}
+	@Override 
+	protected String fillColaDetails()
+	{
+		return ":" + (limiteDeTiempo - tiempoConsumido);
 	}
 	
-}
+}//CrowedJunction
