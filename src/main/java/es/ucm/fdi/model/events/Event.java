@@ -14,10 +14,8 @@ import es.ucm.fdi.model.objects.RoadMap;
  */
 public abstract class Event implements Describable
 {
-	//ATRIBUTOS DE LA CLASE
 	private int time;				//Momento de ejecución
 	
-	//CONSTRUCTORAS
 	/**
 	 * Constructora por defecto, NO USAR SIN PRECAUCIÓN.
 	 * 

@@ -85,7 +85,8 @@ public class NewJunction extends Event
 			return new NewJunction(id, time);
 		}
 	}
-
+	
+	//DESCRIBABLE
 	public void describe(Map<String, String> out) {
 		super.describe(out);
 		out.put("Type", "New Junction " + junction_id);
