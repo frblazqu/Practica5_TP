@@ -3,6 +3,7 @@ package es.ucm.fdi.model.events;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.RoundJunction;
+import es.ucm.fdi.util.StringParser;
 
 /**
  * Clase encargada de encapsular toda la información y funcionalidad relativa al evento del simulador de añadir
@@ -45,8 +46,8 @@ public class NewRoundJunction extends NewJunction
 		@Override
 		protected Event leerAtributosEspecificos(IniSection sec)
 		{
-			minDurationVerde = EventBuilder.parseIntValue(sec.getValue("min_time_slice"));
-			maxDurationVerde = EventBuilder.parseIntValue(sec.getValue("max_time_slice"));
+			minDurationVerde = StringParser.parseIntValue(sec.getValue("min_time_slice"));
+			maxDurationVerde = StringParser.parseIntValue(sec.getValue("max_time_slice"));
 			
 			return new NewRoundJunction(id, time, minDurationVerde, maxDurationVerde);
 		}

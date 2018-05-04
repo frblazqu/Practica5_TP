@@ -5,6 +5,7 @@ import java.util.Map;
 import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.util.StringParser;
 
 public class MakeVehicleFaulty extends Event
 {
@@ -43,10 +44,10 @@ public class MakeVehicleFaulty extends Event
 			if (!sec.getTag().equals("make_vehicle_faulty")){
 				return null;
 			}else{
-				int tm = EventBuilder.parseTime(sec.getValue("time"));
+				int tm = StringParser.parseTime(sec.getValue("time"));
 				try{
-					String[] vehic = EventBuilder.parseIdList(sec.getValue("vehicles"));
-					int dur = EventBuilder.parseIntValue(sec.getValue("duration"));
+					String[] vehic = StringParser.parseIdList(sec.getValue("vehicles"));
+					int dur = StringParser.parseIntValue(sec.getValue("duration"));
 					return new MakeVehicleFaulty(tm, dur, vehic);
 				}
 				catch(IllegalArgumentException e){

@@ -4,6 +4,7 @@ import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Car;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
+import es.ucm.fdi.util.StringParser;
 
 public class NewCar extends NewVehicle{
 	public static class NewCarBuilder extends NewVehicle.NewVehicleBuilder
@@ -36,9 +37,9 @@ public class NewCar extends NewVehicle{
 		 */
 		protected Event leerAtributosEspecificos(IniSection sec)
 		{
-			int resist 	 = EventBuilder.parseIntValue(sec.getValue("resistance"));
-			double fProb = EventBuilder.parseDoubleValue(sec.getValue("fault_probability"));
-			int mFDur	 = EventBuilder.parseIntValue(sec.getValue("max_fault_duration"));
+			int resist 	 = StringParser.parseIntValue(sec.getValue("resistance"));
+			double fProb = StringParser.parseDoubleValue(sec.getValue("fault_probability"));
+			int mFDur	 = StringParser.parseIntValue(sec.getValue("max_fault_duration"));
 			
 			if(sec.getValue("seed") != null)
 			{

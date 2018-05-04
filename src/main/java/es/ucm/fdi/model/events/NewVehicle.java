@@ -7,6 +7,7 @@ import es.ucm.fdi.ini.IniSection;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.Vehicle;
+import es.ucm.fdi.util.StringParser;
 
 public class NewVehicle extends Event
 {
@@ -101,10 +102,10 @@ public class NewVehicle extends Event
 		 */
 		protected void leerAtributosComunes(IniSection sec)
 		{
-			time   = EventBuilder.parseTime(sec.getValue("time"));
-			id     = EventBuilder.parseId(sec.getValue("id"));
-			mSpeed = EventBuilder.parseIntValue(sec.getValue("max_speed"));
-			it     = EventBuilder.parseIdList(sec.getValue("itinerary"));
+			time   = StringParser.parseTime(sec.getValue("time"));
+			id     = StringParser.parseId(sec.getValue("id"));
+			mSpeed = StringParser.parseIntValue(sec.getValue("max_speed"));
+			it     = StringParser.parseIdList(sec.getValue("itinerary"));
 		}
 		/**
 		 * Método encargado de decidir si la sección representa un evento de tipo NewVehicle o hijas y generar

@@ -1,12 +1,10 @@
 package es.ucm.fdi.model.events;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.RoadMap;
+import es.ucm.fdi.util.StringParser;
 import es.ucm.fdi.ini.*;
 
 /**
@@ -20,10 +18,6 @@ public class NewJunction extends Event
 	protected String junction_id;
 
 	//CONSTRUCTORAS
-	public NewJunction()
-	{
-		junction_id = null;
-	}
 	public NewJunction(String junctionId, int time)
 	{
 		super(time);
@@ -77,8 +71,8 @@ public class NewJunction extends Event
 		}
 		public void leerAtributosComunes(IniSection sec)
 		{
-			time = EventBuilder.parseTime(sec.getValue("time"));
-			id   = EventBuilder.parseId(sec.getValue("id"));
+			time = StringParser.parseTime(sec.getValue("time"));
+			id   = StringParser.parseId(sec.getValue("id"));
 		}
 		
 		//MÉTODOS QUE DEBEN SER SOBREESCRITOS PARA LOS DEMÁS CRUCES

@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import es.ucm.fdi.ini.IniSection;
-import es.ucm.fdi.model.Describable;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.Road;
 import es.ucm.fdi.model.objects.RoadMap;
 import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
+import es.ucm.fdi.util.StringParser;
 
 public class NewRoad extends Event
 {
@@ -86,14 +86,14 @@ public class NewRoad extends Event
 				return null;
 			} else
 			{
-				int tm = EventBuilder.parseTime(sec.getValue("time"));
+				int tm = StringParser.parseTime(sec.getValue("time"));
 				try
 				{
-					String id   = EventBuilder.parseId(sec.getValue("id"));
-					String src  = EventBuilder.parseId(sec.getValue("src"));
-					String dest = EventBuilder.parseId(sec.getValue("dest"));
-					int mSpeed  = EventBuilder.parseIntValue(sec.getValue("max_speed"));
-					int l       = EventBuilder.parseIntValue(sec.getValue("length"));
+					String id   = StringParser.parseId(sec.getValue("id"));
+					String src  = StringParser.parseId(sec.getValue("src"));
+					String dest = StringParser.parseId(sec.getValue("dest"));
+					int mSpeed  = StringParser.parseIntValue(sec.getValue("max_speed"));
+					int l       = StringParser.parseIntValue(sec.getValue("length"));
 
 					if (sec.getValue("type") == null)
 						return new NewRoad(tm, id, src, dest, l, mSpeed);
@@ -101,7 +101,7 @@ public class NewRoad extends Event
 						return new NewPath(tm, id, src, dest, l, mSpeed);
 					else if (sec.getValue("type").equals("lanes"))
 					{
-						int lanes = EventBuilder.parseIntValue(sec.getValue("lanes"));
+						int lanes = StringParser.parseIntValue(sec.getValue("lanes"));
 						return new NewFreeway(tm, id, src, dest, l, mSpeed, lanes);
 					} else
 						return null;
