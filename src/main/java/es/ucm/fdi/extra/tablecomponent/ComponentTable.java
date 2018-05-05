@@ -82,11 +82,6 @@ public class ComponentTable extends JPanel{
 		elementsTable.updateTable();
 	}
 	
-	public void pop(){
-		elements.remove(0);
-		elementsTable.updateTable();
-	}
-	
 	public void updateTable() {
 		elementsTable.updateTable();
 	}

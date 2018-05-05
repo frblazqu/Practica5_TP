@@ -327,11 +327,11 @@ public class ExampleMain {
 
 		// Call test in order to test the simulator on all examples in a directory.
 		//
-	    test(DEFAULT_READ_DIRECTORY + "examples/basic/");
-		test(DEFAULT_READ_DIRECTORY + "examples/advanced/");
+	    //test(DEFAULT_READ_DIRECTORY + "examples/basic/");
+		//test(DEFAULT_READ_DIRECTORY + "examples/advanced/");
 
 		// Call start to start the simulator from command line, etc.
-		// start(args);
+		start(args);
 	}
 
 	//MÉTODOS QUE SOLO DEBEN SER USADOS PARA EL TESTEO

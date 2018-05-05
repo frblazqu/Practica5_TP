@@ -81,11 +81,21 @@ public class Controller
 		this(loadFilePath, saveFilePath, DEFAULT_TICKS);
 	}
 	
+	/**
+	 * Crea el controlador para la simulación en modo GUI.
+	 * Si no se especifica el fichero de eventos a cargar, no se inicializa el inputStream.
+	 * @param loadFilePath	path del fichero a cargar
+	 * @param numTicks	número de ticks al que inicializar el simulador
+	 */
 	public Controller(String loadFilePath, int numTicks) {
 		try  
 		{
 			inputPath = loadFilePath;
-			inputStream  = new FileInputStream( new File(loadFilePath));
+			if(!loadFilePath.equals(DEFAULT_READ_DIRECTORY + DEFAULT_INI_FILE)) {
+				inputStream  = new FileInputStream( new File(loadFilePath));
+			} else {
+				inputStream = null;
+			}
 			outputStream = null;
 			simulador = new TrafficSimulator();
 			ticksSimulacion = numTicks;

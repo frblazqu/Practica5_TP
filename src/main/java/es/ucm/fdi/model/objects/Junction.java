@@ -161,7 +161,7 @@ public class Junction extends SimulatedObject
 		String aux = "";
 		aux += "[";
 		if(semaforo != -1){
-		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + ")]";
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green," + "[" + vehiculosCola(semaforo) + ']' + ")]";
 		}
 		aux += "]";
 		

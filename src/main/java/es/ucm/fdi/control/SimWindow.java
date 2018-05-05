@@ -32,8 +32,6 @@ import es.ucm.fdi.model.objects.Vehicle;
 
 public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	
-	private final static String INPUT_FILE = "C:/Users/Usuario/Desktop/Repositorios/Practica5_TP/src/main/resources/readStr/examples/basic/"
-										   + "10_crossRoadMultipleVehicles.ini";
 	JFileChooser fc;
 	JSplitPane bottomSplit;
 	JSplitPane mainPanel;
@@ -58,7 +56,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		fc = new JFileChooser();
 		fc.setFileFilter(new FileNameExtensionFilter("INI File","ini"));
 		
-		control = new Controller(INPUT_FILE ,"src/main/resources/writeStr/"+ "auxiliar.ini");
+		control = new Controller();
 		
 		addLowerPanel();
 		addUpperPanel();
@@ -242,7 +240,10 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upperPanel, bottomSplit);
 		
 		eventsArea = new TextEditor("Events", true, fc);
-		eventsArea.setText(TextEditor.readFile(new File(control.getInputPath())));
+		if(!control.getInputPath().equals("src/main/resources/readStr/iniFile.ini")) {
+			eventsArea.setText(TextEditor.readFile(new File(control.getInputPath())));
+		}
+		
 		reportsArea = new TextEditor("Reports", false, fc);
 		
 		List<Describable> l = new ArrayList<>();

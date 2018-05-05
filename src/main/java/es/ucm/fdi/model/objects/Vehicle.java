@@ -247,7 +247,7 @@ public class Vehicle extends SimulatedObject
 		out.put("Location", "" + location());
 		out.put("Speed", "" + velActual);
 		out.put("Km", "" + kilometrage);
-		out.put("Faulty units", "" + tiempoAveria);
+		out.put("Faulty Units", "" + tiempoAveria);
 		out.put("Itinerary", itineraryDesc());
 	}
 	private String itineraryDesc() {
