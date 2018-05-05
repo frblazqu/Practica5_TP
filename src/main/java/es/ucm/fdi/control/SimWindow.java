@@ -113,7 +113,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		JSpinner stepsSpinner = new JSpinner(new SpinnerNumberModel(control.getTicksSim(), 1, 1000, 1));
 		
 		JLabel time = new JLabel(" Time: ");
-		JTextField timeText = new JTextField("0");	
+		timeText = new JTextField("0");	
 		timeText.setPreferredSize(new Dimension(75, 10));
 		timeText.setEnabled(false);
 		
@@ -136,12 +136,13 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		SimulatorAction insertEvents = new SimulatorAction(
 				"Insert Events", "events.png", "Inserta eventos en simulador",
 				KeyEvent.VK_I, "control I",
-				()-> control.simulador().leerDatosSimulacion(eventsArea.flujoLectura()));
+				()-> {control.simulador().leerDatosSimulacion(eventsArea.flujoLectura());
+				      eventsArea.setText("");});
 		
 		SimulatorAction executeSim = new SimulatorAction(
 				"Run", "play.png", "Ejecutar simulador",
 				KeyEvent.VK_E, "control E",
-				()-> control.ejecutaKPasos((Integer) stepSpinner.getValue()));
+				()-> control.ejecutaKPasos((Integer) stepsSpinner.getValue()));
 		
 		SimulatorAction restartSim = new SimulatorAction(
 				"Reset Sim", "reset.png", "Reiniciar simulador",
@@ -310,6 +311,8 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 	/* MÉTODOS DE LISTENER */
 	public void update(UpdateEvent ue, String error)
 	{
+		statusBarReport.setForeground(Color.black);
+		
 		switch(ue.getType())
 		{
 		case ADVANCED: 		advanced(ue);		break;
@@ -350,7 +353,7 @@ public class SimWindow extends JFrame implements TrafficSimulator.Listener {
 		
 		timeText.setText("0");
 		reportsArea.setText("");
-    generateGraph(ue);
+		generateGraph(ue);
 		
 		statusBarReport.setText(" Se ha reiniciado el estado de la simulación.");
 	}
