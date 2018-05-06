@@ -28,8 +28,8 @@ public class NewBike extends NewVehicle {
 				map.addVehicle(bike);
 			}
 		} else {
-			throw new IllegalArgumentException("Ya existe un objeto con el id " + this.getId()
-					+ '.');
+			throw new IllegalArgumentException("Ya existe un objeto con el id "
+					+ this.getId() + '.');
 		}
 	}
 

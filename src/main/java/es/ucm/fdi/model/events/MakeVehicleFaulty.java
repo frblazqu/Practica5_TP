@@ -49,7 +49,8 @@ public class MakeVehicleFaulty extends Event {
 					return new MakeVehicleFaulty(tm, dur, vehic);
 				} catch (IllegalArgumentException e) {
 					throw new IllegalArgumentException(
-							"Algo ha fallado con alguno de los atributos.\n" + e.getMessage(), e);
+							"Algo ha fallado con alguno de los atributos.\n"
+									+ e.getMessage(), e);
 				}
 			}
 		}

@@ -156,12 +156,12 @@ public class RoadMap {
 			return true;
 
 		else if (getJunction(idIni) == null)
-			throw new IllegalArgumentException(
-					"El mapa no contiene un cruce con el id " + idIni + '.');
+			throw new IllegalArgumentException("El mapa no contiene un cruce con el id "
+					+ idIni + '.');
 
 		else
-			throw new IllegalArgumentException(
-					"El mapa no contiene un cruce con el id " + idDest + '.');
+			throw new IllegalArgumentException("El mapa no contiene un cruce con el id "
+					+ idDest + '.');
 	}
 	public Map<String, List<ConexionCruces>> getConectionMap() {
 		return connectedJunctions;

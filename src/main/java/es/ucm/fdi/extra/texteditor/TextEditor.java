@@ -58,16 +58,16 @@ public class TextEditor extends JPanel {
 
 			SimulatorAction clearOption = new SimulatorAction("Clear", "Vaciar eventos",
 					KeyEvent.VK_B, () -> textArea.setText(""));
-			
+
 			JMenu plantillaEventos = new JMenu("Add Template");
-			
-			String[] eventos = {"New RR Junction", "New MC Junction", "New Junction", 
-					"New Dirt Road", "New Lanes Road", "New Road", "New Bike", "New Car", 
-					"New Vehicle", "Make Vehicle Faulty" };
-			
-			for(String s: eventos) {
+
+			String[] eventos = {"New RR Junction", "New MC Junction", "New Junction",
+					"New Dirt Road", "New Lanes Road", "New Road", "New Bike", "New Car",
+					"New Vehicle", "Make Vehicle Faulty"};
+
+			for (String s : eventos) {
 				JMenuItem option = new JMenuItem(s);
-				
+
 				plantillaEventos.add(option);
 			}
 
@@ -194,7 +194,7 @@ public class TextEditor extends JPanel {
 	}
 
 	/**
-	 * @see http
+	 * @see http 
 	 *      ://www.codejava.net/java-se/swing/redirect-standard-output-streams
 	 *      -to-jtextarea
 	 */

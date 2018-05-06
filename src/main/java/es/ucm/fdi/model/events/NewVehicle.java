@@ -44,7 +44,8 @@ public class NewVehicle extends Event {
 
 	public void execute(RoadMap map) throws IllegalArgumentException {
 		if (map.duplicatedId(vehicleId))
-			throw new IllegalArgumentException("Ya existe un objeto con el id " + vehicleId + '.');
+			throw new IllegalArgumentException("Ya existe un objeto con el id "
+					+ vehicleId + '.');
 
 		// Si estamos aquí es porque el identificador del vehículo es válido
 

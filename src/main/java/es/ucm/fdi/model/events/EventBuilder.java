@@ -48,8 +48,7 @@ public interface EventBuilder {
 	 */
 	public static String parseId(String value) {
 		if (value == null) {
-			throw new IllegalArgumentException(
-					"Falta el id en la IniSection.");
+			throw new IllegalArgumentException("Falta el id en la IniSection.");
 		} else {
 			if (isValidId(value)) {
 				return value;
@@ -80,8 +79,7 @@ public interface EventBuilder {
 		} else {
 			int val = Integer.parseInt(value);
 			if (val < 0) {
-				throw new IllegalArgumentException("El valor " + value
-						+ " no es válido.");
+				throw new IllegalArgumentException("El valor " + value + " no es válido.");
 			} else {
 				return val;
 			}
@@ -94,8 +92,7 @@ public interface EventBuilder {
 		} else {
 			double val = Double.parseDouble(value);
 			if (val < 0 || val > 1) {
-				throw new IllegalArgumentException("El valor " + value
-						+ " no es válido.");
+				throw new IllegalArgumentException("El valor " + value + " no es válido.");
 			} else {
 				return val;
 			}
@@ -111,7 +108,8 @@ public interface EventBuilder {
 				return time;
 
 			else
-				throw new IllegalArgumentException("El valor de tiempo " + time + " no es válido.");
+				throw new IllegalArgumentException("El valor de tiempo " + time
+						+ " no es válido.");
 		}
 	}
 }

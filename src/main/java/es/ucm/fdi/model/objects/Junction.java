@@ -115,8 +115,8 @@ public class Junction extends SimulatedObject {
 
 	// INFORMES Y TABLAS
 	/**
-	 * @return "junction_report" como encabezado por defecto para los informes de
-	 *         los cruces.
+	 * @return "junction_report" como encabezado por defecto para los informes
+	 *         de los cruces.
 	 */
 	public String getHeader() {
 		return "junction_report";
@@ -161,8 +161,8 @@ public class Junction extends SimulatedObject {
 		return cola;
 	}
 	/**
-	 * @return La representación textual de una cola de vehículos esperando en el
-	 *         cruce.
+	 * @return La representación textual de una cola de vehículos esperando en
+	 *         el cruce.
 	 */
 	protected String vehiculosCola(int index) {
 		String vehiculos = "";

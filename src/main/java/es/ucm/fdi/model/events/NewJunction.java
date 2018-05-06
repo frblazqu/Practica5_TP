@@ -31,7 +31,8 @@ public class NewJunction extends Event {
 	// MÉTODOS PUBLICOS Y GENERALES
 	public void execute(RoadMap map) throws IllegalArgumentException {
 		if (map.duplicatedId(junction_id))
-			throw new IllegalArgumentException("Ya existe un objeto con el id " + junction_id + '.');
+			throw new IllegalArgumentException("Ya existe un objeto con el id "
+					+ junction_id + '.');
 
 		Junction junc = construyeElemento();
 		map.addJunction(junc);

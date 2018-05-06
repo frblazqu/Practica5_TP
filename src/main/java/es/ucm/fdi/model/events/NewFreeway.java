@@ -35,7 +35,8 @@ public class NewFreeway extends NewRoad {
 
 	public void execute(RoadMap map) throws IllegalArgumentException {
 		if (map.duplicatedId(road_id))
-			throw new IllegalArgumentException("Ya existe un objeto con el id " + road_id + '.');
+			throw new IllegalArgumentException("Ya existe un objeto con el id " + road_id
+					+ '.');
 
 		try {
 			if (map.validJuctionsForRoad(junctionIniId, junctionDestId)) {
@@ -62,8 +63,8 @@ public class NewFreeway extends NewRoad {
 			}
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException(
-					"Algo ha fallado con los cruces especificados para la carretera.\n" + e.getMessage(),
-					e);
+					"Algo ha fallado con los cruces especificados para la carretera.\n"
+							+ e.getMessage(), e);
 		}
 
 	}
