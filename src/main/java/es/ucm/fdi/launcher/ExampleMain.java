@@ -11,6 +11,8 @@ import javax.swing.SwingUtilities;
 import es.ucm.fdi.control.Controller;
 import es.ucm.fdi.control.SimWindow;
 import es.ucm.fdi.ini.Ini;
+import es.ucm.fdi.model.TrafficSimulator;
+import es.ucm.fdi.model.TrafficSimulator.UpdateEvent;
 import es.ucm.fdi.model.exceptions.SimulationFailedException;
 
 import org.apache.commons.cli.CommandLine;
@@ -48,18 +50,7 @@ public class ExampleMain {
 	
 	
 
-	//MÉTODOS
-	/**
-	 * DUDAS:
-	 *
-	 * ¿Por qué parsea un array y no un string? ¿Presupone split? ¿Clase Options? ¿Clase CommandLineParser?
-	 * ¿Clase CommandLine?
-	 *
-	 * Ya no es que me interese saber exactamente que hacen estos métodos pero si que quiero saber por qúe no
-	 * se ha tenido que implementar el parser, lo ha cogido ya hecho. ¿De dónde lo ha sacado? ¿Cómo puedo verlo?
-	 * En definitiva buscar las librerías org.apache.commons y ver que se cuece por ahí. ¿Se puede hacer esto sin
-	 * maven? Dudas para el bueno de ManuFreire. 
-	 */
+
 	public static void parseArgs(String[] args) {
 		//SI HAY ALGÚN ERROR DE PARSEO HACE QUE TODO TERMINE (VER CATCH FINAL)
 		
@@ -255,8 +246,45 @@ public class ExampleMain {
 		try
 		{
 			Controller controller = new Controller(_inFile, _outFile, _timeLimit);
-			controller.leerDatosSimulacion();
-			controller.run();
+			controller.simulador().addSimulatorListener(new TrafficSimulator.Listener() {
+				
+				@Override
+				public void update(UpdateEvent ue, String error) {
+					switch(ue.getType())
+					{
+					case ERROR:			error(ue, error);   break;
+					case REGISTERED:	registered(ue); 	break;
+					}
+				}
+				
+				@Override
+				public void reset(UpdateEvent ue) {
+				}
+				
+				@Override
+				public void registered(UpdateEvent ue) {
+					controller.leerDatosSimulacion();
+					controller.run();
+				}
+				
+				@Override
+				public void newEvent(UpdateEvent ue) {
+				}
+				
+				@Override
+				public void error(UpdateEvent ue, String error) {
+					System.err.println("Ha fallado la simulación con características:\n" +
+							  "-> tiempo: " + _timeLimit + "\n" +
+							  "-> fichero de entrada: "  + _inFile + "\n" +
+							  "-> fichero de salida: "  + _outFile + "\n" +
+							  "Motivo:\n" + error);					
+				}
+				
+				@Override
+				public void advanced(UpdateEvent ue) {
+				}
+			});
+
 		}
 		catch(Exception e)
 		{

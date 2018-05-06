@@ -69,11 +69,11 @@ public class NewRoad extends Event
 				}
 			}
 			else
-				throw new IllegalArgumentException("There is something wrong with the junctions specified for the road");
+				throw new IllegalArgumentException("There is something wrong with the junctions specified for the road.");
 
 		} catch (IllegalArgumentException e)
 		{
-			throw new IllegalArgumentException("There is something wrong with the junctions specified for the road", e);
+			throw new IllegalArgumentException("There is something wrong with the junctions specified for the road.", e);
 		}
 	}
 

@@ -53,7 +53,7 @@ public class Controller
 			simulador = new TrafficSimulator();
 			ticksSimulacion = numTicks;
 		}catch (Exception e) {
-			System.err.println("Error al crear el controlador");
+			System.err.println("Error al crear el controlador.");
 		}
 	}
 	/**
@@ -100,7 +100,7 @@ public class Controller
 			simulador = new TrafficSimulator();
 			ticksSimulacion = numTicks;
 		}catch (Exception e) {
-			System.err.println("Error al crear el controlador");
+			System.err.println("Error al cargar el controlador");
 		}
 	}
 	
