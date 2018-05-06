@@ -10,14 +10,11 @@ import es.ucm.fdi.model.objects.Freeway;
 import es.ucm.fdi.model.objects.Junction;
 import es.ucm.fdi.model.objects.RoadMap.ConexionCruces;
 
-public class NewFreeway extends NewRoad
-{
-	public static class NewFreewayBuilder implements EventBuilder
-	{
+public class NewFreeway extends NewRoad {
+	public static class NewFreewayBuilder implements EventBuilder {
 
 		@Override
-		public Event parse(IniSection sec)
-		{
+		public Event parse(IniSection sec) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -26,50 +23,48 @@ public class NewFreeway extends NewRoad
 
 	private int lanes;
 
-	public NewFreeway()
-	{
+	public NewFreeway() {
 
 	}
 
-	public NewFreeway(int time, String id, String src, String dest, int l, int mSpeed, int nLanes)
-	{
+	public NewFreeway(int time, String id, String src, String dest, int l, int mSpeed,
+			int nLanes) {
 		super(time, id, src, dest, l, mSpeed);
 		lanes = nLanes;
 	}
 
-	public void execute(RoadMap map) throws IllegalArgumentException
-	{
+	public void execute(RoadMap map) throws IllegalArgumentException {
 		if (map.duplicatedId(road_id))
 			throw new IllegalArgumentException("The id " + road_id + " is already used");
 
-			try
-			{				
-				if (map.validJuctionsForRoad(junctionIniId, junctionDestId))
-				{
-					//Cogemos el cruce de destino
-					Junction junc = map.getJunction(junctionDestId);
-					Junction ini = map.getJunction(junctionIniId);
-					
-					//Creamos la nueva autopista y la añadimos al mapa y como entrante al cruce de destino
-					Road road = new Freeway(road_id, maxSpeed, length, lanes, junc, ini);
-					map.addRoad(road);
-					junc.añadirCarreteraEntrante(road);
-					ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
-					
-					//Cosas del manu para tener el mapa de carreteras/cruces que unen completito
-					if (map.getConectionMap().containsKey(junctionIniId))
-						map.getConectionMap().get(junctionIniId).add(conJunct);
-					else
-					{
-						List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
-						connect.add(conJunct);
-						map.getConectionMap().put(junctionIniId, connect);
-					}
+		try {
+			if (map.validJuctionsForRoad(junctionIniId, junctionDestId)) {
+				// Cogemos el cruce de destino
+				Junction junc = map.getJunction(junctionDestId);
+				Junction ini = map.getJunction(junctionIniId);
+
+				// Creamos la nueva autopista y la añadimos al mapa y como
+				// entrante al cruce de destino
+				Road road = new Freeway(road_id, maxSpeed, length, lanes, junc, ini);
+				map.addRoad(road);
+				junc.añadirCarreteraEntrante(road);
+				ConexionCruces conJunct = new ConexionCruces(road_id, junctionDestId);
+
+				// Cosas del manu para tener el mapa de carreteras/cruces que
+				// unen completito
+				if (map.getConectionMap().containsKey(junctionIniId))
+					map.getConectionMap().get(junctionIniId).add(conJunct);
+				else {
+					List<ConexionCruces> connect = new ArrayList<ConexionCruces>();
+					connect.add(conJunct);
+					map.getConectionMap().put(junctionIniId, connect);
 				}
-			} catch (IllegalArgumentException e)
-			{
-				throw new IllegalArgumentException("There is something wrong with the junctions specified for the road", e);
 			}
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(
+					"There is something wrong with the junctions specified for the road",
+					e);
+		}
 
 	}
 }

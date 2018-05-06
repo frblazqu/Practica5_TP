@@ -73,29 +73,25 @@ public class TextEditorExample extends JFrame implements ActionListener {
 		load.setActionCommand(LOAD);
 		load.addActionListener(this);
 		load.setMnemonic(KeyEvent.VK_L);
-		load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-				ActionEvent.ALT_MASK));
+		load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 
 		save = new JMenuItem("Save");
 		save.setActionCommand(SAVE);
 		save.addActionListener(this);
 		save.setMnemonic(KeyEvent.VK_S);
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				ActionEvent.ALT_MASK));
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 
 		clear = new JMenuItem("Clear");
 		clear.setActionCommand(CLEAR);
 		clear.addActionListener(this);
 		clear.setMnemonic(KeyEvent.VK_C);
-		clear.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				ActionEvent.ALT_MASK));
+		clear.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
 
 		quit = new JMenuItem("Quit");
 		quit.setActionCommand(QUIT);
 		quit.addActionListener(this);
 		quit.setMnemonic(KeyEvent.VK_Q);
-		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-				ActionEvent.ALT_MASK));
+		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
 
 		file.add(load);
 		file.add(save);
