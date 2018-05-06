@@ -1,6 +1,7 @@
 package es.ucm.fdi.model.objects;
 
 import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
 
 public class CrowedJunction extends Junction
@@ -91,6 +92,20 @@ public class CrowedJunction extends Junction
 		if(cola.length() > 0) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
 		
 		return cola;
+	}
+	
+	@Override
+	public String estadoVerde() {
+		
+		String aux = "";
+		int timeLeft = limiteDeTiempo - tiempoConsumido;
+		aux += "[";
+		if(semaforo != -1){
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green:" + timeLeft + ',' + "[" + vehiculosCola(semaforo) + ']' + ")]";
+		}
+		aux += "]";
+		
+		return aux;
 	}
 	
 }

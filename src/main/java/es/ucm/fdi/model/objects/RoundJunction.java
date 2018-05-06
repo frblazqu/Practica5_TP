@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import es.ucm.fdi.ini.IniSection;
 
 public class RoundJunction extends Junction
@@ -109,6 +110,20 @@ public class RoundJunction extends Junction
 		if(cola.length() > 1) cola = cola.substring(0, cola.length()-1);	//Eliminamos la ',' final
 		
 		return cola;
+	}
+	
+	@Override
+	public String estadoVerde() {
+		
+		String aux = "";
+		int timeLeft = intervalosVerde.get(incomingRoadIds.get(semaforo)) - tiempoConsumido;
+		aux += "[";
+		if(semaforo != -1){
+		aux += "(" + incomingRoadIds.get(semaforo) + ",green:" + timeLeft + ',' + "[" + vehiculosCola(semaforo) + ']' + ")]";
+		}
+		aux += "]";
+		
+		return aux;
 	}
 	
 }
