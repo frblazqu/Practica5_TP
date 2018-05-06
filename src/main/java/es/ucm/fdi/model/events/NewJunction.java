@@ -8,79 +8,88 @@ import es.ucm.fdi.util.StringParser;
 import es.ucm.fdi.ini.*;
 
 /**
- * Clase encargada de encapsular toda la información y funcionalidad relativa al
- * evento del simulador de añadir un nuevo cruce simple, incluyendo la propia
- * construccción de este tipo de eventos.
+ * Clase encargada de encapsular toda la información y funcionalidad relativa al evento del simulador de añadir
+ * un nuevo cruce simple, incluyendo la propia construccción de este tipo de eventos.
  * 
  * @author Francisco Javier Blázquez
  */
-public class NewJunction extends Event {
+public class NewJunction extends Event
+{
 	protected String junction_id;
 
-	// CONSTRUCTORAS
-	public NewJunction(String junctionId, int time) {
+	//CONSTRUCTORAS
+	public NewJunction(String junctionId, int time)
+	{
 		super(time);
 		junction_id = junctionId;
 	}
-
-	// MÉTODOS PUBLICOS Y GENERALES
-	public void execute(RoadMap map) throws IllegalArgumentException {
+	
+	//MÉTODOS PUBLICOS Y GENERALES
+	public void execute(RoadMap map) throws IllegalArgumentException
+	{
 		if (map.duplicatedId(junction_id))
-			throw new IllegalArgumentException(
-					"The id " + junction_id + " is already used");
+			throw new IllegalArgumentException("The id " + junction_id + " is already used");
 
 		Junction junc = construyeElemento();
 		map.addJunction(junc);
 	}
 
 	@Override
-	public String getTag() {
+	public String getTag()
+	{
 		return "new_junction";
 	}
 
 	@Override
-	public void fillSectionDetails(IniSection s) {
+	public void fillSectionDetails(IniSection s)
+	{
 		/* Ha caido en desuso */
 	}
 
-	// MÉTODOS QUE DEBEN SOBREESCRIBIR LAS CLASES HIJAS
-	protected Junction construyeElemento() {
+	//MÉTODOS QUE DEBEN SOBREESCRIBIR LAS CLASES HIJAS
+	protected Junction construyeElemento()
+	{
 		return new Junction(junction_id);
 	}
-
-	// BUILDER
-	public static class NewJunctionBuilder implements EventBuilder {
-		// ATRIBUTOS DE JUNCTION, COMUNES A TODOS LOS CRUCES
+	
+	//BUILDER
+	public static class NewJunctionBuilder implements EventBuilder
+	{	
+		//ATRIBUTOS DE JUNCTION, COMUNES A TODOS LOS CRUCES
 		protected final String TAG = "new_junction";
 		protected int time;
 		protected String id;
-
-		// MÉTODO GENERAL PARA CONSTRUIR TODOS LOS CRUCES
-		public Event parse(IniSection sec) throws IllegalArgumentException {
+		
+		//MÉTODO GENERAL PARA CONSTRUIR TODOS LOS CRUCES
+		public Event parse(IniSection sec) throws IllegalArgumentException
+		{
 			if (!sec.getTag().equals(TAG) || !esDeEsteTipo(sec))
 				return null;
-
-			leerAtributosComunes(sec);
+	
+				   leerAtributosComunes(sec);
 			return leerAtributosEspecificos(sec);
 		}
-		public void leerAtributosComunes(IniSection sec) {
+		public void leerAtributosComunes(IniSection sec)
+		{
 			time = StringParser.parseTime(sec.getValue("time"));
-			id = StringParser.parseId(sec.getValue("id"));
+			id   = StringParser.parseId(sec.getValue("id"));
 		}
-
-		// MÉTODOS QUE DEBEN SER SOBREESCRITOS PARA LOS DEMÁS CRUCES
-		protected boolean esDeEsteTipo(IniSection sec) {
+		
+		//MÉTODOS QUE DEBEN SER SOBREESCRITOS PARA LOS DEMÁS CRUCES
+		protected boolean esDeEsteTipo(IniSection sec)
+		{
 			return sec.getValue("type") == null;
 		}
-		protected Event leerAtributosEspecificos(IniSection sec) {
+		protected Event leerAtributosEspecificos(IniSection sec)
+		{
 			return new NewJunction(id, time);
 		}
 	}
-
-	// DESCRIBABLE
+	
+	//DESCRIBABLE
 	public void describe(Map<String, String> out) {
 		super.describe(out);
 		out.put("Type", "New Junction " + junction_id);
 	}
-
+	
 }

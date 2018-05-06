@@ -93,8 +93,7 @@ public class Ini {
 		while ((line = br.readLine()) != null) {
 			Boolean matched = false;
 
-			if (_comment.matcher(line).matches()
-					|| _whitespaces.matcher(line).matches()) {
+			if (_comment.matcher(line).matches() || _whitespaces.matcher(line).matches()) {
 				matched = true;
 			} else {
 				Matcher m = _section.matcher(line);

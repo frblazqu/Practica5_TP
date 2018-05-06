@@ -13,7 +13,7 @@ public class Demo {
 	private final static String READ_DIRECTORY = "src/main/resources/readStr/";
 	private final static String FILE_NAME_WRITE = "output.ini";
 	private final static String FILE_NAME_READ = "00_helloWorld.ini";
-
+	
 	public static void write() throws Exception {
 		System.out.println("-> write test");
 
@@ -83,21 +83,19 @@ public class Demo {
 		Ini[] ini = new Ini[5];
 
 		for (int i = 0; i < ini.length; i++) {
-			ini[i] = new Ini(new FileInputStream(
-					new File("resources/examples/ini/input" + i + ".ini")));
+			ini[i] = new Ini(new FileInputStream(new File("resources/examples/ini/input" + i + ".ini")));
 		}
 
 		for (int i = 0; i < ini.length; i++) {
 			for (int j = i + 1; j < ini.length; j++)
-				System.out.println("are input" + i + ".ini and input" + j
-						+ ".ini equal? " + ini[i].equals(ini[j]));
+				System.out.println("are input" + i + ".ini and input" + j + ".ini equal? " + ini[i].equals(ini[j]));
 		}
 		System.out.println();
 	}
 
 	public static void main(String[] args) throws Exception {
 		read();
-		// compare();
-		// write();
+		//compare();
+		//write();
 	}
 }

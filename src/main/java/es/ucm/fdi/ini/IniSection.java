@@ -47,12 +47,15 @@ public class IniSection {
 		_comments = new HashMap<>();
 		_comments.put("", new ArrayList<>()); // section comments
 	}
-	/*
-	 * public IniSection(SimulatedObject sim, int time) { _tag =
-	 * sim.getHeader(); _attr = new HashMap<>(); sim.report(time, _attr); _keys
-	 * = (List<String>) _attr.keySet(); _comments = new HashMap<>();
-	 * _comments.put("", new ArrayList<>()); // section comments }
-	 */
+	/*public IniSection(SimulatedObject sim, int time)
+	{
+		_tag = sim.getHeader();
+		_attr = new HashMap<>();
+		sim.report(time, _attr);
+		_keys = (List<String>) _attr.keySet();
+		_comments = new HashMap<>();
+		_comments.put("", new ArrayList<>()); // section comments
+	}*/
 	private void checkKeyValidity(String key) {
 		if (key.isEmpty()) {
 			throw new IniError("Invalid key: " + key);
@@ -194,7 +197,8 @@ public class IniSection {
 
 			// key comments
 			for (String c : _comments.get(key)) {
-				s += ";" + c + System.lineSeparator();;
+				s += ";" + c + System.lineSeparator();
+				;
 			}
 
 			s += key + " = " + _attr.get(key) + System.lineSeparator();
