@@ -19,35 +19,31 @@ import es.ucm.fdi.model.events.NewJunction.NewJunctionBuilder;
 import es.ucm.fdi.model.events.NewRoad.NewRoadBuilder;
 import es.ucm.fdi.model.events.NewVehicle.NewVehicleBuilder;
 
-public class ControllerTest 
-{
+public class ControllerTest {
 	@Test
-	public void LeerEntradaTest(){
+	public void LeerEntradaTest() {
 		InputStream input;
 		Event event;
 		try {
-			input = new FileInputStream(new File("src/main/resources/readStr/examples/basic/05_twoVehiclesOneFaulty.ini"));
+			input = new FileInputStream(new File(
+					"src/main/resources/readStr/examples/basic/05_twoVehiclesOneFaulty.ini"));
 			Ini ini = new Ini(input);
-			for(IniSection s: ini.getSections()){
-				try{
-				event = getEvento(s);
-				System.out.println(event.getTime());
-				}
-				catch(IllegalArgumentException e){
+			for (IniSection s : ini.getSections()) {
+				try {
+					event = getEvento(s);
+					System.out.println(event.getTime());
+				} catch (IllegalArgumentException e) {
 					System.out.println(e.getMessage());
 				}
-			}		
-		}
-		catch(FileNotFoundException e){
+			}
+		} catch (FileNotFoundException e) {
 			System.out.println("No encuentra el fichero");
-		}
-		catch(IOException e){
+		} catch (IOException e) {
 			System.out.println("Falla ini");
 		}
-		
+
 	}
-	public Event getEvento(IniSection s) throws IllegalArgumentException
-	{
+	public Event getEvento(IniSection s) throws IllegalArgumentException {
 		Event event;
 		List<EventBuilder> EventBuilderList;
 		EventBuilderList = new ArrayList<>();
@@ -56,17 +52,16 @@ public class ControllerTest
 		EventBuilderList.add(new NewVehicleBuilder());
 		EventBuilderList.add(new NewVehicleFaulty());
 
-		for(EventBuilder e: EventBuilderList)
-		{
-			//Parsea el evento con el correspondiente builder
+		for (EventBuilder e : EventBuilderList) {
+			// Parsea el evento con el correspondiente builder
 			event = e.parse(s);
-			
-			//Si se consigue parsear correctamente lo devuelve
-			if(event != null)
+
+			// Si se consigue parsear correctamente lo devuelve
+			if (event != null)
 				return event;
 		}
-		
-		
-		throw new IllegalArgumentException(new Throwable("No se ha podido parsear la sección:\n" + s.toString()));
+
+		throw new IllegalArgumentException(new Throwable(
+				"No se ha podido parsear la sección:\n" + s.toString()));
 	}
 }

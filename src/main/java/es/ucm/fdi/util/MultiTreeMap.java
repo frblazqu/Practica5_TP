@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
-
 /**
  * A TreeMap that supports multiple values for the same key, via ArrayLists.
  *
@@ -18,153 +17,157 @@ import java.util.TreeMap;
 @SuppressWarnings("serial")
 public class MultiTreeMap<K, V> extends TreeMap<K, ArrayList<V>> {
 
-    public MultiTreeMap() {}
+	public MultiTreeMap() {
+	}
 
-    public MultiTreeMap(Comparator<K> comparator) {
-        super(comparator);
-    }
+	public MultiTreeMap(Comparator<K> comparator) {
+		super(comparator);
+	}
 
-    /**
-     * Adds a value at the end of the list of values for the specified key.
-     * @param key to add the value under
-     * @param value to add
-     */
-    public void putValue(K key, V value) {
-        if ( ! containsKey(key)) {
-            put(key, new ArrayList<>());
-        }
-        get(key).add(value);
-    }
+	/**
+	 * Adds a value at the end of the list of values for the specified key.
+	 * 
+	 * @param key
+	 *            to add the value under
+	 * @param value
+	 *            to add
+	 */
+	public void putValue(K key, V value) {
+		if (!containsKey(key)) {
+			put(key, new ArrayList<>());
+		}
+		get(key).add(value);
+	}
 
-    /**
-     * Removes the first occurrence of a value from the list found at
-     * a given key. Efficiency is O(size-of-that-list)
-     * @param key to look into
-     * @param value within the list found at that key to remove. The first
-     *              element that is equals to this one will be removed.
-     * @return true if removed, false if not found
-     */
-    public boolean removeValue(K key, V value) 
-    {
-        if ( ! containsKey(key)) 
-        	return false;
-        else
-        {
-        	boolean eliminado = get(key).remove(value);
-        	
-        	if(get(key).size() == 0)
-        		this.remove(key);
-        	
-        	return eliminado;
-        }
-        	
-    }
+	/**
+	 * Removes the first occurrence of a value from the list found at a given
+	 * key. Efficiency is O(size-of-that-list)
+	 * 
+	 * @param key
+	 *            to look into
+	 * @param value
+	 *            within the list found at that key to remove. The first element
+	 *            that is equals to this one will be removed.
+	 * @return true if removed, false if not found
+	 */
+	public boolean removeValue(K key, V value) {
+		if (!containsKey(key))
+			return false;
+		else {
+			boolean eliminado = get(key).remove(value);
 
-    /**
-     * Returns the total number of values stored in this multimap
-     */
-    public int sizeOfValues() {
-        int total = 0;
-        for (List<V> l : values()) {
-            total += l.size();
-        }
-        return total;
-    }
+			if (get(key).size() == 0)
+				this.remove(key);
 
-    /**
-     * Returns the values as a read-only list. Changes to this structure
-     * will be immediately reflected in the list.
-     */
-    public List<V> valuesList() {
-        return new InnerList();
-    }
+			return eliminado;
+		}
 
-    /**
-     * A logical, read-only list containing all elements in
-     * correct order.
-     */
-    private class InnerList extends AbstractList<V> {
+	}
 
-        @Override
-        public V get(int index) {
+	/**
+	 * Returns the total number of values stored in this multimap
+	 */
+	public int sizeOfValues() {
+		int total = 0;
+		for (List<V> l : values()) {
+			total += l.size();
+		}
+		return total;
+	}
 
-            if (index < 0 || isEmpty()) {
-                throw new IndexOutOfBoundsException(
-                        "Index " + index + " is out of bounds");
-            }
+	/**
+	 * Returns the values as a read-only list. Changes to this structure will be
+	 * immediately reflected in the list.
+	 */
+	public List<V> valuesList() {
+		return new InnerList();
+	}
 
-            Iterator<ArrayList<V>> it = values().iterator();
-            ArrayList<V> current = it.next(); // not empty, therefore hasNext()
-            int start = 0;
+	/**
+	 * A logical, read-only list containing all elements in correct order.
+	 */
+	private class InnerList extends AbstractList<V> {
 
-            while (index >= (start+current.size())) {
-                if (!it.hasNext()) {
-                    throw new IndexOutOfBoundsException(
-                            "Index " + index + " is out of bounds");
-                }
-                start += current.size();
-                current = it.next();
-            }
+		@Override
+		public V get(int index) {
 
-            return current.get(index - start);
-        }
+			if (index < 0 || isEmpty()) {
+				throw new IndexOutOfBoundsException(
+						"Index " + index + " is out of bounds");
+			}
 
-        @Override
-        public int size() {
-            return sizeOfValues();
-        }
-    }
+			Iterator<ArrayList<V>> it = values().iterator();
+			ArrayList<V> current = it.next(); // not empty, therefore hasNext()
+			int start = 0;
 
-    /**
-     * Iterates through all internal values
-     * (not the arraylists themselves), first by key order,
-     * and within each bucket, by insertion order.
-     */
-    private class InnerIterator implements Iterator<V> {
+			while (index >= (start + current.size())) {
+				if (!it.hasNext()) {
+					throw new IndexOutOfBoundsException(
+							"Index " + index + " is out of bounds");
+				}
+				start += current.size();
+				current = it.next();
+			}
 
-        private Iterator<ArrayList<V>> arrayIterator;
-        private Iterator<V> valueIterator;
-        private boolean finished = false;
-        private V nextElement;
+			return current.get(index - start);
+		}
 
-        private InnerIterator() {
-            arrayIterator = values().iterator();
-            advance();
-        }
+		@Override
+		public int size() {
+			return sizeOfValues();
+		}
+	}
 
-        private void advance() {
-            if (valueIterator == null || ! valueIterator.hasNext()) {
-                if (arrayIterator.hasNext()) {
-                    valueIterator = arrayIterator.next().iterator();
-                    if (valueIterator.hasNext()) {
-                        nextElement = valueIterator.next();
-                    }
-                } else {
-                    finished = true;
-                }
-            } else {
-                nextElement = valueIterator.next();
-            }
-        }
+	/**
+	 * Iterates through all internal values (not the arraylists themselves),
+	 * first by key order, and within each bucket, by insertion order.
+	 */
+	private class InnerIterator implements Iterator<V> {
 
-        @Override
-        public boolean hasNext() {
-            return !finished;
-        }
+		private Iterator<ArrayList<V>> arrayIterator;
+		private Iterator<V> valueIterator;
+		private boolean finished = false;
+		private V nextElement;
 
-        @Override
-        public V next() {
-            V current = nextElement;
-            advance();
-            return current;
-        }
-    }
+		private InnerIterator() {
+			arrayIterator = values().iterator();
+			advance();
+		}
 
-    /**
-     * Allows iteration by base values.
-     * @return iterable values, ordered by key and then by order-of-insertion
-     */
-    public Iterable<V> innerValues() {
-        return () -> new InnerIterator();
-    }
+		private void advance() {
+			if (valueIterator == null || !valueIterator.hasNext()) {
+				if (arrayIterator.hasNext()) {
+					valueIterator = arrayIterator.next().iterator();
+					if (valueIterator.hasNext()) {
+						nextElement = valueIterator.next();
+					}
+				} else {
+					finished = true;
+				}
+			} else {
+				nextElement = valueIterator.next();
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !finished;
+		}
+
+		@Override
+		public V next() {
+			V current = nextElement;
+			advance();
+			return current;
+		}
+	}
+
+	/**
+	 * Allows iteration by base values.
+	 * 
+	 * @return iterable values, ordered by key and then by order-of-insertion
+	 */
+	public Iterable<V> innerValues() {
+		return () -> new InnerIterator();
+	}
 }

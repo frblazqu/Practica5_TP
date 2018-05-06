@@ -30,7 +30,8 @@ class DialogWindow extends JDialog {
 	private JList<Integer> _numsList;
 
 	static final private char _clearSelectionKey = 'c';
-	private Border _defaultBorder = BorderFactory.createLineBorder(Color.black, 2);
+	private Border _defaultBorder = BorderFactory.createLineBorder(Color.black,
+			2);
 
 	public DialogWindow(Frame parent) {
 		super(parent, true);
@@ -54,10 +55,10 @@ class DialogWindow extends JDialog {
 		contentPanel.add(itemsPanel);
 		contentPanel.add(numsPanel);
 
-		itemsPanel.setBorder(
-				BorderFactory.createTitledBorder(_defaultBorder, "Items", TitledBorder.LEFT, TitledBorder.TOP));
-		numsPanel.setBorder(
-				BorderFactory.createTitledBorder(_defaultBorder, "Numbers", TitledBorder.LEFT, TitledBorder.TOP));
+		itemsPanel.setBorder(BorderFactory.createTitledBorder(_defaultBorder,
+				"Items", TitledBorder.LEFT, TitledBorder.TOP));
+		numsPanel.setBorder(BorderFactory.createTitledBorder(_defaultBorder,
+				"Numbers", TitledBorder.LEFT, TitledBorder.TOP));
 
 		itemsPanel.setMinimumSize(new Dimension(100, 100));
 		numsPanel.setMinimumSize(new Dimension(100, 100));
@@ -71,12 +72,17 @@ class DialogWindow extends JDialog {
 		addCleanSelectionListner(_itemsList);
 		addCleanSelectionListner(_numsList);
 
-		itemsPanel.add(new JScrollPane(_itemsList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+		itemsPanel.add(
+				new JScrollPane(_itemsList,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+				BorderLayout.CENTER);
 
-		numsPanel.add(new JScrollPane(_numsList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
-
+		numsPanel.add(
+				new JScrollPane(_numsList,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+				BorderLayout.CENTER);
 
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		mainPanel.add(buttonsPanel, BorderLayout.PAGE_END);
@@ -109,8 +115,10 @@ class DialogWindow extends JDialog {
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		mainPanel.add(infoPanel, BorderLayout.PAGE_START);
 
-		infoPanel.add(new JLabel("Select items for which you want to process."));
-		infoPanel.add(new JLabel("Use '" + _clearSelectionKey + "' to deselect all."));
+		infoPanel
+				.add(new JLabel("Select items for which you want to process."));
+		infoPanel.add(new JLabel(
+				"Use '" + _clearSelectionKey + "' to deselect all."));
 		infoPanel.add(new JLabel("Use Ctrl+A to select all"));
 		infoPanel.add(new JLabel(" "));
 
@@ -148,7 +156,7 @@ class DialogWindow extends JDialog {
 	public String[] getSelectedItems() {
 		int[] indices = _itemsList.getSelectedIndices();
 		String[] items = new String[indices.length];
-		for(int i=0; i<items.length; i++) {
+		for (int i = 0; i < items.length; i++) {
 			items[i] = _itemsListModel.getElementAt(indices[i]);
 		}
 		return items;
@@ -157,15 +165,15 @@ class DialogWindow extends JDialog {
 	public Integer[] getSelectedNums() {
 		int[] indices = _numsList.getSelectedIndices();
 		Integer[] nums = new Integer[indices.length];
-		for(int i=0; i<nums.length; i++) {
+		for (int i = 0; i < nums.length; i++) {
 			nums[i] = _numsListModel.getElementAt(indices[i]);
 		}
 		return nums;
 	}
 
-
 	public int open() {
-		setLocation(getParent().getLocation().x + 50, getParent().getLocation().y + 50);
+		setLocation(getParent().getLocation().x + 50,
+				getParent().getLocation().y + 50);
 		pack();
 		setVisible(true);
 		return _status;

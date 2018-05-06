@@ -14,15 +14,15 @@ import javax.swing.table.AbstractTableModel;
 
 import es.ucm.fdi.model.Describable;
 
-public class ComponentTable extends JPanel{
-	
+public class ComponentTable extends JPanel {
+
 	private ListOfMapsTableModel elementsTable;
 	private String[] columns;
 	private List<Describable> elements;
 	private JTable table;
-	
+
 	String name;
-	
+
 	public ComponentTable(String[] c, List<Describable> d, String n) {
 		super(new BorderLayout());
 		columns = c;
@@ -30,18 +30,18 @@ public class ComponentTable extends JPanel{
 		name = n;
 		initGUI();
 	}
-	
+
 	public void setElementsList(List<Describable> l) {
 		elements = l;
 	}
-	
+
 	private class ListOfMapsTableModel extends AbstractTableModel {
 
-		@Override 
+		@Override
 		public String getColumnName(int columnIndex) {
 			return columns[columnIndex];
-		}	
-		@Override 
+		}
+		@Override
 		public int getRowCount() {
 			return elements.size();
 		}
@@ -56,37 +56,38 @@ public class ComponentTable extends JPanel{
 			elements.get(rowIndex).describe(out);
 			return out.get((columns[columnIndex]));
 		}
-		
+
 		public void updateTable() {
 			fireTableDataChanged();
 		}
 	}
-	
+
 	public void initGUI() {
 		this.setPreferredSize(new Dimension(300, 200));
-		
+
 		elementsTable = new ListOfMapsTableModel();
 		table = new JTable(elementsTable);
-		
-		JScrollPane scroll = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
+		JScrollPane scroll = new JScrollPane(table,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
 		Border b = BorderFactory.createLineBorder(Color.black, 2);
 		scroll.setBorder(BorderFactory.createTitledBorder(b, name));
-		
+
 		this.add(scroll);
 	}
-	
+
 	public void addElement(Describable d) {
 		elements.add(d);
 		elementsTable.updateTable();
 	}
-	
-	public void pop(){
+
+	public void pop() {
 		elements.remove(0);
 		elementsTable.updateTable();
 	}
-	
+
 	public void updateTable() {
 		elementsTable.updateTable();
 	}

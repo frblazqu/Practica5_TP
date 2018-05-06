@@ -25,10 +25,10 @@ public class GraphComponent extends JComponent {
 	private static final int _dotRadius = 5;
 
 	/**
-	 * An inner class that represent a location of a node. Fields cX and cY are the
-	 * center of the node, and fields tX and tY are the location where the label of
-	 * the node is drawn. This is calculated for each node in the method
-	 * {@code calculateNodeCoordinates()}
+	 * An inner class that represent a location of a node. Fields cX and cY are
+	 * the center of the node, and fields tX and tY are the location where the
+	 * label of the node is drawn. This is calculated for each node in the
+	 * method {@code calculateNodeCoordinates()}
 	 *
 	 */
 	private class Point {
@@ -64,7 +64,7 @@ public class GraphComponent extends JComponent {
 
 	public GraphComponent() {
 		_nodesPisitions = new HashMap<>();
-		//setMinimumSize(new Dimension(500, 500));
+		// setMinimumSize(new Dimension(500, 500));
 		setPreferredSize(new Dimension(500, 500));
 		_lastWidth = -1;
 		_lastHeight = -1;
@@ -72,8 +72,10 @@ public class GraphComponent extends JComponent {
 
 	public void paint(Graphics graphics) {
 		Graphics2D g = (Graphics2D) graphics;
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 		if (_graph == null || _graph.getNodes().size() == 0) {
 			g.setColor(Color.red);
@@ -98,7 +100,8 @@ public class GraphComponent extends JComponent {
 		for (Node j : _graph.getNodes()) {
 			Point p = _nodesPisitions.get(j.getId());
 			g.setColor(Color.blue);
-			g.fillOval(p.cX - _nodeRadius / 2, p.cY - _nodeRadius / 2, _nodeRadius, _nodeRadius);
+			g.fillOval(p.cX - _nodeRadius / 2, p.cY - _nodeRadius / 2,
+					_nodeRadius, _nodeRadius);
 			g.setColor(Color.black);
 			g.drawString(j.getId(), p.tX, p.tY);
 		}
@@ -110,9 +113,11 @@ public class GraphComponent extends JComponent {
 
 			// draw the edge
 			Color arrowColor = Math.random() > 0.5 ? Color.RED : Color.GREEN;
-			drawArrowLine(g, p1.cX, p1.cY, p2.cX, p2.cY, 15, 5, Color.BLACK, arrowColor);
+			drawArrowLine(g, p1.cX, p1.cY, p2.cX, p2.cY, 15, 5, Color.BLACK,
+					arrowColor);
 
-			// draw dots as circles. Dots at the same location are drawn with circles of
+			// draw dots as circles. Dots at the same location are drawn with
+			// circles of
 			// different diameter.
 			int lastLocation = -1;
 			int diam = _dotRadius;
@@ -123,20 +128,23 @@ public class GraphComponent extends JComponent {
 				} else {
 					diam += _dotRadius;
 				}
-				Color dotColor = Math.random() > 0.5 ? Color.MAGENTA : Color.ORANGE;
-				drawCircleOnALine(g, p1.cX, p1.cY, p2.cX, p2.cY, e.getLength(), d.getLocation(), diam, dotColor,
-						d.getId());
+				Color dotColor = Math.random() > 0.5
+						? Color.MAGENTA
+						: Color.ORANGE;
+				drawCircleOnALine(g, p1.cX, p1.cY, p2.cX, p2.cY, e.getLength(),
+						d.getLocation(), diam, dotColor, d.getId());
 			}
 		}
 	}
 
 	/**
-	 * put the objects in a circle, for each one store the center coordinate and a
-	 * coordinate for a corresponding text.
+	 * put the objects in a circle, for each one store the center coordinate and
+	 * a coordinate for a corresponding text.
 	 */
 	private void calculateNodeCoordinates() {
 
-		int r = Math.min(_lastHeight, _lastWidth) / 2 - _nodeRadius - 50; // 50 for
+		int r = Math.min(_lastHeight, _lastWidth) / 2 - _nodeRadius - 50; // 50
+																			// for
 																			// text
 		int tr = (r + _nodeRadius + 10);
 
@@ -160,21 +168,25 @@ public class GraphComponent extends JComponent {
 	}
 
 	/**
-	 * Draws a circle on the line from (x1,y1) to (x2,y2). Assuming the (virtual)
-	 * length of the line is virtualLength, the circles is drawn at location
-	 * virtualLocation (0..virtualLength). The diameter is 'diam'
+	 * Draws a circle on the line from (x1,y1) to (x2,y2). Assuming the
+	 * (virtual) length of the line is virtualLength, the circles is drawn at
+	 * location virtualLocation (0..virtualLength). The diameter is 'diam'
 	 */
-	private void drawCircleOnALine(Graphics g, int x1, int y1, int x2, int y2, int virtualLength, int virtualLocation,
-			int diam, Color c, String txt) {
+	private void drawCircleOnALine(Graphics g, int x1, int y1, int x2, int y2,
+			int virtualLength, int virtualLocation, int diam, Color c,
+			String txt) {
 
 		// The actual length of the line
-		double lineActualLength = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)) - 45;
+		double lineActualLength = Math
+				.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)) - 45;
 
 		// the angle of the line with the horizontal axis
-		double alpha = Math.atan(((double) Math.abs(x1 - x2)) / ((double) Math.abs(y1 - y2)));
+		double alpha = Math.atan(
+				((double) Math.abs(x1 - x2)) / ((double) Math.abs(y1 - y2)));
 
 		// the actual location on the line (0..lineActualLength)
-		double actualLocation = lineActualLength * ((double) virtualLocation) / ((double) virtualLength) + 15;
+		double actualLocation = lineActualLength * ((double) virtualLocation)
+				/ ((double) virtualLength) + 15;
 
 		// the coordinates of the location
 		double x = Math.sin(alpha) * actualLocation;
@@ -186,19 +198,22 @@ public class GraphComponent extends JComponent {
 
 		// draw the point
 		g.setColor(c);
-		g.drawOval(x1 + xDir * ((int) x) - diam / 2, y1 + yDir * ((int) y) - diam / 2, diam, diam);
+		g.drawOval(x1 + xDir * ((int) x) - diam / 2,
+				y1 + yDir * ((int) y) - diam / 2, diam, diam);
 
 		// draw the text
 		g.setColor(Color.darkGray);
-		g.drawString(txt, x1 + xDir * ((int) x) - diam / 2, y1 + yDir * ((int) y) - diam / 2);
+		g.drawString(txt, x1 + xDir * ((int) x) - diam / 2,
+				y1 + yDir * ((int) y) - diam / 2);
 	}
 
 	/**
-	 * Draws a line from (x1,y1) to (x2,y2) with an arrow of width d and height h.
-	 * The color of the line is lineColor and that of the arrow is arrowColor.
+	 * Draws a line from (x1,y1) to (x2,y2) with an arrow of width d and height
+	 * h. The color of the line is lineColor and that of the arrow is
+	 * arrowColor.
 	 */
-	private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2, int d, int h, Color lineColor,
-			Color arrowColor) {
+	private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2,
+			int d, int h, Color lineColor, Color arrowColor) {
 		int dx = x2 - x1, dy = y2 - y1;
 		double D = Math.sqrt(dx * dx + dy * dy);
 		double xm = D - d, xn = xm, ym = h, yn = -h, x;
@@ -212,8 +227,8 @@ public class GraphComponent extends JComponent {
 		yn = xn * sin + yn * cos + y1;
 		xn = x;
 
-		int[] xpoints = { x2, (int) xm, (int) xn };
-		int[] ypoints = { y2, (int) ym, (int) yn };
+		int[] xpoints = {x2, (int) xm, (int) xn};
+		int[] ypoints = {y2, (int) ym, (int) yn};
 
 		g.setColor(lineColor);
 		g.drawLine(x1, y1, x2, y2);

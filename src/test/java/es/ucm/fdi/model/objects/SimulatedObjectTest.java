@@ -8,11 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class SimulatedObjectTest
-{
+public class SimulatedObjectTest {
 	@Test
-	public void escribeInformeTest1() throws IOException
-	{
+	public void escribeInformeTest1() throws IOException {
 		Vehicle car = new Vehicle();
 	}
 }
